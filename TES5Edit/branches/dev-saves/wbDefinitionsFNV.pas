@@ -4281,8 +4281,8 @@ begin
     {0x00000001}'ESM',
     {0x00000002}'',
     {0x00000004}'',   // Plugin selected (Editor)
-    {0x00000008}'',   // Form cannot be saved (Runtime)/Plugin active (Editor)
-    {0x00000010}'Form initialized (Runtime only)',  // Plugin cannot be active or selected (Editor)
+    {0x00000008}'Form initialized (Runtime only)',   // Form cannot be saved (Runtime)/Plugin active (Editor)
+    {0x00000010}'',  // Plugin cannot be active or selected (Editor)
     {0x00000020}'Deleted',
     {0x00000040}'Border Region / Has Tree LOD / Constant / Hidden From Local Map / Plugin Endian',
     {0x00000080}'Turn Off Fire',
@@ -11449,6 +11449,7 @@ begin
     wbString(MODL, 'Slot Machine Model'),
     wbString(MOD2, 'Slot Machine Model (again?)'),
     wbString(MOD3, 'BlackJack Table Model'),
+    wbString(MODT, 'BlackJack Table Model related'),
     wbString(MOD4, 'Roulette Table Model'),
     wbRStruct('Slot Reel Textures', [
       wbString(ICON, 'Symbol 1'),
