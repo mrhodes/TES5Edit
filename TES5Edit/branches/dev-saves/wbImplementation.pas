@@ -11930,7 +11930,8 @@ end;
 
 procedure TwbElement.FreeInstance;
 begin
-  Assert(FRefCount = 1);
+  if FRefCount <> 1 then
+    Assert(FRefCount = 1);
   Assert(eExternalRefs = 1);
   inherited;
 end;

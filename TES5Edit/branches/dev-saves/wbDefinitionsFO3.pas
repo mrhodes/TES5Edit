@@ -1835,7 +1835,6 @@ begin
       11: Container.ElementNativeValues['..\Actor Value'] := 48;//Invisibility
       12: Container.ElementNativeValues['..\Actor Value'] := 49;//Chameleon
       24: Container.ElementNativeValues['..\Actor Value'] := 47;//Paralysis
-      36: Container.ElementNativeValues['..\Actor Value'] := 51;//Turbo
     else
       Container.ElementNativeValues['..\Actor Value'] := -1;
     end;
