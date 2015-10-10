@@ -298,7 +298,7 @@ type
     function GetBaseName: string; virtual;
     function GetDisplayName: string; virtual;
     function GetShortName: string; virtual;
-    function GetPermanentName: string; virtual;
+    function GetPersistentName: string; virtual;
     function GetPath: string; virtual;
     function GetFullPath: string; virtual;
     function GetPathName: string; virtual;
@@ -586,7 +586,7 @@ type
     function GetReferenceFile: IwbFile; override;
     function GetName: string; override;
     function GetBaseName: string; override;
-    function GetPermanentName: string; override;
+    function GetPersistentName: string; override;
     procedure PrepareSave; override;
     procedure SetModified(aValue: Boolean); override;
 
@@ -1062,7 +1062,7 @@ type
 
     function GetName: string; override;
     function GetShortName: string; override;
-    function GetPermanentName: string; override;
+    function GetPersistentName: string; override;
     function GetDisplayName: string; override;
   end;
 
@@ -1473,7 +1473,7 @@ type
 
     function GetName: string; override;
     function GetShortName: string; override;
-    function GetPermanentName: string; override;
+    function GetPersistentName: string; override;
     function GetElementType: TwbElementType; override;
     function GetSortKeyInternal(aExtended: Boolean): string; override;
     function IsElementRemoveable(const aElement: IwbElement): Boolean; override;
@@ -2257,7 +2257,7 @@ begin
   flFileName := aFileName;
   Header := TwbMainRecord.Create(Self, wbHeaderSignature, 0);
   if wbGameMode = gmFNV then
-    Header.RecordBySignature['HEDR'].Elements[0].EditValue := '1.32'
+    Header.RecordBySignature['HEDR'].Elements[0].EditValue := '1.34'
   else if wbGameMode = gmFO3 then
     Header.RecordBySignature['HEDR'].Elements[0].EditValue := '0.94'
   else if wbGameMode = gmTES3 then
@@ -2718,7 +2718,7 @@ begin
     Result := '['+IntToHex64(flLoadOrder, 2)+'] ' + Result;
 end;
 
-function TwbFile.GetPermanentName: string;
+function TwbFile.GetPersistentName: string;
 begin
   Result := GetFileName;
   if fsIsHardcoded in flStates then
@@ -7157,12 +7157,12 @@ begin
   Result := mrStruct.mrsSignature;
 end;
 
-function TwbMainRecord.GetPermanentName: string;
+function TwbMainRecord.GetPersistentName: string;
 begin
   if GetIsMaster then
     Result := '[self:' + IntToHex64($00FFFFFF and GetLoadOrderFormID, 8) + ']'
   else
-    Result := '[' + GetMasterOrSelf.GetFile.GetPermanentName + ':' + IntToHex64($00FFFFFF and GetLoadOrderFormID, 8) + ']'
+    Result := '[' + GetMasterOrSelf.GetFile.GetPersistentName + ':' + IntToHex64($00FFFFFF and GetLoadOrderFormID, 8) + ']'
 end;
 
 function TwbMainRecord.GetCountedRecordCount: Cardinal;
@@ -10892,7 +10892,7 @@ begin
     Result := Result + wbFormID.ToString(grStruct.grsLabel, Self);
 end;
 
-function TwbGroupRecord.GetPermanentName: string;
+function TwbGroupRecord.GetPersistentName: string;
 var
   aRecord : IwbMainrecord;
 begin
@@ -10902,7 +10902,7 @@ begin
     1, 6, 7: begin
         aRecord := GetFile.GetRecordByFormID(grStruct.grsLabel, True);
         if Assigned(aRecord) then
-          Result := 'Children of ' + aRecord.PermanentName
+          Result := 'Children of ' + aRecord.PersistentName
         else
           Result := 'Children of non existant ' + IntToHex(grStruct.grsLabel, 8);
     end;
@@ -12095,10 +12095,10 @@ begin
   else
     Result := '';
   Result := Result + ' \ ';
-  Result := Result + GetPermanentName;
+  Result := Result + GetPersistentName;
 end;
 
-function TwbElement.GetPermanentName: string;
+function TwbElement.GetPersistentName: string;
 var
   aElement  : IwbElement;
 begin

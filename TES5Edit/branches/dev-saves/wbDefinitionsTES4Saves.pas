@@ -110,7 +110,7 @@ end;
 //    Result := SaveFormVersionDecider(73, aBasePtr, aEndPtr, aElement);
 //end;
 
-function ScreenShotDataCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function ScreenShotDataCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 var
   Element : IwbElement;
   Container: IwbDataContainer;
@@ -133,7 +133,7 @@ begin
   end;
 end;
 
-function FileLocationTableCountCounter(aName: String; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function FileLocationTableCountCounter(aName: String; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 var
   Element : IwbElement;
   Container: IwbDataContainer;
@@ -152,32 +152,32 @@ begin
   end;
 end;
 
-function GlobalDataCounter(aIndex: Integer; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function GlobalDataCounter(aIndex: Integer; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 begin
   Result := FileLocationTableCountCounter('Global Data Table '+IntToStr(aIndex), aBasePtr, aEndPtr, aElement);
 end;
 
-function GlobalData1Counter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function GlobalData1Counter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 begin
   Result := GlobalDataCounter(1, aBasePtr, aEndPtr, aElement);
 end;
 
-function GlobalData2Counter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function GlobalData2Counter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 begin
   Result := GlobalDataCounter(2, aBasePtr, aEndPtr, aElement);
 end;
 
-function GlobalData3Counter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function GlobalData3Counter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 begin
   Result := GlobalDataCounter(3, aBasePtr, aEndPtr, aElement) + 1;  // +1 due to the bug as seen on UESP
 end;
 
-function ChangedFormsCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function ChangedFormsCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 begin
   Result := FileLocationTableCountCounter('Changed Forms', aBasePtr, aEndPtr, aElement);
 end;
 
-//function GlobalData2TableSizeCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+//function GlobalData2TableSizeCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 //var
 //  Element    : IwbElement;
 //  Container  : IwbDataContainer;
@@ -333,7 +333,7 @@ end;
 //  end;
 //end;
 //
-//function ChangedFormHavokMovedSubBufferCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+//function ChangedFormHavokMovedSubBufferCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 //var
 //  Element    : IwbElement;
 //  Container  : IwbDataContainer;
@@ -349,7 +349,7 @@ end;
 //  end;
 //end;
 //
-//function ChangedFormHighProcessSubBufferCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+//function ChangedFormHighProcessSubBufferCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 //var
 //  Element    : IwbElement;
 //  Container  : IwbDataContainer;
@@ -419,7 +419,7 @@ end;
 //  end;
 //end;
 //
-//function ChangedFormAnimationSubBufferCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+//function ChangedFormAnimationSubBufferCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 //var
 //  Element    : IwbElement;
 //  Container  : IwbDataContainer;
@@ -435,7 +435,7 @@ end;
 //  end;
 //end;
 //
-//function ChangedFormDataSizer(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; var CompressedSize: Integer): Cardinal;
+//function ChangedFormDataSizer(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; var CompressedSize: Cardinal): Cardinal;
 //const
 //  OffsetLength = 9;
 //var
@@ -467,7 +467,7 @@ end;
 //    CompressedSize := 0;
 //end;
 //
-//function ChangedFormSizer(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; var CompressedSize: Integer): Cardinal;
+//function ChangedFormSizer(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; var CompressedSize: Cardinal): Cardinal;
 //var
 //  Struct : IwbStructCDef;
 //  i      : Integer;
@@ -920,7 +920,7 @@ end;
 //  end;
 //end;
 //
-//function ChangedFormExtraNonMagicTargetSubCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+//function ChangedFormExtraNonMagicTargetSubCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 //var
 //  Element    : IwbElement;
 //  Container  : IwbDataContainer;
@@ -1626,7 +1626,7 @@ end;
 //    Result := 1 + Result;
 //end;
 //
-//function ChangedFormRemainingDataCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+//function ChangedFormRemainingDataCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 //var
 //  Element   : IwbElement;
 //  Container : IwbDataContainer;
@@ -1662,12 +1662,12 @@ end;
 //  end;
 //end;
 //
-//function SkipCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+//function SkipCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 //begin
 //  Result := wbBytesToSkip;
 //end;
 //
-//function DumpCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+//function DumpCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 //begin
 //  if wbBytesToDump = $FFFFFFFF then
 //    Result := ( Cardinal(aEndPtr) - Cardinal(aBasePtr) ) div wbBytesToGroup + 1
@@ -1675,7 +1675,7 @@ end;
 //    Result := wbBytesToDump div wbBytesToGroup + 1;
 //end;
 //
-//function DataLengthCounter(aName: String; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aModifier: Integer = 0): Integer;
+//function DataLengthCounter(aName: String; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aModifier: Integer = 0): Cardinal;
 //var
 //  Element   : IwbElement;
 //  Container : IwbDataContainer;
@@ -1698,7 +1698,7 @@ end;
 //  end;
 //end;
 //
-//function DataLengthRemainderCounter(aName: String; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aModifier: Integer = 0): Integer;
+//function DataLengthRemainderCounter(aName: String; aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement; aModifier: Integer = 0): Cardinal;
 //var
 //  Element   : IwbElement;
 //  Container : IwbDataContainer;
@@ -1729,23 +1729,23 @@ end;
 //  end;
 //end;
 //
-//function DataCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+//function DataCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 //begin
 //  Result := DataLengthCounter('Global Data', aBasePtr, aEndPtr, aElement, 0);
 //end;
 //
-//function DataQuartetCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+//function DataQuartetCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 //begin
 //  Result := DataLengthRemainderCounter('Global Data', aBasePtr, aEndPtr, aElement, 1);
 //end;
 //
-//function DataQuartetRemainderCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+//function DataQuartetRemainderCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 //begin
 //  Result := DataLengthRemainderCounter('Global Data', aBasePtr, aEndPtr, aElement, 2);
 //end;
 //
 //
-//function CounterCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+//function CounterCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 //var
 //  Element : IwbElement;
 //  Container: IwbDataContainer;
@@ -1762,7 +1762,7 @@ end;
 //  end;
 //end;
 //
-//function DivByteBy4Counter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+//function DivByteBy4Counter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 //var
 //  Element : IwbElement;
 //  Container: IwbDataContainer;
@@ -1806,7 +1806,7 @@ begin
   end;
 end;
 
-function OBSEChapterGlobalCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function OBSEChapterGlobalCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 var
   Element : IwbElement;
   Container: IwbDataContainer;

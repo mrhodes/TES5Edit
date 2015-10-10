@@ -36,9 +36,9 @@ function wbDontShowBranch(const aElement: IwbElement): Boolean;
 var
   wbCoSaveArrayTypeEnum : IwbEnumDef;
 
-function wbCoSaveChapterOtherCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-function wbCoSavePluginCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-function wbCoSaveChunkCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function wbCoSaveChapterOtherCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
+function wbCoSavePluginCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
+function wbCoSaveChunkCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 function wbCoSaveChunkType(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 function wbCoSaveChunkTypeName(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): String;
 function wbCoSaveArrayKeyElementDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
@@ -49,8 +49,8 @@ function wbCoSaveArrayTypeName(aBasePtr: Pointer; aEndPtr: Pointer; const aEleme
 // Place holder during decoding...
 
 function ToBeDeterminedDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-function ToBeDeterminedCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
-function ToBeDeterminedCountCallback(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function ToBeDeterminedCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
+function ToBeDeterminedCountCallback(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 
 implementation
 
@@ -314,7 +314,7 @@ begin
   Result := wbHideNeverShow;
 end;
 
-function wbCoSaveChapterOtherCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function wbCoSaveChapterOtherCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 var
   Element : IwbElement;
   Container: IwbDataContainer;
@@ -330,7 +330,7 @@ begin
   end;
 end;
 
-function wbCoSavePluginCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function wbCoSavePluginCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 var
   Element   : IwbElement;
   Container : IwbDataContainer;
@@ -349,7 +349,7 @@ begin
   end;
 end;
 
-function wbCoSaveChunkCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function wbCoSaveChunkCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 var
   Element : IwbElement;
   Container: IwbDataContainer;
@@ -439,12 +439,12 @@ begin
   Result := 0;
 end;
 
-function ToBeDeterminedCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function ToBeDeterminedCounter(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 begin
   Result := 0;
 end;
 
-function ToBeDeterminedCountCallback(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+function ToBeDeterminedCountCallback(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
 begin
   Result := 0;
 end;

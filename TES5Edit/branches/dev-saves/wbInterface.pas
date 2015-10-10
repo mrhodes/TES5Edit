@@ -51,6 +51,7 @@ var
   wbHideNeverShow          : Boolean  = True;
   wbShowFormVersion        : Boolean  = False;
   wbShowFlagEnumValue      : Boolean  = False;
+  wbShowGroupRecordCount   : Boolean  = False;
   wbDisplayShorterNames    : Boolean  = False;
   wbSortSubRecords         : Boolean  = False;
   wbSortFLST               : Boolean  = True;
@@ -417,7 +418,7 @@ type
     function GetBaseName: string;
     function GetDisplayName: string;
     function GetShortName: string;
-    function GetPermanentName: string;
+    function GetPersistentName: string;
     function GetPath: string;
     function GetFullPath: string;
     function GetPathName: string;
@@ -530,8 +531,8 @@ type
       read GetDisplayName;
     property ShortName: string
       read GetShortName;
-    property PermanentName: string
-      read GetpermanentName;
+    property PersistentName: string
+      read GetPersistentName;
     property Path: string
       read GetPath;
     property FullPath: string
@@ -1165,7 +1166,7 @@ type
   TwbUnionDecider = function(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
   TwbIntegerDefFormaterUnionDecider = function(const aElement: IwbElement): Integer;
   TwbIsSortedCallback = function(const aContainer: IwbContainer): Boolean;
-  TwbCountCallback = function(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+  TwbCountCallback = function(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Cardinal;
   TwbSizeCallback = function(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement;var CompressedSize: Integer): Cardinal;
   TwbGetChapterTypeCallback = function(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
   TwbGetChapterTypeNameCallback = function(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): String;

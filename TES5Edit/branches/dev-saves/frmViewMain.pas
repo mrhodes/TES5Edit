@@ -3906,6 +3906,7 @@ begin
   wbSortFLST := Settings.ReadBool('Options', 'SortFLST', wbSortFLST);
   wbSortGroupRecord := Settings.ReadBool('Options', 'SortGroupRecord', wbSortGroupRecord);
   wbRemoveOffsetData := Settings.ReadBool('Options', 'RemoveOffsetData', wbRemoveOffsetData);
+  wbShowGroupRecordCount := Settings.ReadBool('Options', 'ShowGroupRecordCount', wbShowGroupRecordCount);
   wbClampFormID := Settings.ReadBool('Options', 'ClampFormID', wbClampFormID);
   //wbIKnowWhatImDoing := Settings.ReadBool('Options', 'IKnowWhatImDoing', wbIKnowWhatImDoing);
   wbUDRSetXESP := Settings.ReadBool('Options', 'UDRSetXESP', wbUDRSetXESP);
@@ -4990,11 +4991,16 @@ begin
       if Length(res) = 0 then
         Continue;
 
-      if wbGameMode = gmTES5 then
-        NifTexturesUVRange(res[High(res)].GetData, UVRange, slNifTextures)
-      else
-        // fallouts nif scanner doesn't support them fully, grab all textures for now
-        NifTextures(res[High(res)].GetData, slNifTextures);
+      try
+        if wbGameMode = gmTES5 then
+          NifTexturesUVRange(res[High(res)].GetData, UVRange, slNifTextures)
+        else
+          // fallouts nif scanner doesn't support them fully, grab all textures for now
+          NifTextures(res[High(res)].GetData, slNifTextures);
+      except
+        on E: Exception do
+          raise Exception.Create(E.Message + ' in ' + slMeshes[i]);
+      end;
 
       for j := 0 to Pred(slNifTextures.Count) do begin
         // get only texture at index 0 in BSTextureSet nodes (diffuse texture)
@@ -5293,24 +5299,21 @@ var
   end;
 
   function GetLODMeshName(const aStat: IwbMainRecord; const aLODLevel: Integer): string;
-  var
-    i   : integer;
-    arr : TBytes;
   begin
     Result := '';
     // full mesh
     if aLODLevel = -1 then
       Result := aStat.ElementEditValues['Model\MODL']
-    else if (wbGameMode = gmTES5) and aStat.ElementExists['MNAM'] then begin
-      arr := aStat.ElementNativeValues[Format('MNAM\LOD #%d (Level %d)\Mesh', [aLODLevel, aLODLevel])];
-      if Length(arr) > 0 then
-        for i := Low(arr) to High(arr) do
-          if arr[i] = 0 then
-            Break
-          else
-            Result := Result + Chr(arr[i]);
+    else if wbGameMode = gmTES5 then begin
+      // use MNAM data of STAT record for lod meshes if exists
+      if aStat.ElementExists['MNAM'] then
+        Result := aStat.ElementEditValues[Format('MNAM\LOD #%d (Level %d)\Mesh', [aLODLevel, aLODLevel])]
+      // otherwise meshes with the same path and name as full one with _lod_0, _lod_1 and _lod_2 suffixes
+      else
+        Result := ChangeFileExt(aStat.ElementEditValues['Model\MODL'], '') + '_lod_' + IntToStr(aLODLevel) + '.nif';
     end
     else if (wbGameMode in [gmFO3, gmFNV]) and (aLODLevel = 0) then
+      // fallouts always use _lod mesh only
       Result := ChangeFileExt(aStat.ElementEditValues['Model\MODL'], '') + '_lod.nif';
 
     Result := wbNormalizeResourceName(Result, resMesh);
@@ -5384,6 +5387,7 @@ var
   REFRs               : TDynMainRecords;
   RefFormID           : Cardinal;
   Count, TreesCount   : Integer;
+  TreesDupCount       : Integer;
   TotalCount          : Integer;
   LodLevel            : Integer;
   i, j, k, l          : Integer;
@@ -5475,6 +5479,7 @@ begin
     StartTick := GetTickCount;
 
     TreesCount := 0;
+    TreesDupCount := 0;
     slLog := TStringList.Create;
     if wbGameMode in [gmFO3, gmFNV] then LodLevel := 8 else LodLevel := 4;
     Lst := TwbLodTES5TreeList.Create(aWorldspace.EditorID);
@@ -5550,6 +5555,11 @@ begin
         then
           Continue;
 
+        // Skyrim: skip persistent "Is Full LOD" tree refs
+        if wbGameMode = gmTES5 then
+          if REFRs[i].IsPersistent and (REFRs[i].Flags._Flags and $00010000 <> 0) then
+            Continue;
+
         PTree := Lst.TreeByFormID[TreeRec.LoadOrderFormID];
         // adding a new tree to the list
         if not Assigned(PTree) then begin
@@ -5588,8 +5598,10 @@ begin
         else
           RefFormID := (REFRs[i].FixedFormID and $00FFFFFF) or $01000000;
 
-        LOD4[k].AddReference(RefFormID, PTree^.Index, RefPos, Scale);
-        Inc(TreesCount);
+        if LOD4[k].AddReference(RefFormID, PTree^.Index, RefPos, Scale) then
+          Inc(TreesCount)
+        else
+          Inc(TreesDupCount);
 
         if ForceTerminate then
           Abort;
@@ -5657,6 +5669,8 @@ begin
         end;
 
         PostAddMessage('[' + aWorldspace.EditorID + '] Trees LOD Done.');
+        if TreesDupCount <> 0 then
+          PostAddMessage('<Warning: ' + IntToStr(TreesDupCount) + ' duplicate FormID numbers of trees references were detected, excluded from LOD>');
       end;
     except on E: Exception do
       PostAddMessage('[' + aWorldspace.EditorID + '] Trees LOD generation error: ' + E.Message);
@@ -5688,13 +5702,12 @@ begin
     try
     try
       for i := Low(REFRs) to High(REFRs) do begin
-        // only for STAT, SCOL and ACTI
         StatRec := REFRs[i].BaseRecord;
         if not Assigned(StatRec) then
           Continue;
 
-        // Skyrim: only STAT objects
-        if (wbGameMode = gmTES5) and (StatRec.Signature <> 'STAT') then
+        // Skyrim: only STAT and TREEE objects
+        if (wbGameMode = gmTES5) and ((StatRec.Signature <> 'STAT') and (StatRec.Signature <> 'TREE')) then
           Continue;
 
         // Fallouts: only STAT, SCOL and ACTI objects
@@ -5747,7 +5760,9 @@ begin
               if (wbGameMode = gmTES5) and StatRec.ElementExists['DNAM\Material'] and Supports(StatRec.ElementByPath['DNAM\Material'].LinksTo, IwbMainRecord, Ovr) then begin
                 mat := LowerCase(Ovr.EditorID);
                 if Pos('snow', mat) > 0 then mat := 'Snow' else
-                  if Pos('ash', mat) > 0 then mat := 'Ash';
+                  if Pos('ash', mat) > 0 then mat := 'Ash' else
+                    // Sheson: So the material name needs to be 'PassThru', then it will simply use the entire shader effect/lighting as is in the source fie.
+                    if Pos('passthru', mat) > 0 then mat := 'PassThru';
               end else
                 mat := '';
               // a tab separated string of Editor ID, flags, material, full mesh and lod files
@@ -8031,12 +8046,12 @@ end;
 procedure TfrmMain.mniNavChangeFormIDClick(Sender: TObject);
 var
   s                           : string;
-  i, j                        : Integer;
+  i, j, k                     : Integer;
   NewFormID                   : Cardinal;
   OldFormID                   : Cardinal;
   NodeData                    : PNavNodeData;
   MainRecord                  : IwbMainRecord;
-  ReferencedBy                : TDynMainRecords;
+  ReferencedBy, Overrides     : TDynMainRecords;
   Nodes                       : TNodeArray;
 //  NewFileID                   : Integer;
   OldFileID                   : Integer;
@@ -8163,7 +8178,29 @@ begin
 
     AddMessage('Record is referenced by '+IntToStr(Length(ReferencedBy))+' other record(s)');
     try
-      MainRecord.LoadOrderFormID := NewFormID;
+      if Master.OverrideCount <> 0 then begin
+        k := -1;
+        // store overrides since they change on the go when renumbering FormIDs
+        SetLength(Overrides, Master.OverrideCount);
+        for i := 0 to Pred(Master.OverrideCount) do begin
+          Overrides[i] := Master.Overrides[i];
+          // index of the focused record in overrides list
+          if Overrides[i].Equals(MainRecord) then k := i;
+        end;
+        // if it is not the last override and user confirms
+        if (k < Pred(Length(Overrides))) and (MessageDlg('Record '+MainRecord.Name+' has later overrides, update them too?', mtConfirmation, [mbYes, mbNo], 0) = mrYes) then begin
+          // happens when master record is selected which is not in the list of overrides, renumber all overrides
+          if k = -1 then k := 0;
+          // change this record and all later overrides
+          for i := k to Pred(Length(Overrides)) do begin
+            //AddMessage('Renumbering ' + Overrides[i].FullPath);
+            Overrides[i].LoadOrderFormID := NewFormID;
+          end;
+        end;
+      end;
+
+      if MainRecord.LoadOrderFormID <> NewFormID then
+        MainRecord.LoadOrderFormID := NewFormID;
 
       NodeData.ConflictAll := caUnknown;
       NodeData.ConflictThis := ctUnknown;
@@ -10986,6 +11023,7 @@ begin
     cbSortGroupRecord.Checked := wbSortGroupRecord;
     cbRemoveOffsetData.Checked := wbRemoveOffsetData;
     cbShowFlagEnumValue.Checked := wbShowFlagEnumValue;
+    cbShowGroupRecordCount.Checked := wbShowGroupRecordCount;
     cbSimpleRecords.Checked := wbSimpleRecords;
     cbClampFormID.Checked := wbClampFormID;
     edColumnWidth.Text := IntToStr(wbColumnWidth);
@@ -11017,6 +11055,7 @@ begin
     wbSortGroupRecord := cbSortGroupRecord.Checked;
     wbRemoveOffsetData := cbRemoveOffsetData.Checked;
     wbShowFlagEnumValue := cbShowFlagEnumValue.Checked;
+    wbShowGroupRecordCount := cbShowGroupRecordCount.Checked;
     wbSimpleRecords := cbSimpleRecords.Checked;
     wbClampFormID := cbClampFormID.Checked;
     wbColumnWidth := StrToIntDef(edColumnWidth.Text, wbColumnWidth);
@@ -11045,6 +11084,7 @@ begin
     Settings.WriteBool('Options', 'SortGroupRecord', wbSortGroupRecord);
     Settings.WriteBool('Options', 'RemoveOffsetData', wbRemoveOffsetData);
     Settings.WriteBool('Options', 'ShowFlagEnumValue', wbShowFlagEnumValue);
+    Settings.WriteBool('Options', 'ShowGroupRecordCount', wbShowGroupRecordCount);
     Settings.WriteBool('Options', 'SimpleRecords', wbSimpleRecords);
     Settings.WriteBool('Options', 'ClampFormID', wbClampFormID);
     Settings.WriteInteger('Options', 'ColumnWidth', wbColumnWidth);
@@ -14395,6 +14435,9 @@ begin
         GroupRecord := Element as IwbGroupRecord;
         if Column < 1 then
           CellText := GroupRecord.ShortName;
+        if wbShowGroupRecordCount and (Column = 2) then
+          if GroupRecord.ElementCount <> 0 then
+            CellText := IntToStr(GroupRecord.ElementCount);
         Exit;
       end
       else if Element.ElementType = etMainRecord then begin
