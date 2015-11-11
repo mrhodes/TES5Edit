@@ -391,7 +391,7 @@ begin
         WriteLn(ErrOutput, 'Application '+wbGameName+' does not currently supports '+wbToolName);
         Exit;
       end;
-      if not (wbToolSource in []) then begin
+      if not (wbToolSource in [tsPlugins]) then begin
         WriteLn(ErrOutput, 'Application '+wbGameName+' does not currently supports '+wbSourceName);
         Exit;
       end;
@@ -516,7 +516,7 @@ begin
       WriteLn(ErrOutput, '-check       ', 'Performs "Check for Errors" instead of dumping content');
       WriteLn(ErrOutput, '             ', '');
       WriteLn(ErrOutput, 'Example: full dump of Skyrim.esm excluding "bloated" records');
-      WriteLn(ErrOutput, '  FO4Dump.exe -xr:NAVI,NAVM,WRLD,CELL,LAND,REFR,ACHR Skyrim.esm');
+      WriteLn(ErrOutput, '  FO4Dump.exe -xr:NAVI,NAVM,WRLD,CELL,LAND,REFR,ACHR Fallout4.esm');
       WriteLn(ErrOutput, '             ', '');
       Exit;
     end;
