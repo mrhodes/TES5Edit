@@ -13390,8 +13390,14 @@ begin
     wbEDID
   ]);
 
-  wbRecord(CMPO, 'CMPO', [
-    wbEDID
+  wbRecord(CMPO, 'Component', [
+    wbEDID,
+    wbOBND,
+    wbFULL,
+    wbCUSD,
+    wbUnknown(DATA),
+    wbFormIDCk(MNAM, 'Scrap Item', [MISC]),
+    wbFormIDCk(GNAM, 'Rarity', [GLOB])
   ]);
 
   wbRecord(DFOB, 'DFOB', [
