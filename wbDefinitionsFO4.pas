@@ -7851,7 +7851,8 @@ procedure DefineFO4e;
 begin
   wbRecord(LCRT, 'Location Reference Type', [
     wbEDID,
-    wbCNAM
+    wbCNAM,
+    wbUnknown(TNAM)
   ]);
 
   wbRecord(AACT, 'Action', [
