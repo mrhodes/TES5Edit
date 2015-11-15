@@ -7925,8 +7925,9 @@ begin
       wbString(NAM1, 'Filename', 0, cpTranslate, True)
     ], []),
     wbFormIDCk(TNAM, 'Texture Set', [TXST, NULL]),
-    wbFormIDCk(CNAM, 'Color', [CLFM, NULL]),
-    wbFormIDCk(RNAM, 'Valid Races', [FLST, NULL])
+    //wbFormIDCk(CNAM, 'Color', [CLFM, NULL]),
+    wbFormIDCk(RNAM, 'Valid Races', [FLST, NULL]),
+    wbCTDAs
   ]);
 
   wbRecord(ASPC, 'Acoustic Space', [
