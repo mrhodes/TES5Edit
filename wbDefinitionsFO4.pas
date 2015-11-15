@@ -510,6 +510,7 @@ const
   REGN : TwbSignature = 'REGN';
   RELA : TwbSignature = 'RELA';
   REPL : TwbSignature = 'REPL';
+  REPT : TwbSignature = 'REPT'; { New To Fallout 4 }
   REVB : TwbSignature = 'REVB';
   RFCT : TwbSignature = 'RFCT';
   RFGP : TwbSignature = 'RFGP'; { New to Fallout 4 }
@@ -12580,9 +12581,8 @@ begin
   wbRecord(SOUN, 'Sound Marker', [
     wbEDID,
     wbOBNDReq,
-    wbUnknown(FNAM, cpIgnore), // leftover, unused
-    wbUnknown(SNDD, cpIgnore), // leftover, unused
-    wbFormIDCk(SDSC, 'Sound Descriptor', [SNDR, NULL])
+    wbFormIDCk(SDSC, 'Sound Descriptor', [SNDR, NULL]),
+    wbUnknown(REPT)
   ]);
 
   wbSPIT := wbStruct(SPIT, 'Data', [
