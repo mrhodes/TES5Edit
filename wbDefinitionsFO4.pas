@@ -7868,14 +7868,16 @@ begin
   wbRecord(TXST, 'Texture Set', [
     wbEDID,
     wbOBNDReq,
+    { Unsure if texture names are the same }
     wbRStruct('Textures (RGB/A)', [
       wbString(TX00,'Difuse'),
       wbString(TX01,'Normal/Gloss'),
-      wbString(TX02,'Environment Mask/Subsurface Tint'),
       wbString(TX03,'Glow/Detail Map'),
       wbString(TX04,'Height'),
       wbString(TX05,'Environment'),
       wbString(TX06,'Multilayer'),
+     { TX02 moved for Fallout 4 }
+      wbString(TX02,'Environment Mask/Subsurface Tint'),
       wbString(TX07,'Backlight Mask/Specular')
     ], []),
     wbDODT,
@@ -7883,7 +7885,8 @@ begin
       {0x0001}'No Specular Map',
       {0x0002}'Facegen Textures',
       {0x0004}'Has Model Space Normal Map'
-    ]), cpNormal, False)
+    ]), cpNormal, False),
+    wbString(MNAM, 'Unknown')
   ]);
 
   wbRecord(HDPT, 'Head Part',
