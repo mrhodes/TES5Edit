@@ -867,6 +867,8 @@ begin
   if not Supports(Param1.LinksTo, IwbMainRecord, MainRecord) then
     Exit;
 
+  MainRecord := MainRecord.WinningOverride;
+
   if MainRecord.Signature <> QUST then begin
     case aType of
       ctToStr: Result := IntToStr(aInt) + ' <Warning: "'+MainRecord.ShortName+'" is not a Quest record>';
@@ -955,6 +957,8 @@ begin
 
   if not Supports(Param1.LinksTo, IwbMainRecord, MainRecord) then
     Exit;
+
+  MainRecord := MainRecord.WinningOverride;
 
   if MainRecord.Signature <> QUST then begin
     case aType of
@@ -1059,6 +1063,8 @@ begin
   if not Supports(aQuestRef, IwbMainRecord, MainRecord) then
     if not Supports(aQuestRef.LinksTo, IwbMainRecord, MainRecord) then
       Exit;
+
+  MainRecord := MainRecord.WinningOverride;
 
   if MainRecord.Signature <> QUST then begin
     case aType of
@@ -1325,7 +1331,11 @@ begin
   if aType = ctToSortKey then
     Result := IntToHex64(aInt, 4)
   else if aType = ctToStr then
-    Result := TimeToStr( EncodeTime(aInt div 6, (aInt mod 6) * 10, 0, 0) )
+    try
+      Result := TimeToStr( EncodeTime(aInt div 6, (aInt mod 6) * 10, 0, 0) )
+    except
+      Result := IntToStr(aInt)
+    end
   else
     Result := '';
 end;
@@ -9458,7 +9468,7 @@ begin
   wbRecord(SMBN, 'Story Manager Branch Node', [
     wbEDID,
     wbFormIDCk(PNAM, 'Parent ', [SMQN, SMBN, SMEN, NULL]),
-    wbFormIDCk(SNAM, 'Child ', [SMQN, SMBN, SMEN, NULL], False, cpBenign),
+    wbFormIDCk(SNAM, 'Child ', [SMQN, SMBN, SMEN, NULL]),
     wbCITC,
     wbCTDAsCount,
     wbInteger(DNAM, 'Flags', itU32, wbSMNodeFlags),
@@ -9468,7 +9478,7 @@ begin
   wbRecord(SMQN, 'Story Manager Quest Node', [
     wbEDID,
     wbFormIDCk(PNAM, 'Parent ', [SMQN, SMBN, SMEN, NULL]),
-    wbFormIDCk(SNAM, 'Child ', [SMQN, SMBN, SMEN, NULL], False, cpBenign),
+    wbFormIDCk(SNAM, 'Child ', [SMQN, SMBN, SMEN, NULL]),
     wbCITC,
     wbCTDAsCount,
     wbStruct(DNAM, 'Flags', [

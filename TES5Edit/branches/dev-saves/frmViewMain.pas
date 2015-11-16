@@ -3041,7 +3041,7 @@ var
   Worldspaces : TDynMainRecords;
 begin
   // TES5LODGen: selective lodgenning, no need to regenerate lod for all worldspaces like in Oblivion
-  if wbGameMode in [gmTES5, gmFNV] then begin
+  if wbGameMode in [gmTES5, gmFO3, gmFNV] then begin
     try
       mniNavGenerateLODClick(nil);
     finally
@@ -3052,7 +3052,7 @@ begin
   end;
 
   // TES4LODGen, rebuild for all worldspaces
-  try
+  if wbGameMode = gmTES4 then try
     frmMain.PostAddMessage('[' + FormatDateTime('hh:nn:ss', Now - wbStartTime) + '] LOD Generator: starting');
 
     Worldspaces := nil;
@@ -5706,7 +5706,7 @@ begin
         if not Assigned(StatRec) then
           Continue;
 
-        // Skyrim: only STAT and TREEE objects
+        // Skyrim: only STAT and TREE objects
         if (wbGameMode = gmTES5) and ((StatRec.Signature <> 'STAT') and (StatRec.Signature <> 'TREE')) then
           Continue;
 
@@ -5909,6 +5909,10 @@ begin
         s := Format(wbScriptsPath + 'LODGen.exe "%s"', [s]);
         s := s + ' --dontFixTangents';
         s := s + ' --removeUnseenFaces';
+        // if "No LOD Water" flag is set for a worldspace, then don't remove underwater meshes
+        i := aWorldspace.WinningOverride.ElementNativeValues['DATA'];
+        if ((wbGameMode = gmTES5) and (i and $08 <> 0)) or ((wbGameMode in [gmFO3, gmFNV]) and (i and $10 <> 0)) then
+          s := s + ' --ignoreWater';
         if Settings.ReadBool(wbAppName + ' LOD Options', 'ObjectsNoVertexColors', False) then
           s := s + ' --dontGenerateVertexColors';
         if Settings.ReadBool(wbAppName + ' LOD Options', 'ObjectsNoTangents', False) then
