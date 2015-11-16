@@ -273,6 +273,7 @@ const
   EYES : TwbSignature = 'EYES';
   FACT : TwbSignature = 'FACT';
   FCHT : TwbSignature = 'FCHT'; { New to Skyrim }
+  FIMD : TwbSignature = 'FIMD'; { New To Fallout 4 }
   FLMV : TwbSignature = 'FLMV'; { New to Skyrim }
   FLOR : TwbSignature = 'FLOR';
   FLST : TwbSignature = 'FLST';
@@ -6565,39 +6566,42 @@ begin
     wbEDID,
     wbVMAD,
     wbOBNDReq,
+    wbPTRN,
     wbFULL,
     wbMODL,
-    wbICON,
     wbLStringKC(DESC, 'Book Text', 0, cpNormal, True),
     wbDEST,
-    wbFormIDCk(YNAM, 'Sound - Pick Up', [SNDR, SOUN]),
-    wbFormIDCk(ZNAM, 'Sound - Drop', [SNDR, SOUN]),
+    wbFormIDCk(YNAM, 'Sound - Pick Up', [SNDR]),
+    wbFormIDCk(ZNAM, 'Sound - Drop', [SNDR]),
     wbKSIZ,
     wbKWDAs,
+    wbFormIDCk(FIMD, 'Unknown', [MESG]),
     wbStruct(DATA, 'Data', [
-      wbInteger('Flags', itU8, wbFlags([
-       {0x01} 'Teaches Skill',
-       {0x02} 'Can''t be Taken',
-       {0x04} 'Teaches Spell',
-       {0x08} 'Unknown 4',
-       {0x10} 'Unknown 5',
-       {0x20} 'Unknown 6',
-       {0x40} 'Unknown 7',
-       {0x80} 'Unknown 8'
-      ])),
-      wbInteger('Type', itU8, wbEnum([], [
-        0, 'Book/Tome', 255, 'Note/Scroll'
-      ])),
-      wbByteArray('Unused', 2),
-      wbUnion('Teaches', wbBOOKTeachesDecider, [
-        wbInteger('Skill', itS32, wbSkillEnum),
-        wbFormIDCk('Spell', [SPEL, NULL])
-      ]),
-      wbInteger('Value', itU32),
-      wbFloat('Weight')
+      wbUnknown
+//      wbInteger('Flags', itU8, wbFlags([
+//       {0x01} 'Teaches Skill',
+//       {0x02} 'Can''t be Taken',
+//       {0x04} 'Teaches Spell',
+//       {0x08} 'Unknown 4',
+//       {0x10} 'Unknown 5',
+//       {0x20} 'Unknown 6',
+//       {0x40} 'Unknown 7',
+//       {0x80} 'Unknown 8'
+//      ])),
+//      wbInteger('Type', itU8, wbEnum([], [
+//        0, 'Book/Tome', 255, 'Note/Scroll'
+//      ])),
+//      wbByteArray('Unused', 2),
+//      wbUnion('Teaches', wbBOOKTeachesDecider, [
+//        wbInteger('Skill', itS32, wbSkillEnum),
+//        wbFormIDCk('Spell', [SPEL, NULL])
+//      ]),
+//      wbInteger('Value', itU32),
+//      wbFloat('Weight')
     ], cpNormal, True),
-    wbFormIDCk(INAM, 'Inventory Art', [STAT]),
-    wbLString(CNAM, 'Description')
+    wbUnknown(DNAM),
+    wbLString(CNAM, 'Description'),
+    wbFormIDCk(INAM, 'Inventory Art', [STAT])
   ], False, nil, cpNormal, False, nil, wbKeywordsAfterSet);
 end;
 
