@@ -217,6 +217,7 @@ const
   CRIS : TwbSignature = 'CRIS'; { New to Fallout 4 }
   CRVA : TwbSignature = 'CRVA'; { New to Skyrim }
   CSCR : TwbSignature = 'CSCR';
+  CSCV : TwbSignature = 'CSCV'; { New To Fallout 4 }
   CSDC : TwbSignature = 'CSDC';
   CSDI : TwbSignature = 'CSDI';
   CSDT : TwbSignature = 'CSDT';
@@ -225,6 +226,7 @@ const
   CSLR : TwbSignature = 'CSLR'; { New to Skyrim }
   CSMD : TwbSignature = 'CSMD'; { New to Skyrim }
   CSME : TwbSignature = 'CSME'; { New to Skyrim }
+  CSRA : TwbSignature = 'CSRA'; { New To Fallout 4 }
   CSTY : TwbSignature = 'CSTY';
   CTDA : TwbSignature = 'CTDA';
   CUSD : TwbSignature = 'CUSD'; { New to Fallout 4 }
@@ -7270,7 +7272,9 @@ begin
       wbFloat('Equipment Score Mult - Shout'),
       wbFloat('Equipment Score Mult - Unarmed'),
       wbFloat('Equipment Score Mult - Staff'),
-      wbFloat('Avoid Threat Chance')
+      wbFloat('Avoid Threat Chance'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown')
     ], cpNormal, True, nil, 0),
     wbUnknown(CSMD, cpIgnore),
     wbStruct(CSME, 'Melee', [
@@ -7281,17 +7285,29 @@ begin
       wbFloat('Bash Recoil Mult'),
       wbFloat('Bash Attack Mult'),
       wbFloat('Bash Power Attack Mult'),
-      wbFloat('Special Attack Mult')
+      wbFloat('Special Attack Mult'),
+      wbFloat('Unknown')
     ], cpNormal, False, nil, 0),
+    wbFloat(CSRA, 'Unknown'),
     wbStruct(CSCR, 'Close Range', [
       wbFloat('Circle Mult'),
       wbFloat('Fallback Mult'),
       wbFloat('Flank Distance'),
-      wbFloat('Stalk Time')
+      wbFloat('Stalk Time'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown')
     ], cpNormal, False, nil, 0),
     wbStruct(CSLR, 'Long Range', [
-      wbFloat('Strafe Mult')
+      wbFloat('Strafe Mult'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown')
     ], cpNormal, False),
+    wbFloat(CSCV, 'Unknown'),
     wbStruct(CSFL, 'Flight', [
       wbFloat('Hover Chance'),
       wbFloat('Dive Bomb Chance'),
