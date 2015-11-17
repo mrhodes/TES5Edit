@@ -373,6 +373,7 @@ const
   LVLO : TwbSignature = 'LVLO';
   LVSG : TwbSignature = 'LVSG'; { New to Fallout 4 }
   LVSP : TwbSignature = 'LVSP';
+  MASE : TwbSignature = 'MASE'; { New To Fallout 4 }
   MAST : TwbSignature = 'MAST';
   MATO : TwbSignature = 'MATO';
   MATT : TwbSignature = 'MATT';
@@ -619,6 +620,7 @@ const
   VTXT : TwbSignature = 'VTXT';
   VTYP : TwbSignature = 'VTYP';
   WAIT : TwbSignature = 'WAIT'; { New To Skyrim }
+  WAMD : TwbSignature = 'WAMD'; { New To Fallout 4 }
   WATR : TwbSignature = 'WATR';
   WBDT : TwbSignature = 'WBDT'; { New to Skyrim }
   WCTR : TwbSignature = 'WCTR'; { New To Skyrim }
@@ -630,6 +632,7 @@ const
   WOOP : TwbSignature = 'WOOP';
   WRLD : TwbSignature = 'WRLD';
   WTHR : TwbSignature = 'WTHR';
+  WZMD : TwbSignature = 'WZMD'; { New To Fallout 4 }
   XACT : TwbSignature = 'XACT';
   XALP : TwbSignature = 'XALP'; { New To Skyrim }
   XAMC : TwbSignature = 'XAMC'; { New To Fallout 4 }
@@ -12989,9 +12992,9 @@ begin
     wbEDID,
     wbVMAD,
     wbOBNDReq,
+    wbPTRN,
     wbFULL,
     wbMODL,
-    wbICON,
     wbEITM,
     wbInteger(EAMT, 'Enchantment Amount', itU16),
     wbDEST,
@@ -13003,97 +13006,113 @@ begin
     wbKSIZ,
     wbKWDAs,
     wbDESC,
-    wbRStruct('Has Scope', [
-      wbString(MOD3, 'Model Filename'),
-      wbByteArray(MO3T, 'Texture Files Hashes', 0, cpIgnore, false, false, wbNeverShow),
-      wbMO3S
+    wbFormIDCk(INRD, 'Unknown', [INNR]),
+    wbAPPR,
+    wbOBTESequence,
+    wbFormIDCk(NNAM, 'Modification', [OMOD]),
+    wbRStruct('Unknown', [
+      wbString(MOD4, 'Model Filename'),
+      wbByteArray(MO4T, 'Texture Files Hashes', 0, cpIgnore, false, false, wbNeverShow),
+      wbMO4S
     ], []),
-    wbByteArray(NNAM, 'Unused', 0, cpIgnore, False), // leftover
-    wbFormIDCk(INAM, 'Impact Data Set', [IPDS, NULL]),
-    wbFormIDCk(WNAM, '1st Person Model Object', [STAT, NULL]),
-    wbFormIDCk(SNAM, 'Attack Sound', [SNDR]),
-    wbFormIDCk(XNAM, 'Attack Sound 2D', [SNDR]),
-    wbFormIDCk(NAM7, 'Attack Loop Sound', [SNDR]),
-    wbFormIDCk(TNAM, 'Attack Fail Sound', [SNDR]),
-    wbFormIDCk(UNAM, 'Idle Sound', [SNDR]),
-    wbFormIDCk(NAM9, 'Equip Sound', [SNDR]),
-    wbFormIDCk(NAM8, 'Unequip Sound', [SNDR]),
-    wbStruct(DATA, 'Game Data', [
-      wbInteger('Value', itU32),
-      wbFloat('Weight'),
-      wbInteger('Damage', itU16)
-    ]),
     wbStruct(DNAM, 'Data', [
-      wbInteger('Animation Type', itU8, wbWeaponAnimTypeEnum),
-      wbByteArray('Unused', 3, cpIgnore),
-      wbFloat('Speed'),
-      wbFloat('Reach'),
-      wbInteger('Flags', itU16, wbFlags([
-        {0x0001}'Ignores Normal Weapon Resistance',
-        {0x0002}'Automatic (unused)',
-        {0x0004}'Has Scope (unused)',
-        {0x0008}'Can''t Drop',
-        {0x0010}'Hide Backpack (unused)',
-        {0x0020}'Embedded Weapon (unused)',
-        {0x0040}'Don''t Use 1st Person IS Anim (unused)',
-        {0x0080}'Non-playable'
-      ], [1, 2, 4, 5, 6])),
-      wbByteArray('Unused', 2, cpIgnore),
-      wbFloat('Sight FOV'),
-      wbByteArray('Unknown', 4),
-      wbInteger('Base VATS To-Hit Chance', itU8),
-      wbInteger('Attack Animation', itU8, wbAttackAnimationEnum),
-      wbInteger('# Projectiles', itU8),
-      wbInteger('Embedded Weapon AV (unused)', itU8),
-      wbFloat('Range Min'),
-      wbFloat('Range Max'),
-      wbInteger('On Hit', itU32, wbEnum([
-        'No formula behaviour',
-        'Dismember only',
-        'Explode only',
-        'No dismember/explode'
-      ])),
-      wbInteger('Flags2', itU32, wbFlags([
-        {0x00000001}'Player Only',
-        {0x00000002}'NPCs Use Ammo',
-        {0x00000004}'No Jam After Reload (unused)',
-        {0x00000008}'Unknown 4',
-        {0x00000010}'Minor Crime',
-        {0x00000020}'Range Fixed',
-        {0x00000040}'Not Used in Normal Combat',
-        {0x00000080}'Unknown 8',
-        {0x00000100}'Don''t Use 3rd Person IS Anim (unused)',
-        {0x00000200}'Unknown 10',
-        {0x00000400}'Rumble - Alternate',
-        {0x00000800}'Unknown 12',
-        {0x00001000}'Non-hostile',
-        {0x00002000}'Bound Weapon'
-      ], [2, 8])),
-      wbFloat('Animation Attack Mult'),
+      //wbInteger('Animation Type', itU8, wbWeaponAnimTypeEnum),
+      //wbByteArray('Unused', 4, cpIgnore),
+      wbFormIDCk('Ammo', [AMMO, NULL]),
       wbFloat('Unknown'),
-      wbFloat('Rumble - Left Motor Strength'),
-      wbFloat('Rumble - Right Motor Strength'),
-      wbFloat('Rumble - Duration'),
-      wbByteArray('Unknown', 12),
-      wbInteger('Skill', itS32, wbSkillEnum),
-      wbByteArray('Unknown', 8),
-      wbInteger('Resist', itS32, wbActorValueEnum),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbByteArray('Unknown', 16),
+      wbInteger('Magazine Size', itU16),
+      wbByteArray('Unknown', 1),
       wbByteArray('Unknown', 4),
-      wbFloat('Stagger')
-    ]),
-    wbStruct(CRDT, 'Critical Data', [
+      wbFloat('Unknown'),
+      wbByteArray('Unknown', 4),
       wbInteger('Damage', itU16),
-      wbByteArray('Unused', 2, cpIgnore),
+      wbByteArray('Unknown', 4),
+      wbFormIDCk('Sound - ?', [SNDR, NULL]),
+      wbByteArray('Unknown', 8),
+      wbFormIDCk('Sound - Fire Dry', [SNDR, NULL]),
+      wbFormIDCk('Sound - Charge', [SNDR, NULL]),
+      wbFormIDCk('Sound - Equip Up', [SNDR, NULL]),
+      wbFormIDCk('Sound - Equip Down', [SNDR, NULL]),
+      wbUnknown
+//      wbInteger('Flags', itU16, wbFlags([
+//        {0x0001}'Ignores Normal Weapon Resistance',
+//        {0x0002}'Automatic (unused)',
+//        {0x0004}'Has Scope (unused)',
+//        {0x0008}'Can''t Drop',
+//        {0x0010}'Hide Backpack (unused)',
+//        {0x0020}'Embedded Weapon (unused)',
+//        {0x0040}'Don''t Use 1st Person IS Anim (unused)',
+//        {0x0080}'Non-playable'
+//      ], [1, 2, 4, 5, 6])),
+//      wbByteArray('Unused', 2, cpIgnore),
+//      wbFloat('Sight FOV'),
+//      wbByteArray('Unknown', 4),
+//      wbInteger('Base VATS To-Hit Chance', itU8),
+//      wbInteger('Attack Animation', itU8, wbAttackAnimationEnum),
+//      wbInteger('# Projectiles', itU8),
+//      wbInteger('Embedded Weapon AV (unused)', itU8),
+//      wbFloat('Range Min'),
+//      wbFloat('Range Max'),
+//      wbInteger('On Hit', itU32, wbEnum([
+//        'No formula behaviour',
+//        'Dismember only',
+//        'Explode only',
+//        'No dismember/explode'
+//      ])),
+//      wbInteger('Flags2', itU32, wbFlags([
+//        {0x00000001}'Player Only',
+//        {0x00000002}'NPCs Use Ammo',
+//        {0x00000004}'No Jam After Reload (unused)',
+//        {0x00000008}'Unknown 4',
+//        {0x00000010}'Minor Crime',
+//        {0x00000020}'Range Fixed',
+//        {0x00000040}'Not Used in Normal Combat',
+//        {0x00000080}'Unknown 8',
+//        {0x00000100}'Don''t Use 3rd Person IS Anim (unused)',
+//        {0x00000200}'Unknown 10',
+//        {0x00000400}'Rumble - Alternate',
+//        {0x00000800}'Unknown 12',
+//        {0x00001000}'Non-hostile',
+//        {0x00002000}'Bound Weapon'
+//      ], [2, 8])),
+//      wbFloat('Animation Attack Mult'),
+//      wbFloat('Unknown'),
+//      wbFloat('Rumble - Left Motor Strength'),
+//      wbFloat('Rumble - Right Motor Strength'),
+//      wbFloat('Rumble - Duration'),
+//      wbByteArray('Unknown', 12),
+//      wbInteger('Skill', itS32, wbSkillEnum),
+//      wbByteArray('Unknown', 8),
+//      wbInteger('Resist', itS32, wbActorValueEnum),
+//      wbByteArray('Unknown', 4),
+//      wbFloat('Stagger'),
+    ]),
+    wbUnknown(FNAM),
+    wbStruct(CRDT, 'Critical Data', [
+      //wbInteger('Damage', itU16),
+      //wbByteArray('Unused', 2, cpIgnore),
+      wbByteArray('Unknown', 4),
       wbFloat('% Mult'),
-      wbInteger('Flags', itU8, wbFlags([
-        'On Death'
-      ])),
-      wbByteArray('Unused', 3, cpIgnore),
       wbFormIDCk('Effect', [SPEL, NULL])
     ]),
-    wbInteger(VNAM, 'Detection Sound Level', itU32, wbSoundlevelEnum),
-    wbFormIDCk(CNAM, 'Template', [WEAP])
-  ], False, nil, cpNormal, False, wbWEAPAfterLoad, wbKeywordsAfterSet);
+    wbFormIDCk(INAM, 'Impact Data Set', [IPDS, NULL]),
+    wbUnknown(MASE),
+    wbFormIDCk(LNAM, 'Ammunition', [LVLI]),
+    wbFormIDCk(WAMD, 'Unknown', [AMDL]),
+    wbFormIDCk(WZMD, 'Zoom', [ZOOM]),
+    wbStruct(DAMA, 'Critical Data', [
+      wbFormIDCk('Damage Type', [DMGT]),
+      wbInteger('Damage', itU32)
+    ])
+  ], False, nil, cpNormal, False, nil{wbWEAPAfterLoad}, wbKeywordsAfterSet);
 
   if wbSimpleRecords then
     wbRecord(WRLD, 'Worldspace',
