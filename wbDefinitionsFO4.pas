@@ -10407,10 +10407,13 @@ begin
     wbEDID,
     wbVMAD,
     wbOBNDReq,
+    wbPTRN,
     wbMODL,
+    wbKSIZ,
+    wbKWDAs,
     wbDEST,
+    wbPRPS,
     wbFULL,
-    wbICON,
     wbStruct(DATA, '', [
       wbInteger('Time', itS32),
       wbInteger('Radius', itU32),
@@ -10445,9 +10448,15 @@ begin
         wbFloat('Movement Amplitude')
       ]),
       wbInteger('Value', itU32),
-      wbFloat('Weight')
+      wbFloat('Weight'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbUnknown
     ], cpNormal, True),
     wbFloat(FNAM, 'Fade value', cpNormal, True),
+    wbString(NAM0, 'Unknown'),
+    wbFormIDCk(LNAM, 'Lens', [LENS]),
+    wbFormIDCk(WGDR, 'Godray', [GDRY]),
     wbFormIDCk(SNAM, 'Sound', [SNDR])
   ], False, nil, cpNormal, False, wbLIGHAfterLoad);
 end;
