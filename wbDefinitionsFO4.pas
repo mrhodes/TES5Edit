@@ -12743,12 +12743,20 @@ begin
       {0x80000000} {31} ''
     ], [11, 16]), [
     wbEDID,
+    wbVMAD,
     wbOBNDReq,
+    wbPTRN,
+    wbFTYP,
     wbMODL,
+    wbPRPS,
+    wbFULL,
     wbStruct(DNAM, 'Direction Material', [
       wbFloat('Max Angle (30-120)'),
-      wbFormIDCk('Material', [MATO, NULL])
-    ], cpNormal, True),
+      wbFormIDCk('Material', [MATO, NULL]),
+      wbFloat('Unknown'),
+      wbFloat('Unknown')
+    ], cpNormal, True, nil, 2),
+    wbUnknown(NVNM),
     wbArray(MNAM, 'Distant LOD',
       wbStruct('LOD', [
         {>>> Contains null-terminated mesh filename followed by random data up to 260 bytes <<<}
