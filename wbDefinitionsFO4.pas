@@ -188,6 +188,7 @@ const
   BSMS : TwbSignature = 'BSMS'; { New to Fallout 4 }
   BTXT : TwbSignature = 'BTXT';
   CAMS : TwbSignature = 'CAMS';
+  CDIX : TwbSignature = 'CDIX'; { New to Fallout 4 }
   CELL : TwbSignature = 'CELL';
   CIS1 : TwbSignature = 'CIS1'; { New to Skyrim }
   CIS2 : TwbSignature = 'CIS2'; { New to Skyrim }
@@ -220,6 +221,7 @@ const
   CSTY : TwbSignature = 'CSTY';
   CTDA : TwbSignature = 'CTDA';
   CUSD : TwbSignature = 'CUSD'; { New to Fallout 4 }
+  CVPA : TwbSignature = 'CVPA'; { New to Fallout 4 }
   DALC : TwbSignature = 'DALC'; { New to Skyrim }
   DAMA : TwbSignature = 'DAMA'; { New to Fallout 4 }
   DAMC : TwbSignature = 'DAMC'; { New to Fallout 4 }
@@ -10727,18 +10729,25 @@ begin
     wbEDID,
     wbVMAD,
     wbOBNDReq,
+    wbPTRN,
     wbFULL,
     wbMODL,
-    wbICON,
     wbDEST,
-    wbFormIDCk(YNAM, 'Sound - Pick Up', [SNDR, SOUN]),
-    wbFormIDCk(ZNAM, 'Sound - Drop', [SNDR, SOUN]),
+    wbFormIDCk(YNAM, 'Sound - Pick Up', [SNDR]),
+    wbFormIDCk(ZNAM, 'Sound - Drop', [SNDR]),
     wbKSIZ,
     wbKWDAs,
+    wbFormID(FIMD),
     wbStruct(DATA, 'Data', [
       wbInteger('Value', itS32),
       wbFloat('Weight')
-    ], cpNormal, True)
+    ], cpNormal, True),
+    // the amount of components is the same as size of CDIX, so should not be sorted probably
+    wbStructs(CVPA, 'Components', 'Component', [
+      wbFormIDCk('Component', [CMPO, MISC, ALCH]),
+      wbInteger('Count', itU32)
+    ]),
+    wbUnknown(CDIX)
   ], False, nil, cpNormal, False, wbRemoveEmptyKWDA, wbKeywordsAfterSet);
 
   wbRecord(COBJ, 'Constructible Object', [
