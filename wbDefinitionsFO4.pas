@@ -12966,8 +12966,10 @@ begin
     wbFormIDCk(TNAM, 'Material', [MATT]),
     wbFormIDCk(SNAM, 'Open Sound', [SNDR, NULL]),
     wbFormIDCk(XNAM, 'Spell', [SPEL]),
+    wbFormIDCk(YNAM, 'Unknown', [SPEL]),
     wbFormIDCk(INAM, 'Image Space', [IMGS]),
-    wbInteger(DATA, 'Damage Per Second', itU16, nil, cpNormal, True, True),
+    {>>> wbInteger(DATA, 'Damage Per Second', itU16, nil, cpNormal, True, True), <<<}
+    wbByteArray(DATA, 'Unused', 0),
     wbStruct(DNAM, 'Visual Data', [
       wbFloat('Unknown'),
       wbFloat('Unknown'),
@@ -13033,14 +13035,14 @@ begin
       wbFloat('Noise Properties - Layer One - Amplitude Scale'),
       wbFloat('Noise Properties - Layer Two - Amplitude Scale'),
       wbFloat('Noise Properties - Layer Three - Amplitude Scale'),
-      wbFloat('Water Properties - Reflection Magnitude'),
-      wbFloat('Specular Properties - Sun Sparkle Magnitude'),
-      wbFloat('Specular Properties - Sun Specular Magnitude'),
-      wbFloat('Depth Properties - Reflections'),
-      wbFloat('Depth Properties - Refraction'),
-      wbFloat('Depth Properties - Normals'),
-      wbFloat('Depth Properties - Specular Lighting'),
-      wbFloat('Specular Properties - Sun Sparkle Power')
+      wbFloat('Water Properties - Reflection Magnitude')
+//      wbFloat('Specular Properties - Sun Sparkle Magnitude'),
+//      wbFloat('Specular Properties - Sun Specular Magnitude'),
+//      wbFloat('Depth Properties - Reflections'),
+//      wbFloat('Depth Properties - Refraction'),
+//      wbFloat('Depth Properties - Normals'),
+//      wbFloat('Depth Properties - Specular Lighting'),
+//      wbFloat('Specular Properties - Sun Sparkle Power')
     ]),
     wbByteArray(GNAM, 'Unused', 0, cpNormal, True),  // leftover
     wbStruct(NAM0, 'Linear Velocity', [
@@ -13054,8 +13056,8 @@ begin
       wbFloat('Z')
     ], cpNormal, False),
     wbString(NAM2, 'Noise Texture', 0, cpNormal, False),
-    wbString(NAM3, 'Unused', 0, cpNormal),  // leftover
-    wbString(NAM4, 'Unused', 0, cpNormal)  // leftover
+    wbString(NAM3, 'Unknown', 0, cpNormal),  // leftover
+    wbString(NAM4, 'Unknown', 0, cpNormal)
   ], False, nil, cpNormal, False);
 
   wbRecord(WEAP, 'Weapon',
