@@ -158,6 +158,9 @@ const
   ATKD : TwbSignature = 'ATKD'; { New to Skyrim }
   ATKE : TwbSignature = 'ATKE'; { New to Skyrim }
   ATKR : TwbSignature = 'ATKR'; { New to Skyrim }
+  ATKS : TwbSignature = 'ATKS'; { New To Fallout 4 }
+  ATKT : TwbSignature = 'ATKT'; { New To Fallout 4 }
+  ATKW : TwbSignature = 'ATKW'; { New To Fallout 4 }
   ATTX : TwbSignature = 'ATTX'; { New To Fallout 4 }
   ATXT : TwbSignature = 'ATXT';
   AVIF : TwbSignature = 'AVIF';
@@ -216,6 +219,7 @@ const
   CTDA : TwbSignature = 'CTDA';
   CUSD : TwbSignature = 'CUSD'; { New to Fallout 4 }
   DALC : TwbSignature = 'DALC'; { New to Skyrim }
+  DAMC : TwbSignature = 'DAMC'; { New to Fallout 4 }
   DATA : TwbSignature = 'DATA';
   DEBR : TwbSignature = 'DEBR';
   DELE : TwbSignature = 'DELE';
@@ -241,6 +245,7 @@ const
   DOFT : TwbSignature = 'DOFT'; { New to Skyrim }
   DOOR : TwbSignature = 'DOOR';
   DPLT : TwbSignature = 'DPLT'; { New to Skyrim }
+  DSTA : TwbSignature = 'DSTA'; { New To Fallout 4 }
   DSTD : TwbSignature = 'DSTD';
   DSTF : TwbSignature = 'DSTF';
   DUAL : TwbSignature = 'DUAL';
@@ -379,7 +384,9 @@ const
   MOD3 : TwbSignature = 'MOD3';
   MOD4 : TwbSignature = 'MOD4';
   MOD5 : TwbSignature = 'MOD5'; { New to Skyrim }
+  MODC : TwbSignature = 'MODC'; { New to Fallout 4 }
   MODD : TwbSignature = 'MODD';
+  MODF : TwbSignature = 'MODF'; { New to Fallout 4 }
   MODL : TwbSignature = 'MODL';
   MODS : TwbSignature = 'MODS';
   MODT : TwbSignature = 'MODT';
@@ -607,9 +614,13 @@ const
   WTHR : TwbSignature = 'WTHR';
   XACT : TwbSignature = 'XACT';
   XALP : TwbSignature = 'XALP'; { New To Skyrim }
+  XAMC : TwbSignature = 'XAMC'; { New To Fallout 4 }
   XAPD : TwbSignature = 'XAPD';
   XAPR : TwbSignature = 'XAPR';
+  XASP : TwbSignature = 'XASP'; { New To Fallout 4 }
+  XATP : TwbSignature = 'XATP'; { New To Fallout 4 }
   XATR : TwbSignature = 'XATR'; { New To Dawnguard }
+  XBSD : TwbSignature = 'XBSD'; { New To Fallout 4 }
   XCAS : TwbSignature = 'XCAS';
   XCCM : TwbSignature = 'XCCM';
   XCHG : TwbSignature = 'XCHG';
@@ -622,6 +633,7 @@ const
   XCMO : TwbSignature = 'XCMO';
   XCNT : TwbSignature = 'XCNT';
   XCVL : TwbSignature = 'XCVL'; { New To Skyrim }
+  XCVR : TwbSignature = 'XCVR'; { New To Fallout 4 }
   XCWT : TwbSignature = 'XCWT';
   XCZA : TwbSignature = 'XCZA'; { New To Skyrim }
   XCZC : TwbSignature = 'XCZC'; { New To Skyrim }
@@ -643,29 +655,35 @@ const
   XLIB : TwbSignature = 'XLIB'; { New To Skyrim }
   XLIG : TwbSignature = 'XLIG'; { New To Skyrim }
   XLKR : TwbSignature = 'XLKR';
+  XLKT : TwbSignature = 'XLKT'; { New To Fallout 4 }
   XLOC : TwbSignature = 'XLOC';
   XLOD : TwbSignature = 'XLOD';
   XLRL : TwbSignature = 'XLRL'; { New To Skyrim }
   XLRM : TwbSignature = 'XLRM';
   XLRT : TwbSignature = 'XLRT'; { New To Skyrim }
   XLTW : TwbSignature = 'XLTW';
+  XLYR : TwbSignature = 'XLYR'; { New To Fallout 4 }
   XMBO : TwbSignature = 'XMBO';
   XMBP : TwbSignature = 'XMBP';
   XMBR : TwbSignature = 'XMBR';
   XMRC : TwbSignature = 'XMRC';
   XMRK : TwbSignature = 'XMRK';
+  XMSP : TwbSignature = 'XMSP'; { New To Fallout 4 }
   XNAM : TwbSignature = 'XNAM';
   XNDP : TwbSignature = 'XNDP';
   XOCP : TwbSignature = 'XOCP';
   XORD : TwbSignature = 'XORD';
   XOWN : TwbSignature = 'XOWN';
+  XPDD : TwbSignature = 'XPDD'; { New To Fallout 4 }
   XPOD : TwbSignature = 'XPOD';
   XPPA : TwbSignature = 'XPPA';
   XPRD : TwbSignature = 'XPRD';
   XPRM : TwbSignature = 'XPRM';
   XPTL : TwbSignature = 'XPTL';
   XPWR : TwbSignature = 'XPWR';
+  XRDO : TwbSignature = 'XRDO'; { New To Fallout 4 }
   XRDS : TwbSignature = 'XRDS';
+  XRFG : TwbSignature = 'XRFG'; { New To Fallout 4 }
   XRGB : TwbSignature = 'XRGB';
   XRGD : TwbSignature = 'XRGD';
   XRMR : TwbSignature = 'XRMR';
@@ -726,7 +744,9 @@ var
   wbXSCL: IwbSubRecordDef;
   wbDATAPosRot: IwbSubRecordDef;
   wbPosRot: IwbStructDef;
+  wbMODC: IwbSubRecordDef;
   wbMODD: IwbSubRecordDef;
+  wbMODF: IwbSubRecordDef;
   wbMODL: IwbSubRecordStructDef;
   wbMODS: IwbSubRecordDef;
   wbMO2S: IwbSubRecordDef;
@@ -4299,6 +4319,9 @@ begin
     wbReqKWDAs
   ], []);
 
+  //wbActorValue := wbInteger('Actor Value', itS32, wbActorValueEnum);
+  wbActorValue := wbFormIDCkNoReach('Actor Value', [AVIF, NULL]);
+
   wbCOED := wbStructExSK(COED, [2], [0, 1], 'Extra Data', [
     {00} wbFormIDCkNoReach('Owner', [NPC_, FACT, NULL]),
     {04} wbUnion('Global Variable / Required Rank', wbCOEDOwnerDecider, [
@@ -4418,8 +4441,8 @@ begin
   ], cpNormal, False, nil, 3);
 
   wbBOD2 := wbStruct(BOD2, 'Biped Body Template', [
-    wbFirstPersonFlagsU32,
-    wbInteger('Armor Type', itU32, wbArmorTypeEnum)
+    wbFirstPersonFlagsU32
+    //wbInteger('Armor Type', itU32, wbArmorTypeEnum)
   ], cpNormal, False);
 
   wbBODTBOD2 :=
@@ -5068,7 +5091,10 @@ begin
       wbFloat('Recovery Time'),
       wbFloat('Stamina Mult')
     ]),
-    wbString(ATKE, 'Attack Event')
+    wbString(ATKE, 'Attack Event'),
+    wbUnknown(ATKW),
+    wbUnknown(ATKS),
+    wbUnknown(ATKT)
   ], []);
 
   wbPLDT := wbStruct(PLDT, 'Location', [
@@ -5088,7 +5114,8 @@ begin
      {11} wbByteArray('Unknown', 4, cpIgnore),
      {12} wbByteArray('Unknown', 4, cpIgnore)
     ]),
-    wbInteger('Radius', itS32)
+    wbInteger('Radius', itS32),
+    wbUnknown
   ]);
 
   wbPLVD := wbStruct(PLVD, 'Location', [
@@ -5108,7 +5135,8 @@ begin
      {11} wbByteArray('Unknown', 4, cpIgnore),
      {12} wbByteArray('Unknown', 4, cpIgnore)
     ]),
-    wbInteger('Radius', itS32)
+    wbInteger('Radius', itS32),
+    wbUnknown
   ]);
 
   wbTargetData := wbStruct('Target Data', [
@@ -5213,6 +5241,8 @@ begin
       'Left Hand'
     ]));
 
+  wbMODC := wbUnknown(MODC);
+  wbMODF := wbUnknown(MODF);
 	wbMODT := wbByteArray(MODT, 'Texture Files Hashes', 0, cpIgnore, false, false, wbNeverShow);
 	wbDMDT := wbByteArray(DMDT, 'Texture Files Hashes', 0, cpIgnore, false, false, wbNeverShow);
 
@@ -5220,7 +5250,9 @@ begin
     wbRStructSK([0], 'Model', [
       wbString(MODL, 'Model Filename'),
       wbMODT,
-      wbMODS
+      wbMODS,
+      wbMODC,
+      wbMODF
     ], [], cpNormal, False, nil, True);
 
   wbMODLActor :=
@@ -5234,7 +5266,9 @@ begin
     wbRStructSK([0], 'Model', [
       wbString(MODL, 'Model Filename'),
       wbMODT,
-      wbMODS
+      wbMODS,
+      wbMODC,
+      wbMODF
     ], [], cpNormal, True, nil, True);
 
   wbDMDSs := wbArrayS(DMDS, 'Alternate Textures',
@@ -5252,6 +5286,7 @@ begin
       wbInteger('VATS Targetable', itU8, wbEnum(['False', 'True'])),
       wbByteArray('Unknown', 2)
     ]),
+    wbUnknown(DAMC),
     wbRArray('Stages',
       wbRStruct('Stage', [
         wbStruct(DSTD, 'Destruction Stage Data', [
@@ -5269,6 +5304,7 @@ begin
           wbFormIDCk('Debris', [DEBR, NULL]),
           wbInteger('Debris Count', itS32)
         ], cpNormal, True),
+        wbUnknown(DSTA),
         wbRStructSK([0], 'Model', [
           wbString(DMDL, 'Model Filename'),
           wbDMDT,
@@ -5345,9 +5381,14 @@ begin
   ]));
 
   wbOwnership := wbRStruct('Ownership', [
-    wbFormIDCkNoReach(XOWN, 'Owner', [FACT, ACHR, NPC_]),
+    //wbFormIDCkNoReach(XOWN, 'Owner', [FACT, ACHR, NPC_]),
+    // GoodneighborWarehouse02
+    wbStruct(XOWN, 'Owner', [
+      wbFormIDCkNoReach('Owner', [FACT, ACHR, NPC_]),
+      wbUnknown
+    ]),
     wbInteger(XRNK, 'Faction rank', itS32)
-  ], []);
+  ], [XILL]);
 
   wbAmbientColors := wbStruct('Ambient Colors', [
     wbArray('Colors',
@@ -5821,8 +5862,6 @@ begin
       -1, 'None'
     ]);
 
-  wbActorValue := wbInteger('Actor Value', itS32, wbActorValueEnum);
-
   wbETYP := wbFormIDCk(ETYP, 'Equipment Type', [EQUP, NULL]);
   wbETYPReq := wbFormIDCk(ETYP, 'Equipment Type', [EQUP, NULL], False, cpNormal, True);
 
@@ -6099,7 +6138,7 @@ begin
         wbFloat('Float'),
         wbByteArray('Variable Name (unused)', 4, cpIgnore),
         wbInteger('Sex', itU32, wbSexEnum),
-        wbInteger('Actor Value', itS32, wbActorValueEnum),
+        wbActorValue,
         wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
         wbInteger('Axis', itU32, wbAxisEnum),
         wbInteger('Quest Stage (unused)', itS32),
@@ -6157,7 +6196,7 @@ begin
         wbFloat('Float'),
         wbByteArray('Variable Name (unused)', 4, cpIgnore),
         wbInteger('Sex', itU32, wbSexEnum),
-        wbInteger('Actor Value', itS32, wbActorValueEnum),
+        wbActorValue,
         wbInteger('Crime Type', itU32, wbCrimeTypeEnum),
         wbInteger('Axis', itU32, wbAxisEnum),
         wbInteger('Quest Stage', itS32, wbCTDAParam2QuestStageToStr, wbCTDAParam2QuestStageToInt),
@@ -6585,6 +6624,20 @@ procedure DefineFO4c;
           ])
         )
       ], []),
+
+      wbUnknown(XASP),
+      wbUnknown(XATP),
+      wbUnknown(XAMC),
+      wbUnknown(XLKT),
+      wbUnknown(XLYR),
+      wbUnknown(XMSP),
+      wbUnknown(XRFG),
+      wbUnknown(XRDO),
+      wbUnknown(XBSD),
+      wbUnknown(XPDD),
+      wbUnknown(XCVR),
+      wbUnknown(XRNK),
+
       wbXESP,
       wbFormIDCk(XEMI, 'Emittance', [LIGH, REGN]),
       wbFormIDCk(XMBR, 'MultiBound Reference', [REFR]),
@@ -10648,7 +10701,7 @@ begin
       wbFormIDCk('Explosion', [EXPL, NULL]),
       wbInteger('Casting Type', itU32, wbCastEnum),
       wbInteger('Delivery', itU32, wbTargetEnum),
-      wbInteger('Second Actor Value', itS32, wbActorValueEnum),
+      wbActorValue, //wbInteger('Second Actor Value', itS32, wbActorValueEnum),
       wbFormIDCk('Casting Art', [ARTO, NULL]),
       wbFormIDCk('Hit Effect Art', [ARTO, NULL]),
       wbFormIDCk('Impact Data', [IPDS, NULL]),
@@ -11701,7 +11754,8 @@ begin
     wbFloat('OohQ'),
     wbFloat('R'),
     wbFloat('TH'),
-    wbFloat('W')
+    wbFloat('W'),
+    wbUnknown
   ], cpNormal, False, nil, 8);
 
   wbPHWT := wbRStruct('FaceFX Phonemes', [
