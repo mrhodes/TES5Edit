@@ -8474,7 +8474,7 @@ begin
       wbFloat('Radius'),
       wbFloat('IS Radius'),
       wbFloat('Vertical Offset Mult'),
-      wbInteger('Flags', itU32, wbFlags([
+      {wbInteger('Flags', itU32, wbFlags([
         'Unknown 0',
         'Always Uses World Orientation',
         'Knock Down - Always',
@@ -8485,7 +8485,8 @@ begin
         'Chain',
         'No Controller Vibration'
       ])),
-      wbInteger('Sound Level', itU32, wbSoundLevelEnum, cpNormal, True)
+      wbInteger('Sound Level', itU32, wbSoundLevelEnum, cpNormal, True),}
+      wbUnknown
     ], cpNormal, True, nil, 10)
   ]);
 
