@@ -12675,7 +12675,8 @@ begin
       wbArray(RPLD, 'Region Point List Data', wbStruct('Point', [
         wbFloat('X'),
         wbFloat('Y')
-      ]), 0, wbRPLDAfterLoad)
+      ]), 0, wbRPLDAfterLoad),
+      wbUnknown(ANAM)
     ], [])),
     wbRArrayS('Region Data Entries', wbRStructSK([0], 'Region Data Entry', [
       {always starts with an RDAT}
@@ -12772,7 +12773,9 @@ begin
         wbFormIDCk('Weather', [WTHR]),
         wbInteger('Chance', itU32),
         wbFormIDCk('Global', [GLOB, NULL])
-      ]), 0, cpNormal, False, nil, nil, wbREGNWeatherDontShow)
+      ]), 0, cpNormal, False, nil, nil, wbREGNWeatherDontShow),
+
+      wbUnknown(ANAM)
 
     ], []))
   ], True);
