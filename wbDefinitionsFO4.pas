@@ -310,6 +310,7 @@ const
   GMST : TwbSignature = 'GMST';
   GNAM : TwbSignature = 'GNAM';
   GRAS : TwbSignature = 'GRAS';
+  GREE : TwbSignature = 'GREE'; { New to Fallout 4 }
   GWOR : TwbSignature = 'GWOR'; { New to Skyrim }
   HAZD : TwbSignature = 'HAZD';
   HCLF : TwbSignature = 'HCLF'; { New to Skyrim }
@@ -339,6 +340,7 @@ const
   INRD : TwbSignature = 'INRD'; { New To Fallout 4 }
   INTT : TwbSignature = 'INTT'; { New To Fallout 4 }
   INTV : TwbSignature = 'INTV';
+  IOVR : TwbSignature = 'IOVR'; { New To Fallout 4 }
   IPCT : TwbSignature = 'IPCT';
   IPDS : TwbSignature = 'IPDS';
   ISIZ : TwbSignature = 'ISIZ'; { New To Fallout 4 }
@@ -417,6 +419,7 @@ const
   MODL : TwbSignature = 'MODL';
   MODS : TwbSignature = 'MODS';
   MODT : TwbSignature = 'MODT';
+  MODQ : TwbSignature = 'MODQ'; { New to Fallout 4 }
   MOVT : TwbSignature = 'MOVT';
   MPAI : TwbSignature = 'MPAI'; { New To Skyrim }
   MPAV : TwbSignature = 'MPAV'; { New To Skyrim }
@@ -590,6 +593,7 @@ const
   SPLO : TwbSignature = 'SPLO';
   SPMV : TwbSignature = 'SPMV'; { New To Skyrim }
   SPOR : TwbSignature = 'SPOR'; { New to Skyrim }
+  SRAF : TwbSignature = 'SRAF'; { New to Fallout 4 }
   SSPN : TwbSignature = 'SSPN'; { New to Fallout 4 }
   STAG : TwbSignature = 'STAG'; { New to Fallout 4 }
   STAT : TwbSignature = 'STAT';
@@ -611,15 +615,18 @@ const
   TINP : TwbSignature = 'TINP'; { New to Skyrim }
   TINT : TwbSignature = 'TINT'; { New to Skyrim }
   TINV : TwbSignature = 'TINV'; { New to Skyrim }
+  TIQS : TwbSignature = 'TIQS'; { New to Fallout 4 }
   TIRS : TwbSignature = 'TIRS'; { New to Skyrim }
   TLOD : TwbSignature = 'TLOD'; { New to Fallout 4 }
   TNAM : TwbSignature = 'TNAM';
   TOFT : TwbSignature = 'TOFT'; { New to Fallout 4 }
   TPIC : TwbSignature = 'TPIC';
   TPLT : TwbSignature = 'TPLT';
+  TRDA : TwbSignature = 'TRDA'; { New To Fallout 4 }
   TRDT : TwbSignature = 'TRDT';
   TREE : TwbSignature = 'TREE';
   TRNS : TwbSignature = 'TRNS'; { New To Fallout 4 }
+  TSCE : TwbSignature = 'TSCE'; { New To Fallout 4 }
   TVDT : TwbSignature = 'TVDT'; { New To Skyrim }
   TWAT : TwbSignature = 'TWAT'; { New To Skyrim }
   TX00 : TwbSignature = 'TX00';
@@ -10267,7 +10274,7 @@ begin
     ])), [
     wbEDID,
     wbVMAD,
-    wbUnknown(DATA),
+    //wbUnknown(DATA),
     wbStruct(ENAM, 'Response flags', [
       wbInteger('Flags', itU16, wbFlags([
         {0x0001} 'Goodbye',
@@ -10289,54 +10296,48 @@ begin
       ])),
       wbInteger('Reset Hours', itU16, wbDiv(2730))
     ]),
-    wbFormIDCk(TPIC, 'Topic', [DIAL]),
-    wbFormIDCkNoReach(PNAM, 'Previous INFO', [INFO, NULL], False, cpBenign),
-    wbInteger(CNAM, 'Favor Level', itU8, wbEnum([
-      'None',
-      'Small',
-      'Medium',
-      'Large'
-    ])),
-
-    wbRArray('Link To', wbFormIDCk(TCLT, 'Response', [DIAL, INFO, NULL])),
-    wbFormID(DNAM, 'Response Data'),
+    wbFormIDCk(DNAM, 'Unknown', [INFO]),
+    wbFormIDCk(GNAM, 'Unknown', [INFO]),
+    wbString(IOVR, 'Unknown'),
 
     wbRArray('Responses', wbRStruct('Response', [
-      wbStruct(TRDT, 'Response Data', [
-        wbInteger('Emotion Type', itU32, wbEmotionTypeEnum),
-        wbInteger('Emotion Value', itU32),
-        wbByteArray('Unused', 4),
+      wbStruct(TRDA, 'Response Data', [
+        //wbInteger('Emotion Type', itU32, wbEmotionTypeEnum),
+        //wbInteger('Emotion Value', itU32),
+        wbByteArray('Unknown', 4),
         wbInteger('Response number', itU8),
         wbByteArray('Unused', 3),
-        wbFormIDCk('Sound', [SNDR, NULL]),
-        wbInteger('Flags', itU8, wbFlags([
-          'Use Emotion Animation'
-        ])),
-        wbByteArray('Unused', 3)
+        //wbFormIDCk('Sound', [SNDR, NULL]),
+        //wbInteger('Flags', itU8, wbFlags([
+        //  'Use Emotion Animation'
+        //])),
+        wbUnknown
       ]),
       wbLStringKC(NAM1, 'Response Text', 0),
       wbString(NAM2, 'Script Notes', 0),
       wbString(NAM3, 'Edits', 0),
+      wbUnknown(NAM4),
       wbFormIDCk(SNAM, 'Idle Animations: Speaker', [IDLE]),
-      wbFormIDCk(LNAM, 'Idle Animations: Listener', [IDLE])
+      //wbFormIDCk(LNAM, 'Idle Animations: Listener', [IDLE])
+      wbUnknown(TNAM),
+      wbUnknown(NAM9),
+      wbFormID(SRAF),
+      wbUnknown(WZMD)
     ], [])),
 
     wbCTDAs,
-
-    {>>> BEGIN leftover from earlier CK versions <<<}
-    wbRArray('Unknown',
-      wbRStruct('Unknown', [
-        wbUnknown(SCHR),
-        wbFormID(QNAM, 'Unknown'),
-        wbEmpty(NEXT, 'Marker')
-      ], []), cpIgnore, false, nil, nil, wbNeverShow
-    ),
-    {>>> END leftover from earlier CK versions <<<}
-
     wbLString(RNAM, 'Prompt'),
     wbFormIDCk(ANAM, 'Speaker', [NPC_]),
-    wbFormIDCk(TWAT, 'Walk Away Topic', [DIAL]),
-    wbFormIDCk(ONAM, 'Audio Output Override', [SOPM])
+    wbUnknown(TSCE),
+    wbUnknown(ALFA),
+    wbUnknown(INTV),
+    wbFormIDCk(ONAM, 'Audio Output Override', [SOPM]),
+    wbUnknown(GREE),
+    wbUnknown(TIQS),
+    wbString(NAM0),
+    wbFormIDCk(MODQ, 'Unknown', [GLOB]),
+    wbUnknown(INCC),
+    wbUnknown(INAM)
   ], False, wbINFOAddInfo, cpNormal, False, nil{wbINFOAfterLoad});
 
   wbRecord(INGR, 'Ingredient', [
