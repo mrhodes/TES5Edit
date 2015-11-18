@@ -7346,6 +7346,7 @@ begin
     wbFloat(PNAM, 'Priority', cpNormal, True, 1, -1, nil, nil, 50.0),
     wbFormIDCk(BNAM, 'Branch', [DLBR, NULL]),
     wbFormIDCk(QNAM, 'Quest', [QUST, NULL], False, cpNormal, False),
+    wbFormIDCk(KNAM, 'Unknown', [KYWD]),
     wbStruct(DATA, 'Data', [
       // this should not be named Flags since TwbFile.BuildReachable
       // expects Top-Level flag here from FNV
