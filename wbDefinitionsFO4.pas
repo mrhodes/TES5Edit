@@ -149,6 +149,7 @@ const
   ANAM : TwbSignature = 'ANAM';
   ANIO : TwbSignature = 'ANIO';
   AORU : TwbSignature = 'AORU'; { New To Fallout 4 }
+  APPR : TwbSignature = 'APPR'; { New To Fallout 4 }
   ARMA : TwbSignature = 'ARMA';
   ARMO : TwbSignature = 'ARMO';
   ARTO : TwbSignature = 'ARTO';
@@ -157,6 +158,7 @@ const
   ATKD : TwbSignature = 'ATKD'; { New to Skyrim }
   ATKE : TwbSignature = 'ATKE'; { New to Skyrim }
   ATKR : TwbSignature = 'ATKR'; { New to Skyrim }
+  ATTX : TwbSignature = 'ATTX'; { New To Fallout 4 }
   ATXT : TwbSignature = 'ATXT';
   AVIF : TwbSignature = 'AVIF';
   AVSK : TwbSignature = 'AVSK'; { New to Skyrim }
@@ -164,6 +166,7 @@ const
   BIDS : TwbSignature = 'BIDS'; { New to Skyrim }
   BIPL : TwbSignature = 'BIPL';
   BMCT : TwbSignature = 'BMCT';
+  BMMP : TwbSignature = 'BMMP'; { New to Fallout 4 }
   BNAM : TwbSignature = 'BNAM';
   BNDS : TwbSignature = 'BNDS'; { New to Fallout 4 }
   BOD2 : TwbSignature = 'BOD2'; { New to Skyrim 1.6.91 CK}
@@ -175,6 +178,9 @@ const
   BPNT : TwbSignature = 'BPNT';
   BPTD : TwbSignature = 'BPTD';
   BPTN : TwbSignature = 'BPTN';
+  BSMB : TwbSignature = 'BSMB'; { New to Fallout 4 }
+  BSMP : TwbSignature = 'BSMP'; { New to Fallout 4 }
+  BSMS : TwbSignature = 'BSMS'; { New to Fallout 4 }
   BTXT : TwbSignature = 'BTXT';
   CAMS : TwbSignature = 'CAMS';
   CELL : TwbSignature = 'CELL';
@@ -208,6 +214,7 @@ const
   CSME : TwbSignature = 'CSME'; { New to Skyrim }
   CSTY : TwbSignature = 'CSTY';
   CTDA : TwbSignature = 'CTDA';
+  CUSD : TwbSignature = 'CUSD'; { New to Fallout 4 }
   DALC : TwbSignature = 'DALC'; { New to Skyrim }
   DATA : TwbSignature = 'DATA';
   DEBR : TwbSignature = 'DEBR';
@@ -273,6 +280,7 @@ const
   FTSF : TwbSignature = 'FTSF'; { New to Skyrim }
   FTSM : TwbSignature = 'FTSM'; { New to Skyrim }
   FTST : TwbSignature = 'FTST'; { New to Skyrim }
+  FTYP : TwbSignature = 'FTYP'; { New To Fallout 4 }
   FULL : TwbSignature = 'FULL';
   FURN : TwbSignature = 'FURN';
   GDRY : TwbSignature = 'GDRY'; { New to Fallout 4 }
@@ -404,6 +412,7 @@ const
   NOCM : TwbSignature = 'NOCM'; { New to Fallout 4 }
   NOTE : TwbSignature = 'NOTE'; { New to Fallout 4 }
   NPC_ : TwbSignature = 'NPC_';
+  NTRM : TwbSignature = 'NTRM'; { New to Fallout 4 }
   NULL : TwbSignature = 'NULL';
   NVER : TwbSignature = 'NVER';
   NVMI : TwbSignature = 'NVMI';
@@ -411,6 +420,9 @@ const
   NVPP : TwbSignature = 'NVPP'; { New to Skyrim }
   NVSI : TwbSignature = 'NVSI'; { New to Dawnguard }
   OBND : TwbSignature = 'OBND';
+  OBTE : TwbSignature = 'OBTE'; { New to Fallout 4 }
+  OBTF : TwbSignature = 'OBTF'; { New to Fallout 4 }
+  OBTS : TwbSignature = 'OBTS'; { New to Fallout 4 }
   OCOR : TwbSignature = 'OCOR'; { New to Skyrim }
   OFST : TwbSignature = 'OFST';
   OMOD : TwbSignature = 'OMOD'; { New to Fallout 4 }
@@ -454,8 +466,10 @@ const
   PRKR : TwbSignature = 'PRKR'; { New to Skyrim }
   PRKZ : TwbSignature = 'PRKZ'; { New to Skyrim }
   PROJ : TwbSignature = 'PROJ';
+  PRPS : TwbSignature = 'PRPS'; { New to Fallout 4 }
   PSDT : TwbSignature = 'PSDT';
   PTDA : TwbSignature = 'PTDA'; { New to Skyrim }
+  PTRN : TwbSignature = 'PTRN'; { New to Fallout 4 }
   QNAM : TwbSignature = 'QNAM';
   QOBJ : TwbSignature = 'QOBJ';
   QSDT : TwbSignature = 'QSDT';
@@ -530,6 +544,7 @@ const
   STAG : TwbSignature = 'STAG'; { New to Fallout 4 }
   STAT : TwbSignature = 'STAT';
   STOL : TwbSignature = 'STOL'; { New to Skyrim }
+  STOP : TwbSignature = 'STOP'; { New to Fallout 4 }
   SWMV : TwbSignature = 'SWMV'; { New to Skyrim }
   TACT : TwbSignature = 'TACT';
   TCLT : TwbSignature = 'TCLT';
@@ -820,6 +835,16 @@ var
   wbNull: IwbValueDef;
   wbTimeInterpolator: IwbStructDef;
   wbColorInterpolator: IwbStructDef;
+  wbCUSD: IwbSubRecordDef;
+  wbPTRN: IwbSubRecordDef;
+  wbNTRM: IwbSubRecordDef;
+  wbPRPS: IwbSubRecordDef;
+  wbFLTR: IwbSubRecordDef;
+  wbAPPR: IwbSubRecordDef;
+  wbOBTESequence: IwbSubRecordStructDef;
+  wbBSMPSequence: IwbSubRecordArrayDef;
+  wbFTYP: IwbSubRecordDef;
+  wbATTX: IwbSubRecordDef;
 
 function Sig2Int(aSignature: TwbSignature): Cardinal; inline;
 begin
@@ -6249,6 +6274,45 @@ begin
   wbCTDAsCount := wbRArray('Conditions', wbCTDA, cpNormal, False, nil, wbCTDAsAfterSet);
   wbCTDAsReq := wbRArray('Conditions', wbCTDA, cpNormal, True);
   wbCTDAsReqCount := wbRArray('Conditions', wbCTDA, cpNormal, True, nil, wbCTDAsAfterSet);
+
+  wbPTRN := wbFormIDCk(PTRN, 'Transform', [TRNS]);
+  wbNTRM := wbFormIDCk(NTRM, 'Terminal', [TERM]);
+  wbCUSD := wbFormIDCk(CUSD, 'UI Sound', [SNDR]);
+  wbPRPS := wbArrayS(PRPS, 'Properties', wbStructSK([0], 'Property', [
+    wbActorValue,
+    wbFloat('Value')
+  ]));
+  wbFLTR := wbString(FLTR, 'Filter');
+  wbAPPR := wbArray(APPR, 'Keywords', wbFormIDCk('Keyword', [KYWD]));
+  wbFTYP := wbFormIDCk(FTYP, 'Unknown', [LCRT]);
+  wbATTX := wbLString(ATTX, 'Activate Text Override');
+
+  wbOBTESequence := wbRStruct('Unknown', [
+    wbRStruct('Unknown', [
+      wbInteger(OBTE, 'Count', itU32, nil, cpBenign),
+      wbEmpty(OBTF, 'Unknown'),
+      wbFULL
+    ], []),
+    wbRStructs('Unknown', 'Unknown', [
+      wbUnknown(OBTS),
+      wbEmpty(OBTF, 'Unknown'),
+      wbFULL
+    ], []),
+    wbEmpty(STOP, 'Marker', cpNormal, True)
+  ], []);
+
+  wbBSMPSequence := wbRArray('Unknown',
+    wbRStruct('Unknown', [
+      wbInteger(BSMP, 'Unknown', itU32),
+      wbRArray('Unknown',
+        wbRStruct('Unknown', [
+          wbString(BSMB, 'Name'),
+          wbUnknown(BSMS),
+          wbUnknown(BMMP)
+        ], [])
+      )
+    ], [])
+  );
 
   wbEffectsReq :=
     wbRStructs('Effects', 'Effect', [
