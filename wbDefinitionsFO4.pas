@@ -148,6 +148,7 @@ const
   AMMO : TwbSignature = 'AMMO';
   ANAM : TwbSignature = 'ANAM';
   ANIO : TwbSignature = 'ANIO';
+  AOR2 : TwbSignature = 'AOR2'; { New To Fallout 4 }
   AORU : TwbSignature = 'AORU'; { New To Fallout 4 }
   APPR : TwbSignature = 'APPR'; { New To Fallout 4 }
   ARMA : TwbSignature = 'ARMA';
@@ -13431,8 +13432,9 @@ begin
     wbUnknown(DNAM)
   ]);
 
-  wbRecord(AORU, 'AORU', [
-    wbEDID
+  wbRecord(AORU, 'Object Rule', [
+    wbEDID,
+    wbUnknown(AOR2)
   ]);
 
   wbRecord(BNDS, 'BNDS', [
