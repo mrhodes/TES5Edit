@@ -13498,7 +13498,20 @@ end;
 procedure DefineFO4r;
 begin
   wbRecord(INNR, 'INNR', [
-    wbEDID
+    wbEDID,
+    wbUnknown(UNAM),
+    wbRArray('Unknown',
+      wbRStruct('Unknown', [
+        wbInteger(VNAM, 'Count', itU32),
+        wbRArray('Unknown',
+          wbRStruct('Unknown', [
+            wbLString(WNAM, 'Unknown'),
+            wbKSIZ,
+            wbKWDAs
+          ], [])
+        )
+      ], [])
+    )
   ]);
 
   wbRecord(KSSM, 'KSSM', [
