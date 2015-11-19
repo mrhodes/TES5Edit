@@ -5011,7 +5011,8 @@ begin
   wbVMAD := wbStruct(VMAD, 'Virtual Machine Adapter', [
     wbInteger('Version', itS16, nil, cpIgnore),
     wbInteger('Object Format', itS16, nil, cpIgnore),
-    wbUnion('Data', wbScriptFragmentExistsDecider, [
+    wbUnknown
+    {wbUnion('Data', wbScriptFragmentExistsDecider, [
       wbArrayS('Scripts', wbScriptEntry, -2, cpNormal, False, nil, nil, nil, False),
       wbStruct('Info VMAD', [
         wbArrayS('Scripts', wbScriptEntry, -2, cpNormal, False, nil, nil, nil, False),
@@ -5033,7 +5034,7 @@ begin
         wbArrayS('Scripts', wbScriptEntry, -2, cpNormal, False, nil, nil, nil, False),
         wbScriptFragmentsScen
       ], cpNormal, False, nil, 0)
-    ])
+    ])}
   ], cpNormal, false, nil, -1);
 
   wbAttackData := wbRStructSK([1], 'Attack', [
