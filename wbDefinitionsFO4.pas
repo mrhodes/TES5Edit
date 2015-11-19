@@ -13515,7 +13515,16 @@ begin
   ]);
 
   wbRecord(KSSM, 'KSSM', [
-    wbEDID
+    wbEDID,
+    wbFormIDCk(DNAM, 'Sound', [SNDR]),
+    wbFormIDCk(ENAM, 'Sound', [SNDR]),
+    wbFormIDCk(VNAM, 'Sound', [SNDR]),
+    wbFloat(TNAM),
+    wbRArray('Keywords', wbFormIDCk(KNAM, 'Keyword', [KYWD])),
+    wbRArray('Sounds', wbStruct(RNAM, 'Sound', [
+      wbInteger('Unknown', itU32),
+      wbFormIDCk('Sound', [SNDR])
+    ]))
   ]);
 
   wbRecord(LAYR, 'LAYR', [
