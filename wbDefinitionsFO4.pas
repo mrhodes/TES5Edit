@@ -13472,8 +13472,25 @@ begin
     wbUnknown(DNAM)
   ]);
 
-  wbRecord(GDRY, 'GDRY', [
-    wbEDID
+  wbRecord(GDRY, 'God Ray', [
+    wbEDID,
+    wbStruct(DATA, 'Data', [
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown')
+    ])
   ]);
 
 end;
