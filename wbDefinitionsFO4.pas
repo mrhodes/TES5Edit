@@ -13498,8 +13498,12 @@ begin
     wbEDID
   ]);
 
-  wbRecord(STAG, 'STAG', [
-    wbEDID
+  wbRecord(STAG, 'Attack Sound', [
+    wbEDID,
+    wbRArray('Sounds', wbStruct(TNAM, 'Sound', [
+      wbFormIDCk('Sound', [SNDR]),
+      wbString('Action')
+    ]))
   ]);
 
   wbRecord(TERM, 'TERM', [
