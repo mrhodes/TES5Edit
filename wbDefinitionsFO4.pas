@@ -13427,7 +13427,8 @@ begin
   ]);
 
   wbRecord(AMDL, 'AMDL', [
-    wbEDID
+    wbEDID,
+    wbUnknown(DNAM)
   ]);
 
   wbRecord(AORU, 'AORU', [
