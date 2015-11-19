@@ -13577,8 +13577,9 @@ begin
     ], cpNormal, True, nil, 7)
   ]);
 
-  wbRecord(ZOOM, 'ZOOM', [
-    wbEDID
+  wbRecord(ZOOM, 'Zoom', [
+    wbEDID,
+    wbUnknown(GNAM)
   ]);
 
 end;
