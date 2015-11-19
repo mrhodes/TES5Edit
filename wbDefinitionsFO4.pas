@@ -13462,8 +13462,9 @@ begin
     wbFormIDCk(GNAM, 'Rarity', [GLOB])
   ]);
 
-  wbRecord(DFOB, 'DFOB', [
-    wbEDID
+  wbRecord(DFOB, 'Default Object', [
+    wbEDID,
+    wbFormID(DATA)
   ]);
 
   wbRecord(DMGT, 'Damage Type', [
