@@ -13416,8 +13416,14 @@ end;
 
 procedure DefineFO4q;
 begin
-  wbRecord(AECH, 'AECH', [
-    wbEDID
+  wbRecord(AECH, 'Audio Effect Chain', [
+    wbEDID,
+    wbRArray('Effects',
+      wbRStruct('Effect', [
+        wbUnknown(KNAM),
+        wbUnknown(DNAM)
+      ], [])
+    )
   ]);
 
   wbRecord(AMDL, 'AMDL', [
