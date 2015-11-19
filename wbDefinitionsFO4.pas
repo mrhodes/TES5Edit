@@ -450,6 +450,7 @@ const
   MOVT : TwbSignature = 'MOVT';
   MPAI : TwbSignature = 'MPAI'; { New To Skyrim }
   MPAV : TwbSignature = 'MPAV'; { New To Skyrim }
+  MPCD : TwbSignature = 'MPCD'; { New to Fallout 4 }
   MPGN : TwbSignature = 'MPGN'; { New to Fallout 4 }
   MPGS : TwbSignature = 'MPGS'; { New to Fallout 4 }
   MPPC : TwbSignature = 'MPPC'; { New to Fallout 4 }
@@ -10568,8 +10569,8 @@ begin
           wbByteArray(VTXT, 'Alpha Layer Data')
         ], [])
       ], [])),
-
-      wbArray(VTEX, 'Textures', wbFormIDCk('Texture', [LTEX, NULL]))
+      wbArray(VTEX, 'Textures', wbFormIDCk('Texture', [LTEX, NULL])),
+      wbRArray('Unknown', wbUnknown(MPCD))
     ]);
 
   end else begin
@@ -10624,8 +10625,8 @@ begin
           ]))
         ], [])
       ], [])),
-
-      wbArray(VTEX, 'Textures', wbFormIDCk('Texture', [LTEX, NULL]))
+      wbArray(VTEX, 'Textures', wbFormIDCk('Texture', [LTEX, NULL])),
+      wbRArray('Unknown', wbUnknown(MPCD))
     ]);
 
   end;
