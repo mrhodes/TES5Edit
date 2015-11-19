@@ -181,6 +181,7 @@ const
   BPNT : TwbSignature = 'BPNT';
   BPTD : TwbSignature = 'BPTD';
   BPTN : TwbSignature = 'BPTN';
+  BSIZ : TwbSignature = 'BSIZ'; { New to Fallout 4 }
   BSMB : TwbSignature = 'BSMB'; { New to Fallout 4 }
   BSMP : TwbSignature = 'BSMP'; { New to Fallout 4 }
   BSMS : TwbSignature = 'BSMS'; { New to Fallout 4 }
@@ -322,6 +323,8 @@ const
   INTV : TwbSignature = 'INTV';
   IPCT : TwbSignature = 'IPCT';
   IPDS : TwbSignature = 'IPDS';
+  ISIZ : TwbSignature = 'ISIZ'; { New To Fallout 4 }
+  ITID : TwbSignature = 'ITID'; { New To Fallout 4 }
   ITXT : TwbSignature = 'ITXT';
   JAIL : TwbSignature = 'JAIL'; { New To Skyrim }
   JNAM : TwbSignature = 'JNAM';
@@ -13506,8 +13509,49 @@ begin
     ]))
   ]);
 
-  wbRecord(TERM, 'TERM', [
-    wbEDID
+  wbRecord(TERM, 'Terminal', [
+    wbEDID,
+    wbVMAD,
+    wbOBNDReq,
+    wbPTRN,
+    wbUnknown(NAM0),
+    wbUnknown(WNAM),
+    wbFULL,
+    wbMODL,
+    wbKSIZ,
+    wbKWDAs,
+    wbPRPS,
+    wbUnknown(PNAM),
+    wbUnknown(FNAM),
+    wbCOCT,
+    wbCNTOs,
+    wbUnknown(MNAM),
+    wbUnknown(WBDT),
+    wbString(XMRK, 'Marker Model'),
+    wbUnknown(SNAM),
+    wbInteger(BSIZ, 'Count', itU32, nil, cpBenign),
+    wbRArray('Display Items',
+      wbRStruct('Display Item', [
+        wbLString(BTXT, 'Text'),
+        wbCTDAs
+      ], [])
+    ),
+    wbInteger(ISIZ, 'Count', itU32, nil, cpBenign),
+    wbRArray('Menu Items',
+      wbRStruct('Menu Item', [
+        wbLString(ITXT, 'Item Text'),
+        wbLString(RNAM, 'Error Text'),
+        wbInteger(ANAM, 'Flags', itU8, wbFlags([
+          'Add Note',
+          'Force Redraw',
+          'Unknown 2'
+        ]), cpNormal, True),
+        wbInteger(ITID, 'Item ID', itU16),
+        wbLString(UNAM, 'Response Text'),
+        wbFormIDCk(TNAM, 'Terminal', [TERM]),
+        wbCTDAs
+      ], [])
+    )
   ]);
 
   wbRecord(TLOD, 'TLOD', [
