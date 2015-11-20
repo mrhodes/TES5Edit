@@ -202,6 +202,7 @@ const
   CLAS : TwbSignature = 'CLAS';
   CLFM : TwbSignature = 'CLFM';
   CLMT : TwbSignature = 'CLMT';
+  CLSZ : TwbSignature = 'CLSZ'; { New to Fallout 4 }
   CMPO : TwbSignature = 'CMPO'; { New to Fallout 4 }
   CNAM : TwbSignature = 'CNAM';
   CNTO : TwbSignature = 'CNTO';
@@ -662,6 +663,7 @@ const
   WEAP : TwbSignature = 'WEAP';
   WGDR : TwbSignature = 'WGDR'; { New To Fallout 4 }
   WKMV : TwbSignature = 'WKMV'; { New to Skyrim }
+  WLEV : TwbSignature = 'WLEV'; { New To Fallout 4 }
   WLST : TwbSignature = 'WLST';
   WNAM : TwbSignature = 'WNAM';
   WOOP : TwbSignature = 'WOOP';
@@ -3458,6 +3460,15 @@ begin
 
     if MainRecord.ElementExists['Unused RNAM'] then
       MainRecord.RemoveElement('Unused RNAM');
+
+    if MainRecord.ElementExists['Unknown WLEV'] then
+      MainRecord.RemoveElement('Unknown WLEV');
+
+    if MainRecord.ElementExists['MHDT'] then
+      MainRecord.RemoveElement('MHDT');
+
+    if MainRecord.ElementExists['CLSZ'] then
+      MainRecord.RemoveElement('CLSZ');
 
     // large values in object bounds cause stutter and performance issues in game (reported by Arthmoor)
     // CK can occasionally set them wrong, so make a warning
@@ -13311,7 +13322,9 @@ begin
       wbString(TNAM, 'HD LOD Diffuse Texture'),
       wbString(UNAM, 'HD LOD Normal Texture'),
       wbString(XWEM, 'Water Environment Map (unused)', 0, cpIgnore),
-      wbByteArray(OFST, 'Offset Data')
+      wbRArray('Unknown WLEV', wbUnknown(WLEV)),
+      wbByteArray(OFST, 'Offset Data'),
+      wbUnknown(CLSZ)
     ], False, nil, cpNormal, False, wbWRLDAfterLoad)
   else
     wbRecord(WRLD, 'Worldspace',
@@ -13412,7 +13425,9 @@ begin
       wbString(TNAM, 'HD LOD Diffuse Texture'),
       wbString(UNAM, 'HD LOD Normal Texture'),
       wbString(XWEM, 'Water Environment Map (unused)', 0, cpIgnore),
-      wbArray(OFST, 'Offset Data', wbArray('Rows', wbInteger('Offset', itU32), wbOffsetDataColsCounter), 0)
+      wbRArray('Unknown WLEV', wbUnknown(WLEV)),
+      wbArray(OFST, 'Offset Data', wbArray('Rows', wbInteger('Offset', itU32), wbOffsetDataColsCounter), 0),
+      wbUnknown(CLSZ)
     ], False, nil, cpNormal, False, wbWRLDAfterLoad);
 
   wbRecord(WTHR, 'Weather', [
