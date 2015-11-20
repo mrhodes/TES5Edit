@@ -5513,15 +5513,6 @@ begin
       wbFloat(XPRD, 'Idle Time', cpNormal, True),
       wbEmpty(XPPA, 'Patrol Script Marker', cpNormal, True),
       wbFormIDCk(INAM, 'Idle', [IDLE, NULL], False, cpNormal, True),
-      {>>> BEGIN leftover from earlier CK versions <<<}
-      wbRStruct('Unused', [
-        wbUnknown(SCHR),
-        wbUnknown(SCDA),
-        wbUnknown(SCTX),
-        wbUnknown(QNAM),
-        wbUnknown(SCRO)
-      ], [], cpIgnore, false, wbNeverShow),
-      {>>> END leftover from earlier CK versions <<<}
       wbPDTOs,
       wbFormIDCk(TNAM, 'Topic', [DIAL, NULL], False, cpNormal)
     ], []),
@@ -5570,6 +5561,12 @@ begin
         wbByteArray('Unknown', 1)
       ])
     ]),
+
+    wbUnknown(XLKT),
+    wbUnknown(XRFG),
+    wbUnknown(XLYR),
+    wbUnknown(XMSP),
+    wbUnknown(XRNK),
 
     wbFormIDCk(XLCN, 'Persistent Location', [LCTN]),
     wbFormIDCk(XLRL, 'Location Reference', [LCRT, LCTN, NULL], False, cpBenignIfAdded),
