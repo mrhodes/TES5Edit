@@ -11398,35 +11398,16 @@ begin
     wbRStruct('OnBegin', [
       wbEmpty(POBA, 'OnBegin Marker', cpNormal, True),
       wbFormIDCk(INAM, 'Idle', [IDLE, NULL], False, cpNormal, True),
-      {>>> BEGIN leftover from earlier CK versions <<<}
-      wbByteArray(SCHR, 'Unused', 0, cpIgnore, false, false, wbNeverShow),
-      wbByteArray(SCTX, 'Unused', 0, cpIgnore, false, false, wbNeverShow),
-      wbByteArray(QNAM, 'Unused', 0, cpIgnore, false, false, wbNeverShow),
-      wbByteArray(TNAM, 'Unused', 0, cpIgnore, false, false, wbNeverShow),
-      {>>> END leftover from earlier CK versions <<<}
       wbPDTOs
     ], []),
     wbRStruct('OnEnd', [
       wbEmpty(POEA, 'OnEnd Marker', cpNormal, True),
       wbFormIDCk(INAM, 'Idle', [IDLE, NULL], False, cpNormal, True),
-      {>>> BEGIN leftover from earlier CK versions <<<}
-      wbByteArray(SCHR, 'Unused', 0, cpIgnore, false, false, wbNeverShow),
-      wbByteArray(SCTX, 'Unused', 0, cpIgnore, false, false, wbNeverShow),
-      wbByteArray(QNAM, 'Unused', 0, cpIgnore, false, false, wbNeverShow),
-      wbByteArray(TNAM, 'Unused', 0, cpIgnore, false, false, wbNeverShow),
-      {>>> END leftover from earlier CK versions <<<}
       wbPDTOs
     ], []),
     wbRStruct('OnChange', [
       wbEmpty(POCA, 'OnChange Marker', cpNormal, True),
       wbFormIDCk(INAM, 'Idle', [IDLE, NULL], False, cpNormal, True),
-      {>>> BEGIN leftover from earlier CK versions <<<}
-      wbByteArray(SCHR, 'Unused', 0, cpIgnore, false, false, wbNeverShow),
-      wbByteArray(SCDA, 'Unused', 0, cpIgnore, false, false, wbNeverShow),
-      wbByteArray(SCTX, 'Unused', 0, cpIgnore, false, false, wbNeverShow),
-      wbByteArray(QNAM, 'Unused', 0, cpIgnore, false, false, wbNeverShow),
-      wbByteArray(TNAM, 'Unused', 0, cpIgnore, false, false, wbNeverShow),
-      {>>> END leftover from earlier CK versions <<<}
       wbPDTOs
     ], [])
   ], False, nil, cpNormal, False, nil {wbPACKAfterLoad});
