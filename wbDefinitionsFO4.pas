@@ -168,6 +168,7 @@ const
   ATKS : TwbSignature = 'ATKS'; { New To Fallout 4 }
   ATKT : TwbSignature = 'ATKT'; { New To Fallout 4 }
   ATKW : TwbSignature = 'ATKW'; { New To Fallout 4 }
+  ATTN : TwbSignature = 'ATTN'; { New To Fallout 4 }
   ATTX : TwbSignature = 'ATTX'; { New To Fallout 4 }
   ATXT : TwbSignature = 'ATXT';
   AVFL : TwbSignature = 'AVFL'; { New To Fallout 4 }
@@ -10257,13 +10258,11 @@ begin
       wbByteArray('Unknown', 2),
       wbInteger('Reverb Send %', itU8)
     ]),
-    wbUnknown(FNAM), // leftover, unused
     wbInteger(MNAM, 'Type', itU32, wbEnum([
       'Uses HRTF',
       'Defined Speaker Output'
     ])),
-    wbUnknown(CNAM), // leftover, unused
-    wbUnknown(SNAM), // leftover, unused
+    wbUnknown(VNAM),
     wbStruct(ONAM, 'Output Values', [
       wbArray('Channels', wbStruct('', [
         wbInteger('L', itU8),
@@ -10280,13 +10279,15 @@ begin
         'Channel 2? (unused)'
       ])
     ]),
-    wbStruct(ANAM, 'Attenuation Values', [
+    {wbStruct(ANAM, 'Attenuation Values', [
       wbByteArray('Unknown', 4),
       wbFloat('Min Distance'),
       wbFloat('Max Distance'),
       wbArray('Curve', wbInteger('Value', itU8), 5),
       wbByteArray('Unknown')
-    ])
+    ]),}
+    wbUnknown(ATTN),
+    wbFormIDCk(ENAM, 'Unknown', [AECH])
   ]);
 
   wbRecord(COLL, 'Collision Layer', [
