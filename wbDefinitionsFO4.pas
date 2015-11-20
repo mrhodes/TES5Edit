@@ -13629,8 +13629,10 @@ begin
     wbUnknown(VNAM)
   ]);
 
-  wbRecord(RFGP, 'RFGP', [
-    wbEDID
+  wbRecord(RFGP, 'Reference Group', [
+    wbEDID,
+    wbString(NNAM, 'Name'),
+    wbFormIDCk(RNAM, 'Reference', [REFR])
   ]);
 
   wbRecord(RGDL, 'RGDL', [
