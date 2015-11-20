@@ -705,6 +705,7 @@ const
   XGDR : TwbSignature = 'XGDR'; { New To Fallout 4 }
   XGLB : TwbSignature = 'XGLB';
   XHLP : TwbSignature = 'XHLP';
+  XHLT : TwbSignature = 'XHLT'; { New To Fallout 4 }
   XHOR : TwbSignature = 'XHOR'; { New To Skyrim }
   XHTW : TwbSignature = 'XHTW'; { New To Skyrim }
   XIBS : TwbSignature = 'XIBS';
@@ -736,6 +737,7 @@ const
   XORD : TwbSignature = 'XORD';
   XOWN : TwbSignature = 'XOWN';
   XPDD : TwbSignature = 'XPDD'; { New To Fallout 4 }
+  XPLK : TwbSignature = 'XPLK'; { New To Fallout 4 }
   XPOD : TwbSignature = 'XPOD';
   XPPA : TwbSignature = 'XPPA';
   XPRD : TwbSignature = 'XPRD';
@@ -759,6 +761,8 @@ const
   XWCS : TwbSignature = 'XWCS'; { New To Skyrim }
   XWCU : TwbSignature = 'XWCU'; { New To Skyrim }
   XWEM : TwbSignature = 'XWEM'; { New To Skyrim }
+  XWPG : TwbSignature = 'XWPG'; { New To Fallout 4 }
+  XWPN : TwbSignature = 'XWPN'; { New To Fallout 4 }
   XXXX : TwbSignature = 'XXXX';
   YNAM : TwbSignature = 'YNAM';
   ZNAM : TwbSignature = 'ZNAM';
@@ -12378,7 +12382,7 @@ begin
       wbFloat('Fade 1.35+/-'),
       wbByteArray('Unknown', 4),
       wbFloat('Shadow Depth Bias'),
-      wbByteArray('Unknown', 4) // optional
+      wbUnknown
     ], cpNormal, False, nil, 4),
 		wbStruct(XALP, 'Alpha', [
       wbInteger('Cutoff', itU8),
@@ -12391,15 +12395,16 @@ begin
       wbPosRot,
       wbInteger('Flags', itU32, wbFlags([
         'No Alarm'
-      ]))
+      ])),
+      wbUnknown
     ]),
     wbFormIDCk(XTNM, 'Teleport Message Box', [MESG]),
 
     {--- MultiBound ---}
     wbFormIDCk(XMBR, 'MultiBound Reference', [REFR]),
 
-    wbByteArray(XWCN, 'Unknown', 0, cpIgnore), // leftover
-    wbByteArray(XWCS, 'Unknown', 0, cpIgnore), // leftover
+    wbUnknown(XWCN),
+    //wbByteArray(XWCS, 'Unknown', 0, cpIgnore), // leftover
     wbStruct(XWCU, 'Water Velocity', [
       wbFloat('X Offset'),
       wbFloat('Y Offset'),
@@ -12410,6 +12415,19 @@ begin
       wbFloat('Z Angle'),
       wbByteArray('Unknown', 0)
     ]),
+
+    wbUnknown(XASP),
+    wbUnknown(XATP),
+    wbUnknown(XAMC),
+    wbUnknown(XLKT),
+    wbUnknown(XLYR),
+    wbUnknown(XMSP),
+    wbUnknown(XRFG),
+    wbUnknown(XRDO),
+    wbUnknown(XBSD),
+    wbUnknown(XPDD),
+    wbUnknown(XCVR),
+    wbUnknown(XRNK),
 
     wbStruct(XCVL, 'Unknown', [
 			wbByteArray('Unknown', 4),
@@ -12457,7 +12475,7 @@ begin
       wbFormIDCkNoReach('Key', [KEYM, NULL]),
       wbInteger('Flags', itU8, wbFlags(['', '', 'Leveled Lock'])),
       wbByteArray('Unused', 3, cpIgnore),
-      wbByteArray('Unused', 8, cpIgnore)
+      wbUnknown
     ], cpNormal, False, nil, 4),
 
     wbFormIDCk(XEZN, 'Encounter Zone', [ECZN]),
@@ -12476,6 +12494,7 @@ begin
     wbOwnership,
 
     wbInteger(XCNT, 'Item Count', itS32),
+    wbUnknown(XHLT),
     wbFloat(XCHG, 'Charge'),
     wbFormIDCk(XLRL, 'Location Reference', [LCRT, LCTN, NULL], False, cpBenignIfAdded),
 
@@ -12485,12 +12504,19 @@ begin
       wbFormIDCk('Ref', [PLYR, ACHR, REFR, PGRE, PHZD, PMIS, PARW, PBAR, PBEA, PCON, PFLA])
     ], cpNormal, False, nil, 1)),
 
+    wbRArray('Unknown', wbUnknown(XPLK)),
+
+    wbRStruct('Unknown', [
+      wbUnknown(XWPG),
+      wbRArray('Unknown', wbUnknown(XWPN))
+    ], []),
+
     wbRArray('Patrol', wbRStruct('Data', [
       wbFloat(XPRD, 'Idle Time', cpNormal, True),
       wbEmpty(XPPA, 'Patrol Script Marker', cpNormal, True),
       wbFormIDCk(INAM, 'Idle', [IDLE, NULL], False, cpNormal, True),
-      wbByteArray(SCHR, 'Unused', 0, cpIgnore, false, false, wbNeverShow),
-      wbByteArray(SCTX, 'Unused', 0, cpIgnore, false, false, wbNeverShow),
+      //wbByteArray(SCHR, 'Unused', 0, cpIgnore, false, false, wbNeverShow),
+      //wbByteArray(SCTX, 'Unused', 0, cpIgnore, false, false, wbNeverShow),
       wbPDTOs
     ], [])),
 
@@ -12622,10 +12648,13 @@ begin
         wbByteArray('Unused', 1)
       ], cpNormal, True)
     ], []),
+
     {--- Attach reference ---}
     wbFormIDCk(XATR, 'Attach Ref', [REFR, PGRE, PHZD, PMIS, PARW, PBAR, PBEA, PCON, PFLA]),
+
     wbXLOD,
-    wbDataPosRot
+    wbDataPosRot,
+    wbUnknown(MNAM)
   ], True, wbPlacedAddInfo, cpNormal, False, wbREFRAfterLoad);
 
   wbRecord(REGN, 'Region',
