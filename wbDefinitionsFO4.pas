@@ -14202,23 +14202,23 @@ begin
    wbAddGroupOrder(TRNS);
    wbAddGroupOrder(CMPO);
    wbAddGroupOrder(TXST);
-   wbAddGroupOrder(MICN);
+   //wbAddGroupOrder(MICN);
    wbAddGroupOrder(GLOB);
    wbAddGroupOrder(DMGT);
    wbAddGroupOrder(CLAS);
    wbAddGroupOrder(FACT);
    wbAddGroupOrder(HDPT);
-   wbAddGroupOrder(EYES);
+   //wbAddGroupOrder(EYES);
    wbAddGroupOrder(RACE);
    wbAddGroupOrder(SOUN);
    wbAddGroupOrder(ASPC);
-   wbAddGroupOrder(SKIL);
+   //wbAddGroupOrder(SKIL);
    wbAddGroupOrder(MGEF);
-   wbAddGroupOrder(SCPT);{>>> Unused in Skyrim, but contained in Skyrim.esm <<<}
+   //wbAddGroupOrder(SCPT);{>>> Unused in Skyrim, but contained in Skyrim.esm <<<}
    wbAddGroupOrder(LTEX);
    wbAddGroupOrder(ENCH);
    wbAddGroupOrder(SPEL);
-   wbAddGroupOrder(SCRL);
+   //wbAddGroupOrder(SCRL);
    wbAddGroupOrder(ACTI);
    wbAddGroupOrder(TACT);
    wbAddGroupOrder(ARMO);
@@ -14246,7 +14246,7 @@ begin
    wbAddGroupOrder(PROJ);
    wbAddGroupOrder(HAZD);
    wbAddGroupOrder(BNDS);
-   wbAddGroupOrder(SLGM);
+   //wbAddGroupOrder(SLGM);
    wbAddGroupOrder(TERM);
    wbAddGroupOrder(LVLI);
    wbAddGroupOrder(WTHR);
@@ -14256,22 +14256,22 @@ begin
    wbAddGroupOrder(REGN);
    wbAddGroupOrder(NAVI);
    wbAddGroupOrder(CELL);
-   wbAddGroupOrder(REFR);
-   wbAddGroupOrder(ACHR);
-   wbAddGroupOrder(PMIS);
-   wbAddGroupOrder(PARW);
-   wbAddGroupOrder(PGRE);
-   wbAddGroupOrder(PBEA);
-   wbAddGroupOrder(PFLA);
-   wbAddGroupOrder(PCON);
-   wbAddGroupOrder(PBAR);
-   wbAddGroupOrder(PHZD);
+   //wbAddGroupOrder(REFR);
+   //wbAddGroupOrder(ACHR);
+   //wbAddGroupOrder(PMIS);
+   //wbAddGroupOrder(PARW);
+   //wbAddGroupOrder(PGRE);
+   //wbAddGroupOrder(PBEA);
+   //wbAddGroupOrder(PFLA);
+   //wbAddGroupOrder(PCON);
+   //wbAddGroupOrder(PBAR);
+   //wbAddGroupOrder(PHZD);
    wbAddGroupOrder(WRLD);
-   wbAddGroupOrder(LAND);
-   wbAddGroupOrder(NAVM);
-   wbAddGroupOrder(TLOD);
-   wbAddGroupOrder(DIAL);
-   wbAddGroupOrder(INFO);
+   //wbAddGroupOrder(LAND);
+   //wbAddGroupOrder(NAVM);
+   //wbAddGroupOrder(TLOD);
+   //wbAddGroupOrder(DIAL);
+   //wbAddGroupOrder(INFO);
    wbAddGroupOrder(QUST);
    wbAddGroupOrder(IDLE);
    wbAddGroupOrder(PACK);
@@ -14281,7 +14281,7 @@ begin
    wbAddGroupOrder(ANIO);
    wbAddGroupOrder(WATR);
    wbAddGroupOrder(EFSH);
-   wbAddGroupOrder(TOFT);
+   //wbAddGroupOrder(TOFT);
    wbAddGroupOrder(EXPL);
    wbAddGroupOrder(DEBR);
    wbAddGroupOrder(IMGS);
@@ -14301,7 +14301,7 @@ begin
    wbAddGroupOrder(ECZN);
    wbAddGroupOrder(LCTN);
    wbAddGroupOrder(MESG);
-   wbAddGroupOrder(RGDL);{>>> Unused in Skyrim, but contained in Skyrim.esm <<<}
+   //wbAddGroupOrder(RGDL);{>>> Unused in Skyrim, but contained in Skyrim.esm <<<}
    wbAddGroupOrder(DOBJ);
    wbAddGroupOrder(DFOB);
    wbAddGroupOrder(LGTM);
@@ -14314,8 +14314,8 @@ begin
    wbAddGroupOrder(DLBR);
    wbAddGroupOrder(MUST);
    wbAddGroupOrder(DLVW);
-   wbAddGroupOrder(WOOP);
-   wbAddGroupOrder(SHOU);
+   //wbAddGroupOrder(WOOP);
+   //wbAddGroupOrder(SHOU);
    wbAddGroupOrder(EQUP);
    wbAddGroupOrder(RELA);
    wbAddGroupOrder(SCEN);
@@ -14325,7 +14325,7 @@ begin
    wbAddGroupOrder(MATO);
    wbAddGroupOrder(MOVT);
    wbAddGroupOrder(SNDR);
-   wbAddGroupOrder(DUAL);
+   //wbAddGroupOrder(DUAL);
    wbAddGroupOrder(SNCT);
    wbAddGroupOrder(SOPM);
    wbAddGroupOrder(COLL);
