@@ -10171,13 +10171,16 @@ begin
       wbFloat('Back Run'),
       wbFloat('Rotate in Place Walk', cpNormal, True, wbRotationFactor, wbRotationScale, nil, RadiansNormalize),
       wbFloat('Rotate in Place Run', cpNormal, True, wbRotationFactor, wbRotationScale, nil, RadiansNormalize),
-      wbFloat('Rotate while Moving Run', cpNormal, True, wbRotationFactor, wbRotationScale, nil, RadiansNormalize)
+      wbFloat('Rotate while Moving Run', cpNormal, True, wbRotationFactor, wbRotationScale, nil, RadiansNormalize),
+      wbUnknown
     ], cpNormal, True, nil, 10),
     wbStruct(INAM, 'Anim Change Thresholds', [
       wbFloat('Directional', cpNormal, True, 180/Pi),
       wbFloat('Movement Speed'),
       wbFloat('Rotation Speed', cpNormal, True, 180/Pi)
-    ])
+    ]),
+    wbUnknown(JNAM),
+    wbFloat(LNAM, 'Unknown')
   ]);
 
   wbRecord(SNDR, 'Sound Descriptor', [
