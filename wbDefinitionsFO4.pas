@@ -10120,6 +10120,9 @@ begin
   wbRecord(ARTO, 'Art Object', [
     wbEDID,
     wbOBNDReq,
+    wbPTRN,
+    wbKSIZ,
+    wbKWDAs,
     wbMODL,
     wbInteger(DNAM, 'Art Type', itU32, wbEnum([
       'Magic Casting',
