@@ -414,12 +414,20 @@ const
   MISC : TwbSignature = 'MISC';
   MLSI : TwbSignature = 'MLSI'; { New to Fallout 4 }
   MNAM : TwbSignature = 'MNAM';
+  MO2C : TwbSignature = 'MO2C'; { New to Fallout 4 }
+  MO2F : TwbSignature = 'MO2F'; { New to Fallout 4 }
   MO2S : TwbSignature = 'MO2S';
   MO2T : TwbSignature = 'MO2T';
+  MO3C : TwbSignature = 'MO3C'; { New to Fallout 4 }
+  MO3F : TwbSignature = 'MO3F'; { New to Fallout 4 }
   MO3S : TwbSignature = 'MO3S';
   MO3T : TwbSignature = 'MO3T';
+  MO4C : TwbSignature = 'MO4C'; { New to Fallout 4 }
+  MO4F : TwbSignature = 'MO4F'; { New to Fallout 4 }
   MO4S : TwbSignature = 'MO4S';
   MO4T : TwbSignature = 'MO4T';
+  MO5C : TwbSignature = 'MO5C'; { New to Fallout 4 }
+  MO5F : TwbSignature = 'MO5F'; { New to Fallout 4 }
   MO5S : TwbSignature = 'MO5S'; { New to Skyrim }
   MO5T : TwbSignature = 'MO5T'; { New to Skyrim }
   MOD2 : TwbSignature = 'MOD2';
@@ -866,6 +874,14 @@ var
   wbMO2S: IwbSubRecordDef;
   wbMO3S: IwbSubRecordDef;
   wbMO4S: IwbSubRecordDef;
+  wbMO2F: IwbSubRecordDef;
+  wbMO3F: IwbSubRecordDef;
+  wbMO4F: IwbSubRecordDef;
+  wbMO5F: IwbSubRecordDef;
+  wbMO2C: IwbSubRecordDef;
+  wbMO3C: IwbSubRecordDef;
+  wbMO4C: IwbSubRecordDef;
+  wbMO5C: IwbSubRecordDef;
   wbMODLActor: IwbSubRecordStructDef;
   wbMODLReq: IwbSubRecordStructDef;
   wbCTDA: IwbSubRecordStructDef;
@@ -5371,6 +5387,17 @@ begin
 
   wbMODC := wbUnknown(MODC);
   wbMODF := wbUnknown(MODF);
+
+  wbMO2F := wbUnknown(MO2F);
+  wbMO3F := wbUnknown(MO3F);
+  wbMO4F := wbUnknown(MO4F);
+  wbMO5F := wbUnknown(MO5F);
+
+  wbMO2C := wbUnknown(MO2C);
+  wbMO3C := wbUnknown(MO3C);
+  wbMO4C := wbUnknown(MO4C);
+  wbMO5C := wbUnknown(MO5C);
+
 	wbMODT := wbByteArray(MODT, 'Texture Files Hashes', 0, cpIgnore, false, false, wbNeverShow);
 	wbDMDT := wbByteArray(DMDT, 'Texture Files Hashes', 0, cpIgnore, false, false, wbNeverShow);
 
@@ -6630,7 +6657,7 @@ begin
 
   wbRecord(ARMA, 'Armor Addon', [
     wbEDID,
-    wbBODTBOD2,
+    wbBOD2,
     wbFormIDCk(RNAM, 'Race', [RACE]),
     wbStruct(DNAM, 'Data', [
       wbInteger('Male Priority', itU8),
@@ -6652,22 +6679,30 @@ begin
     wbRStruct('Male world model', [
       wbString(MOD2, 'Model Filename'),
       wbByteArray(MO2T, 'Texture Files Hashes', 0, cpIgnore, false, false, wbNeverShow),
-      wbMO2S
+      wbMO2S,
+      wbMO2C,
+      wbMO2F
     ], [], cpNormal, False),
     wbRStruct('Female world model', [
       wbString(MOD3, 'Model Filename'),
       wbByteArray(MO3T, 'Texture Files Hashes', 0, cpIgnore, false, false, wbNeverShow),
-      wbMO3S
+      wbMO3S,
+      wbMO3C,
+      wbMO3F
     ], []),
     wbRStruct('Male 1st Person', [
       wbString(MOD4, 'Model Filename'),
       wbByteArray(MO4T, 'Texture Files Hashes', 0, cpIgnore, false, false, wbNeverShow),
-      wbMO4S
+      wbMO4S,
+      wbMO4C,
+      wbMO4F
     ], []),
     wbRStruct('Female 1st Person', [
       wbString(MOD5, 'Model Filename'),
       wbByteArray(MO5T, 'Texture Files Hashes', 0, cpIgnore, false, false, wbNeverShow),
-      wbMO5S
+      wbMO5S,
+      wbMO5C,
+      wbMO5F
     ], []),
     wbFormIDCK(NAM0, 'Male Skin Texture', [TXST, NULL]),
     wbFormIDCK(NAM1, 'Female Skin texture', [TXST, NULL]),
@@ -6675,7 +6710,8 @@ begin
     wbFormIDCK(NAM3, 'Female Skin Texture Swap List', [FLST, NULL]),
     wbRArrayS('Additional Races', wbFormIDCK(MODL, 'Race', [RACE, NULL])),
     wbFormIDCk(SNDD, 'Footstep Sound', [FSTS, NULL]),
-    wbFormIDCk(ONAM, 'Art Object', [ARTO])
+    wbFormIDCk(ONAM, 'Art Object', [ARTO]),
+    wbBSMPSequence
   ], False, nil, cpNormal, False, wbARMAAfterLoad);
 
   wbRecord(BOOK, 'Book', [
