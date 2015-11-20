@@ -13640,7 +13640,23 @@ begin
   ]);
 
   wbRecord(SCCO, 'SCCO', [
-    wbEDID
+    wbEDID,
+    wbFormIDCk(QNAM, 'Quest', [QUST]),
+    wbRArray('Unknown',
+      wbRStruct('Unknown', [
+        wbFormIDCk(SNAM, 'Scene', [SCEN]),
+        wbStruct(XNAM, 'Unknown', [
+          wbInteger('Unknown', itS32),
+          wbInteger('Unknown', itS32)
+        ])
+      ], [])
+    ),
+    wbUnknown(VNAM, cpNormal, True),
+    wbRArray('Unknown', wbStruct(XNAM, 'Unknown', [
+      wbInteger('Unknown', itS32),
+      wbInteger('Unknown', itS32)
+    ])),
+    wbUnknown(VNAM, cpNormal, True)
   ]);
 
   wbRecord(SCSN, 'SCSN', [
