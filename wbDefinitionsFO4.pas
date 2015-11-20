@@ -9073,6 +9073,7 @@ begin
   wbRecord(CAMS, 'Camera Shot', [
     wbEDID,
     wbMODL,
+    wbCTDAs,
     wbStruct(DATA, 'Data', [
       {00} wbInteger('Action', itU32, wbEnum([
         'Shoot',
@@ -9108,7 +9109,8 @@ begin
       {28} wbFloat('Max Time'),
       {32} wbFloat('Min Time'),
       {36} wbFloat('Target % Between Actors'),
-      {40} wbFloat('Near Target Distance')
+      {40} wbFloat('Near Target Distance'),
+      wbUnknown
     ], cpNormal, True, nil, 8),
     wbFormIDCk(MNAM, 'Image Space Modifier', [IMAD])
   ]);
