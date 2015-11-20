@@ -9361,6 +9361,8 @@ begin
       'Auto Display'
     ]), cpNormal, True, False, nil, wbMESGDNAMAfterSet),
     wbInteger(TNAM, 'Display Time', itU32, nil, cpNormal, False, False, wbMESGTNAMDontShow),
+    wbLString(NNAM, 'Unknown'),
+    wbString(SNAM, 'Unknown'),
     wbRStructs('Menu Buttons', 'Menu Button', [
       wbLString(ITXT, 'Button Text'),
       wbCTDAs
