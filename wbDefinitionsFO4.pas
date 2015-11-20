@@ -10240,8 +10240,11 @@ begin
       'Should Appear on Menu'
     ]), cpNormal, True),
     wbFormIDCk(PNAM, 'Parent', [SNCT]),
+    wbFormIDCk(ONAM, 'Unknown', [SNCT]),
     wbInteger(VNAM, 'Static Volume Multiplier', itU16, wbDiv(65535)),
-    wbInteger(UNAM, 'Default Menu Value', itU16, wbDiv(65535))
+    wbInteger(UNAM, 'Default Menu Value', itU16, wbDiv(65535)),
+    wbFloat(MNAM, 'Unknown'),
+    wbUnknown(CNAM)
   ]);
 
   wbRecord(SOPM, 'Sound Output Model', [
