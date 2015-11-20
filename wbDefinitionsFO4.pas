@@ -284,6 +284,7 @@ const
   ENIT : TwbSignature = 'ENIT';
   EPF2 : TwbSignature = 'EPF2';
   EPF3 : TwbSignature = 'EPF3';
+  EPFB : TwbSignature = 'EPFB'; { New To Fallout 4 }
   EPFD : TwbSignature = 'EPFD';
   EPFT : TwbSignature = 'EPFT';
   EQUP : TwbSignature = 'EQUP';
@@ -8855,7 +8856,6 @@ begin
     wbVMAD,
     wbFULL,
     wbDESCReq,
-    wbICON,
     wbCTDAs,
     wbStruct(DATA, 'Data', [
       wbInteger('Trait', itU8, wbEnum(['False', 'True'])),
@@ -8864,7 +8864,9 @@ begin
       wbInteger('Playable', itU8, wbEnum(['False', 'True'])),
       wbInteger('Hidden', itU8, wbEnum(['False', 'True']))
     ], cpNormal, True),
+    wbFormIDCk(SNAM, 'UI Sound', [SNDR]),
     wbFormIDCK(NNAM, 'Next Perk', [PERK, NULL]),
+    wbString(FNAM, 'Unknown'),
 
     wbRStructsSK('Effects', 'Effect', [0, 1], [
       wbStructSK(PRKE, [1, 2, 0], 'Header', [
@@ -8931,6 +8933,8 @@ begin
         // 5: EPFD=SPEL
         // 6: EPFD=string
         // 7: EPFD=lstring
+
+        wbUnknown(EPFB),
         wbLString(EPF2, 'Button Label'),
         wbStruct(EPF3, 'Script Flags', [
           wbInteger('Script Flags', itU8, wbFlags([
@@ -8952,7 +8956,7 @@ begin
           {6} wbString('Text'),
           {7} wbLString('Text'),
           {8} wbStruct('Actor Value, Float', [
-                wbInteger('Actor Value', itU32, wbEPFDActorValueToStr, wbEPFDActorValueToInt),
+                wbActorValue, // wbInteger('Actor Value', itU32, wbEPFDActorValueToStr, wbEPFDActorValueToInt),
                 wbFloat('Float')
               ])
         ], cpNormal, False{, wbEPFDDontShow})
