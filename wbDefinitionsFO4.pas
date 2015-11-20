@@ -13584,8 +13584,19 @@ end;
 
 procedure DefineFO4s;
 begin
-  wbRecord(NOTE, 'NOTE', [
-    wbEDID
+  wbRecord(NOTE, 'Note', [
+    wbEDID,
+    wbVMAD,
+    wbOBND,
+    wbPTRN,
+    wbFULL,
+    wbMODL,
+    wbFormIDCk(YNAM, 'Sound - Pick Up', [SNDR]),
+    wbFormIDCk(ZNAM, 'Sound - Drop', [SNDR]),
+    wbUnknown(DNAM),
+    wbUnknown(DATA),
+    wbFormIDCk(SNAM, 'Unknown', [SCEN, TERM]),
+    wbString(PNAM, 'Game')
   ]);
 
   wbRecord(OMOD, 'OMOD', [
