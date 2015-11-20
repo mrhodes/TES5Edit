@@ -9185,9 +9185,10 @@ begin
     wbDODT,
     wbFormIDCk(DNAM, 'Texture Set', [TXST]),
     wbFormIDCk(ENAM, 'Secondary Texture Set', [TXST]),
-    wbFormIDCk(SNAM, 'Sound 1', [SNDR, SOUN, NULL]),
-    wbFormIDCk(NAM1, 'Sound 2', [SNDR, SOUN, NULL]),
-    wbFormIDCk(NAM2, 'Hazard', [HAZD, NULL])
+    wbFormIDCk(SNAM, 'Sound 1', [SNDR, NULL]),
+    wbFormIDCk(NAM1, 'Sound 2', [SNDR, NULL]),
+    wbFormIDCk(NAM2, 'Hazard', [HAZD, NULL]),
+    wbUnknown(FNAM)
   ]);
 
   wbRecord(IPDS, 'Impact Data Set', [
