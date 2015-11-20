@@ -357,6 +357,9 @@ const
   IPDS : TwbSignature = 'IPDS';
   ISIZ : TwbSignature = 'ISIZ'; { New To Fallout 4 }
   ITID : TwbSignature = 'ITID'; { New To Fallout 4 }
+  ITMC : TwbSignature = 'ITMC'; { New To Fallout 4 }
+  ITME : TwbSignature = 'ITME'; { New To Fallout 4 }
+  ITMS : TwbSignature = 'ITMS'; { New To Fallout 4 }
   ITXT : TwbSignature = 'ITXT';
   JAIL : TwbSignature = 'JAIL'; { New To Skyrim }
   JNAM : TwbSignature = 'JNAM';
@@ -10191,10 +10194,9 @@ begin
     wbRArray('Sounds',
       wbRStruct('Sound Files', [
         wbString(ANAM, 'File Name')
-      ],[])
+      ], [])
     ),
     wbFormIDCk(ONAM, 'Output Model', [SOPM, NULL]),
-    wbLString(FNAM, 'String', 0, cpIgnore),
     wbCTDAs,
     wbStruct(LNAM, 'Values', [
       wbByteArray('Unknown', 1),
@@ -10213,7 +10215,17 @@ begin
       wbInteger('Priority', itU8),
       wbInteger('db Variance', itU8),
       wbInteger('Static Attenuation (db)', itU16, wbDiv(100))
-    ])
+    ], cpNormal, False, nil, 4),
+    wbRArray('Layers', wbFormIDCk(DNAM, 'Layer', [SNDR])),
+    wbInteger(ITMC, 'Count', itU32, nil, cpBenign),
+    wbRArray('Unknown',
+      wbRStruct('Unknown', [
+        wbEmpty(ITMS, 'Marker Start'),
+        wbUnknown(INTV),
+        wbString(FNAM, 'Unknown'),
+        wbEmpty(ITME, 'Marker End')
+      ], [])
+    )
   ]);
 
   wbRecord(DUAL, 'Dual Cast Data', [
