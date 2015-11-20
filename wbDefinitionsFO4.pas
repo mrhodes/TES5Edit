@@ -10486,7 +10486,6 @@ begin
     wbKSIZ,
     wbKWDAs,
     wbMODL,
-    wbICON,
     wbDEST,
     wbETYP,
     wbFormIDCk(YNAM, 'Sound - Pick Up', [SNDR, SOUN]),
