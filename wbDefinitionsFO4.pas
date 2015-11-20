@@ -170,6 +170,7 @@ const
   ATKW : TwbSignature = 'ATKW'; { New To Fallout 4 }
   ATTX : TwbSignature = 'ATTX'; { New To Fallout 4 }
   ATXT : TwbSignature = 'ATXT';
+  AVFL : TwbSignature = 'AVFL'; { New To Fallout 4 }
   AVIF : TwbSignature = 'AVIF';
   AVSK : TwbSignature = 'AVSK'; { New to Skyrim }
   BAMT : TwbSignature = 'BAMT'; { New to Skyrim }
@@ -9063,27 +9064,10 @@ begin
     wbEDID,
     wbFULL,
     wbDESCReq,
-    wbString(ANAM, 'Abbreviation'),
-    wbUnknown(CNAM),
-    wbStruct(AVSK, 'Skill', [
-      wbFloat('Skill Use Mult'),
-      wbFloat('Skill Offset Mult'),
-      wbFloat('Skill Improve Mult'),
-      wbFloat('Skill Improve Offset')
-    ]),
-    wbRArray('Perk Tree',
-      wbRStruct('Node', [
-        wbFormIDCk(PNAM, 'Perk', [PERK, NULL]),
-        wbUnknown(FNAM),
-        wbInteger(XNAM, 'Perk-Grid X', itU32),
-        wbInteger(YNAM, 'Perk-Grid Y', itU32),
-        wbFloat(HNAM, 'Horizontal Position'),
-        wbFloat(VNAM, 'Vertical Position'),
-        wbFormIDCk(SNAM, 'Associated Skill', [AVIF, NULL]),
-        wbRArray('Connections', wbInteger(CNAM, 'Line to Index', itU32)),
-        wbInteger(INAM, 'Index', itU32)
-      ], [])
-    )
+    wbLString(ANAM, 'Abbreviation'),
+    wbUnknown(NAM0),
+    wbUnknown(AVFL),
+    wbUnknown(NAM1)
   ]);
 
   wbRecord(CAMS, 'Camera Shot', [
