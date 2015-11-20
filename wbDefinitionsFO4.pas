@@ -347,6 +347,8 @@ const
   LCTN : TwbSignature = 'LCTN';
   LCUN : TwbSignature = 'LCUN'; { New to Skyrim }
   LENS : TwbSignature = 'LENS'; { New to Fallout 4 }
+  LFSD : TwbSignature = 'LFSD'; { New to Fallout 4 }
+  LFSP : TwbSignature = 'LFSP'; { New to Fallout 4 }
   LGTM : TwbSignature = 'LGTM';
   LIGH : TwbSignature = 'LIGH';
   LLCT : TwbSignature = 'LLCT'; {New to Skyrim, part of LVLI 'Count'}
@@ -13532,8 +13534,18 @@ begin
     wbFormIDCk(PNAM, 'Parent', [LAYR])
   ]);
 
-  wbRecord(LENS, 'LENS', [
-    wbEDID
+  wbRecord(LENS, 'Lens Flare', [
+    wbEDID,
+    wbFloat(CNAM),
+    wbFloat(DNAM),
+    wbInteger(LFSP, 'Count', itU32),
+    wbRArray('Flares',
+      wbRStruct('Flare', [
+        wbString(DNAM, 'Shape'),
+        wbString(FNAM, 'Texture'),
+        wbUnknown(LFSD)
+      ], [])
+    )
   ]);
 
   wbRecord(LSPR, 'LSPR', [
