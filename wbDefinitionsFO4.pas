@@ -7638,23 +7638,8 @@ begin
     wbEffectsReq
   ]);
 
-  wbRecord(EYES, 'Eyes',
-    wbFlags(wbRecordFlagsFlags, wbFlagsList([
-      {0x00000004}  2, 'Non-Playable'
-    ])), [
-    wbEDID,
-    wbFULLReq,
-    wbString(ICON, 'Texture', 0, cpNormal, True),
-    wbInteger(DATA, 'Flags', itU8, wbFlags([
-      {0x01}'Playable',
-      {0x02}'Not Male',
-      {0x04}'Not Female',
-      {0x08}'Unknown 4',
-      {0x10}'Unknown 5',
-      {0x20}'Unknown 6',
-      {0x40}'Unknown 7',
-      {0x80}'Unknown 8'
-    ]), cpNormal, True)
+  wbRecord(EYES, 'Eyes', [
+    wbEDID
   ]);
 
   wbRecord(FACT, 'Faction', [
@@ -8083,28 +8068,9 @@ begin
     {5} 'Grand'
   ]);
 
-  wbRecord(SLGM, 'Soul Gem',
-    wbFlags(wbRecordFlagsFlags, wbFlagsList([
-      {0x00020000} 17, 'Can Hold NPC Soul'
-    ])), [
-    wbEDID,
-    wbOBND,
-    wbFULL,
-    wbMODL,
-    wbICON,
-    wbDEST,
-    wbFormIDCk(YNAM, 'Sound - Pick Up', [SNDR, SOUN]),
-    wbFormIDCk(ZNAM, 'Sound - Drop', [SNDR, SOUN]),
-    wbKSIZ,
-    wbKWDAs,
-    wbStruct(DATA, '', [
-      wbInteger('Value', itU32),
-      wbFloat('Weight')
-    ], cpNormal, True),
-    wbInteger(SOUL, 'Contained Soul', itU8, wbSoulGemEnum, cpNormal, True),
-    wbInteger(SLCP, 'Maximum Capacity', itU8, wbSoulGemEnum, cpNormal, True),
-    wbFormIDCk(NAM0, 'Linked To', [SLGM])
-  ], False, nil, cpNormal, False, nil, wbKeywordsAfterSet);
+  wbRecord(SLGM, 'Soul Gem', [
+    wbEDID
+  ]);
 
   if wbSimpleRecords then begin
 
@@ -9693,27 +9659,11 @@ begin
   ]);
 
   wbRecord(WOOP, 'Word of Power', [
-    wbEDID,
-    wbFULL,
-    wbLString(TNAM, 'Translation', 0, cpNormal, True)
+    wbEDID
   ]);
 
-  wbRecord(SHOU, 'Shout',
-    wbFlags(wbRecordFlagsFlags, wbFlagsList([
-      {0x00000080}  7, 'Treat spells as powers'
-    ])), [
-    wbEDID,
-    wbFULL,
-    wbMDOB,
-    wbDESC,
-    {>>> Don't sort <<<}
-    wbRArray('Words of Power',
-      wbStruct(SNAM, '', [
-        wbFormIDCk('Word', [WOOP, NULL]),
-        wbFormIDCk('Spell', [SPEL, NULL]),
-        wbFloat('Recovery Time')
-      ])
-    )
+  wbRecord(SHOU, 'Shout', [
+    wbEDID
   ]);
 
   wbRecord(EQUP, 'Equip Type', [
@@ -10001,20 +9951,7 @@ begin
   ]);
 
   wbRecord(DUAL, 'Dual Cast Data', [
-    wbEDID,
-    wbOBNDReq,
-    wbStruct(DATA, 'Data', [
-      wbFormIDCk('Projectile', [PROJ, NULL]),
-      wbFormIDCk('Explosion', [EXPL, NULL]),
-      wbFormIDCk('Effect Shader', [EFSH, NULL]),
-      wbFormIDCk('Hit Effect Art', [ARTO, NULL]),
-      wbFormIDCk('Impact Data Set', [IPDS, NULL]),
-      wbInteger('Inherit Scale', itU32, wbFlags([
-        'Hit Effect Art',
-        'Projectile',
-        'Explosion'
-      ]))
-    ], cpNormal, True)
+    wbEDID
   ]);
 
   wbRecord(SNCT, 'Sound Category', [
@@ -10558,28 +10495,9 @@ begin
     )
   ], False, nil, cpNormal, False, nil, wbLLEAfterSet);
 
-   wbRecord(LVSP, 'Leveled Spell', [
-    wbEDID,
-    wbOBNDReq,
-    wbLVLD,
-    wbInteger(LVLF, 'Flags', itU8, wbFlags([
-      {0x01} 'Calculate from all levels <= player''s level',
-      {0x02} 'Calculate for each item in count',
-      {0x04} 'Use All Spells'
-    ]), cpNormal, True),
-    wbLLCT,
-    wbRArrayS('Leveled List Entries',
-      wbRStructSK([0], 'Leveled List Entry', [
-        wbStructExSK(LVLO , [0, 2], [3], 'Base Data', [
-        wbInteger('Level', itU16),
-        wbByteArray('Unknown', 2, cpIgnore, false, wbNeverShow),
-        wbFormIDCk('Reference', [SPEL, LVSP]),
-        wbInteger('Count', itU16),
-        wbByteArray('Unknown', 2, cpIgnore, false, wbNeverShow)
-      ])
-      ], []), cpNormal, False, nil, wbLVLOsAfterSet
-    )
-  ], False, nil, cpNormal, False, nil, wbLLEAfterSet);
+  wbRecord(LVSP, 'Leveled Spell', [
+    wbEDID
+  ]);
 
   wbMGEFType := wbInteger('Archtype', itU32, wbEnum([
     {00} 'Value Modifier',
@@ -12709,25 +12627,8 @@ begin
   ], False, nil, cpNormal, False, nil, wbKeywordsAfterSet);
 
   wbRecord(SCRL, 'Scroll', [
-    wbEDID,
-    wbOBNDReq,
-    wbFULL,
-    wbKSIZ,
-    wbKWDAs,
-    wbMDOB,
-    wbETYP,
-    wbDESC,
-    wbMODL,
-    wbDEST,
-    wbFormIDCk(YNAM, 'Sound - Pick Up', [SNDR, SOUN]),
-    wbFormIDCk(ZNAM, 'Sound - Drop', [SNDR, SOUN]),
-    wbStruct(DATA, 'Item', [
-      wbInteger('Value', itU32),
-      wbFloat('Weight')
-    ], cpNormal, True),
-    wbSPIT,
-    wbEffectsReq
-  ], False, nil, cpNormal, False, nil, wbKeywordsAfterSet);
+    wbEDID
+  ]);
 
   wbRecord(STAT, 'Static',
     wbFlags(wbRecordFlagsFlags, [
