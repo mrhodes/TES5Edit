@@ -9316,7 +9316,8 @@ begin
     wbFormIDCk(FNAM, 'Unreported Crime Faction', [FACT]),
     wbFormIDCk(MNAM, 'World Location Marker Ref', [REFR, ACHR]),
     wbFloat(RNAM, 'World Location Radius'),
-    wbFormIDCk(NAM0, 'Horse Marker Ref', [REFR]),
+    //wbFormIDCk(NAM0, 'Horse Marker Ref', [REFR]),
+    wbFloat(ANAM, 'Unknown'),
     wbCNAM
   ], False, nil, cpNormal, False, nil, wbKeywordsAfterSet);
 
