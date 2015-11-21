@@ -7990,10 +7990,15 @@ begin
       {0x40000000} 30, 'NavMesh Generation - Ground'
     ])), [
     wbEDID,
+    wbVMAD,
     wbOBNDReq,
+    wbPTRN,
     wbFULL,
     wbMODL,
     wbDEST,
+    wbKSIZ,
+    wbKWDAs,
+    wbPRPS,
     wbInteger(DATA, 'Flags', itU8, wbFlags([
       'On Local Map',
       'Unknown 2'
