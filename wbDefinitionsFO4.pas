@@ -7785,17 +7785,24 @@ begin
     wbEDID,
     wbVMAD,
     wbOBNDReq,
+    wbPTRN,
     wbFULL,
     wbMODL,
     wbDEST,
     wbKSIZ,
     wbKWDAs,
+    wbPRPS,
+    wbFTYP,
     wbUnknown(PNAM),
+    wbATTX,
     wbInteger(FNAM, 'Flags', itU16, wbFlags([
       {0x0001} 'Unknown 0',
       {0x0002} 'Ignored By Sandbox'
     ])),
-    wbFormIDCk(KNAM, 'Interaction Keyword', [KYWD, NULL]),
+    wbCITC,
+    wbCTDAsCount,
+    wbCOCT,
+    wbCNTOs,
     wbInteger(MNAM, 'Active Markers / Flags', itU32, wbFlags([
       {0x00000001} 'Sit 0',
       {0x00000002} 'Sit 1',
@@ -7842,21 +7849,25 @@ begin
         {7} 'Smithing Armor'
       ])),
       wbInteger('Uses Skill', itS8, wbSkillEnum)
-    ]),
-    wbFormIDCk(NAM1, 'Associated Spell', [SPEL]),
+    ], cpNormal, True, nil, 1),
+    wbFormIDCk(NAM1, 'Associated weapon', [WEAP]),
     wbRArray('Markers', wbRStruct('Marker', [
       wbInteger(ENAM, 'Marker Index', itU32),
       wbStruct(NAM0, 'Disabled Entry Points', [
         wbByteArray('Unknown', 2),
         wbInteger('Disabled Points', itU16, wbFurnitureEntryTypeFlags)
-      ]),
-      wbFormIDCk(FNMK, 'Marker Keyword', [KYWD, NULL])
+      ])
+      //wbFormIDCk(FNMK, 'Marker Keyword', [KYWD, NULL])
     ], [])),
     wbRArray('Marker Entry Points', wbStruct(FNPR, 'Marker', [
       wbInteger('Type', itU16, wbFurnitureAnimTypeEnum),
       wbInteger('Entry Points', itU16, wbFurnitureEntryTypeFlags)
     ])),
-    wbString(XMRK, 'Model Filename')
+    wbString(XMRK, 'Model Filename'),
+    wbUnknown(SNAM),
+    wbUnknown(NVNM),
+    wbAPPR,
+    wbOBTESequence
   ], False, nil, cpNormal, False, nil, wbKeywordsAfterSet);
 
 //----------------------------------------------------------------------------
