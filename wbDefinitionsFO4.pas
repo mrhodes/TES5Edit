@@ -6436,26 +6436,25 @@ begin
     ])), [
     wbEDID,
     wbOBNDReq,
+    wbPTRN,
     wbFULL,
     wbMODL,
-    wbICON,
     wbDEST,
-    wbFormIDCk(YNAM, 'Sound - Pick Up', [SNDR, SOUN]),
-    wbFormIDCk(ZNAM, 'Sound - Drop', [SNDR, SOUN]),
+    wbFormIDCk(YNAM, 'Sound - Pick Up', [SNDR]),
+    wbFormIDCk(ZNAM, 'Sound - Drop', [SNDR]),
     wbDESC,
     wbKSIZ,
     wbKWDAs,
-    wbStruct(DATA, 'Data', [
+    wbUnknown(DATA),
+    wbStruct(DNAM, '', [
       wbFormIDCk('Projectile', [PROJ, NULL]),
-        wbInteger('Flags', itU32, wbFlags([
-          'Ignores Normal Weapon Resistance',
-          'Non-Playable',
-          'Non-Bolt'
-        ])),
-      wbFloat('Damage'),
-      wbInteger('Value', itU32)
-    ], cpNormal, True),
-    wbString(ONAM, 'Short Name')
+      wbByteArray('Unknown', 4),
+      wbByteArray('Unknown', 4),
+      wbByteArray('Unknown', 4)
+    ]),
+    wbLString(ONAM, 'Unknown'),
+    wbString(NAM1, 'Casing Model'),
+    wbUnknown(NAM2)
   ], False, nil, cpNormal, False, wbRemoveEmptyKWDA, wbKeywordsAfterSet);
 
   wbRecord(ANIO, 'Animated Object',
