@@ -71,6 +71,7 @@ uses
   wbDefinitionsFNVSaves,
   wbDefinitionsFO3,
   wbDefinitionsFO3Saves,
+  wbDefinitionsFO4,
   wbDefinitionsTES3,
   wbDefinitionsTES4,
   wbDefinitionsTES4Saves,
@@ -220,9 +221,9 @@ end;
 
 function CheckAppPath: string;
 const
-  //gmFNV, gmFO3, gmTES3, gmTES4, gmTES5
+  //gmFNV, gmFO3, gmTES3, gmTES4, gmTES5, gmFO4
   ExeName : array[TwbGameMode] of string =
-    ('FalloutNV.exe', 'Fallout3.exe', 'Morrowind.exe', 'Oblivion.exe', 'TESV.exe');
+    ('FalloutNV.exe', 'Fallout3.exe', 'Morrowind.exe', 'Oblivion.exe', 'TESV.exe', 'Fallout4.exe');
 var
   s: string;
 begin
@@ -435,6 +436,7 @@ var
 begin
   Result := False;
   // there is a game specific script provided to execute
+  // go into 'script' tool mode and detect game mode by script's extension
   i := 1;
   if wbFindCmdLineParam('script', s) or wbFindNextValidCmdLineFileName(i, s) then begin
     if not FileExists(s) then
@@ -539,6 +541,19 @@ begin
       ShowMessage('Application '+wbGameName+' does not currently support '+wbSourceName);
       Exit;
     end;
+  end else if isMode('FO4') then begin
+    wbGameMode := gmFO4;
+    wbAppName := 'FO4';
+    wbGameName := 'Fallout4';
+    wbArchiveExtension := '.ba2';
+    if not (wbToolMode in wbAlwaysMode) and not (wbToolMode in [tmTranslate]) then begin
+      ShowMessage('Application '+wbGameName+' does not currently support '+wbToolName);
+      Exit;
+    end;
+    if not (wbToolSource in [tsPlugins]) then begin
+      ShowMessage('Application '+wbGameName+' does not currently support '+wbSourceName);
+      Exit;
+    end;
   end else if isMode('TES3') then begin
     wbGameMode := gmTES3;
     wbAppName := 'TES3';
@@ -576,7 +591,7 @@ begin
       Exit;
     end;
   end else begin
-    ShowMessage('Application name must contain FNV, FO3, TES4 or TES5 to select game.');
+    ShowMessage('Application name must contain FNV, FO3, FO4, TES4 or TES5 to select game.');
     Exit;
   end;
   if (wbToolSource = tsSaves) and (wbToolMode = tmEdit) then begin
@@ -594,6 +609,12 @@ begin
     wbVWDInTemporary := True;
     wbLoadBSAs := False;
     ReadSettings;
+  end else if wbGameMode = gmFO4 then begin
+    wbVWDInTemporary := True;
+    wbVWDAsQuestChildren := True;
+    wbHideIgnored := False; // to show Form Version
+    ReadSettings;
+    //wbCreateContainedIn := False;
   end else if wbGameMode = gmTES3 then begin
     wbLoadBSAs := False;
     wbAllowInternalEdit := false;
@@ -620,6 +641,9 @@ begin
       tsSaves:   DefineFO3Saves;
       tsPlugins: DefineFO3;
     end;
+    gmFO4:  case wbToolSource of
+      tsPlugins: DefineFO4;
+    end;
     gmTES3: case wbToolSource of
       tsPlugins: DefineTES3;
     end;
@@ -632,13 +656,23 @@ begin
       tsPlugins: DefineTES5;
     end
   else
-    ShowMessage('Application name must contain FNV, FO3, TES4 or TES5 to select game.');
+    ShowMessage('Application name must contain FNV, FO3, TES4, TES5 or FO4 to select game.');
     Exit;
   end;
 
-  wbLanguage := 'English';
+  case wbGameMode of
+    gmTES5:
+      wbLanguage := 'English';
+    gmFO4:
+      wbLanguage := 'En';
+  end;
   if wbFindCmdLineParam('l', s) then
     wbLanguage := s;
+
+  if wbFindCmdLineParam('cp', s) then begin
+    if SameText(s, 'utf-8') then
+      wbStringEncoding := seUTF8;
+  end;
 
   if FindCmdLineSwitch('speed') then
     wbSpeedOverMemory := True;

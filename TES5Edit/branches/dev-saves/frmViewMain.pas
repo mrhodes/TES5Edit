@@ -2609,7 +2609,7 @@ var
   LastLoadOrder   : Integer;
   i               : Integer;
 begin
-  if wbGameMode in [gmTES5] then begin
+  if wbGameMode in [gmTES5, gmFO4] then begin
     if MessageDlg('Merged patch is unsupported for ' + wbGameName +
       '. Create it only if you know what you are doing and can troubleshoot possible issues yourself. ' +
       'Do you want to continue?',
@@ -3263,8 +3263,10 @@ procedure TfrmMain.DoInit;
         // even if not present in plugins.txt
         j := FindMatchText(sl, wbGameName+'.esm');
         if j = -1 then sl.Insert(0, wbGameName+'.esm');
-        j := FindMatchText(sl, 'Update.esm');
-        if j = -1 then sl.Insert(1, 'Update.esm');
+        if wbGameMode = gmTES5 then begin
+          j := FindMatchText(sl, 'Update.esm');
+          if j = -1 then sl.Insert(1, 'Update.esm');
+        end;
 
         s := ExtractFilePath(wbPluginsFileName) + 'loadorder.txt';
         if FileExists(s) then begin
@@ -3458,6 +3460,7 @@ begin
           tsSaves: begin
             case wbGameMode of
               gmFO3:  begin saveExt := '.fos'; coSaveExt := '.fose'; end;
+              gmFO4:  begin saveExt := '.fos'; coSaveExt := '';      end;
               gmFNV:  begin saveExt := '.fos'; coSaveExt := '.nvse'; end;
               gmTES3: begin saveExt := '.ess'; coSaveExt := '';      end;
               gmTES4: begin saveExt := '.ess'; coSaveExt := '.obse'; end;
@@ -3494,7 +3497,7 @@ begin
         end;
 
         if not wbQuickClean then
-          if (wbToolMode in wbPluginModes) and (sl.Count > 1) and (wbGameMode in [gmTES4, gmFO3, gmFNV, gmTES5]) then begin
+          if (wbToolMode in wbPluginModes) and (sl.Count > 1) and (wbGameMode in [gmTES4, gmFO3, gmFO4, gmFNV, gmTES5]) then begin
               j := CheckListBox1.Items.IndexOf(wbPluginToUse);
               if j < 0 then begin
                 ShowMessage('Selected plugin "' + wbPluginToUse + '" does not exist');  // which we checked previously anyway :(
@@ -4398,7 +4401,7 @@ begin
             if not AutoModeCheckForDR then begin
               IsDeleted := True;
               IsDeleted := False;
-              if (wbGameMode in [gmFO3, gmFNV, gmTES5]) and ((Signature = 'ACHR') or (Signature = 'ACRE')) then
+              if (wbGameMode in [gmFO3, gmFO4, gmFNV, gmTES5]) and ((Signature = 'ACHR') or (Signature = 'ACRE')) then
                 IsPersistent := True
               else if wbGameMode = gmTES4 then
                 IsPersistent := False;
@@ -11551,7 +11554,7 @@ begin
      Assigned(Element) and
     (Element.ElementType = etFile);
 
-  mniNavLocalization.Visible := (wbGameMode = gmTES5);
+  mniNavLocalization.Visible := (wbGameMode in [gmTES5, gmFO4]);
   mniNavLocalizationSwitch.Visible :=
      Assigned(Element) and
     (Element.ElementType = etFile) and
@@ -11562,7 +11565,7 @@ begin
     else
       mniNavLocalizationSwitch.Caption := 'Localize plugin';
 
-  if wbGameMode = gmTES5 then begin
+  if wbGameMode in [gmTES5, gmFO4] then begin
     mniNavLocalizationLanguage.Clear;
     sl := wbLocalizationHandler.AvailableLanguages;
     for i := 0 to Pred(sl.Count) do begin
@@ -12774,6 +12777,8 @@ begin
       ShellExecute(Handle, 'open', 'https://flattr.com/thing/77985/TES4Edit-Editor-for-The-Elder-Scrolls-IV-Oblivion', '', '', 0);
     gmFO3:
       ShellExecute(Handle, 'open', 'https://flattr.com/thing/77983/FO3Edit-Editor-for-Fallout-3', '', '', 0);
+    gmFO4:
+      ShellExecute(Handle, 'open', 'https://flattr.com/thing/77983/FO3Edit-Editor-for-Fallout-3', '', '', 0);
     gmFNV:
       ShellExecute(Handle, 'open', 'https://flattr.com/thing/77972/FNVEdit-Editor-for-Fallout-New-Vegas', '', '', 0);
     gmTES5:
@@ -13112,7 +13117,7 @@ var
   i, j                        : Integer;
 const
   SiteName : array[TwbGameMode] of string =
-    ('Fallout3', 'NewVegas', 'Oblivion', 'Oblivion', 'Skyrim');
+    ('Fallout3', 'NewVegas', 'Oblivion', 'Oblivion', 'Skyrim', 'Fallout4');
 begin
   if not wbLoaderDone then
     Exit;
@@ -16070,7 +16075,7 @@ begin
                 // All games prior to Skyrim load BSA files with partial matching, Skyrim requires exact names match and
                 //   can use a private ini to specify the bsa to use.
                 if HasBSAs(ChangeFileExt(ltLoadList[i], ''), ltDataPath,
-                    wbGameMode in [gmTES5], wbGameMode in [gmTES5], n, m)>0 then begin
+                    wbGameMode in [gmFO4, gmTES5], wbGameMode in [gmTES5], n, m)>0 then begin
                       for j := 0 to Pred(n.Count) do
                         if wbLoadBSAs then begin
                           LoaderProgress('[' + n[j] + '] Loading Resources.');

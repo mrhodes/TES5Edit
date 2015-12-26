@@ -932,9 +932,18 @@ begin
       with TStringList.Create do try
         if wbGameMode in [gmTES4, gmFO3, gmFNV] then
           Text := StringReplace(ReadString('Archive', 'sArchiveList', ''), ',' ,#10, [rfReplaceAll])
-        else
+        else if wbGameMode = gmTES5 then
           Text := StringReplace(
-            ReadString('Archive', 'sResourceArchiveList', '') + ',' + ReadString('Archive', 'sResourceArchiveList2', ''),
+            ReadString('Archive', 'sResourceArchiveList', '') + ',' +
+            ReadString('Archive', 'sResourceArchiveList2', ''),
+            ',', #10, [rfReplaceAll]
+          )
+        else if wbGameMode = gmFO4 then
+          Text := StringReplace(
+            ReadString('Archive', 'sResourceIndexFileList', '') + ',' +
+            ReadString('Archive', 'sResourceStartUpArchiveList', '') + ',' +
+            ReadString('Archive', 'sResourceArchiveList', '') + ',' +
+            ReadString('Archive', 'sResourceArchiveList2', ''),
             ',', #10, [rfReplaceAll]
           );
         for i := 0 to Pred(Count) do begin

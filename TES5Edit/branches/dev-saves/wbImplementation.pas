@@ -2266,7 +2266,9 @@ begin
   else if wbGameMode = gmTES4 then
     Header.RecordBySignature['HEDR'].Elements[0].EditValue := '1.0'
   else if wbGameMode = gmTES5 then
-    Header.RecordBySignature['HEDR'].Elements[0].EditValue := '1.7';
+    Header.RecordBySignature['HEDR'].Elements[0].EditValue := '1.7'
+  else if wbGameMode = gmFO4 then
+    Header.RecordBySignature['HEDR'].Elements[0].EditValue := '0.95';
   Header.RecordBySignature['HEDR'].Elements[2].EditValue := '2048';
   flLoadFinished := True;
 end;
@@ -3221,7 +3223,7 @@ begin
   SortRecordsByEditorID;
   flProgress('EditorID index built');
 
-  if wbGameMode in [gmFNV, gmTES5] then begin
+  if wbGameMode in [gmFNV, gmTES5, gmFO4] then begin
     IsInternal := not GetIsEditable and wbBeginInternalEdit(True);
     try
       SetLength(Groups, wbGroupOrder.Count);
@@ -5349,7 +5351,7 @@ begin
             with TwbMainRecord(MainRecord.ElementID) do begin
               Self.mrStruct.mrsFlags := mrStruct.mrsFlags;
               Self.mrStruct.mrsVCS1 := DefaultVCS1;
-              if wbGameMode in [gmFO3, gmFNV, gmTES5] then begin
+              if wbGameMode in [gmFO3, gmFNV, gmTES5, gmFO4] then begin
                 Self.mrStruct.mrsVersion := mrStruct.mrsVersion;
                 Self.mrStruct.mrsVCS2 := DefaultVCS2; //mrStruct.mrsVCS2;
               end;
@@ -5799,10 +5801,13 @@ begin
   BasePtr.mrsFlags._Flags := 0;
   BasePtr.mrsFormID := aFormID;
   BasePtr.mrsVCS1 := DefaultVCS1;
-  if wbGameMode >= gmTES5 then
-    BasePtr.mrsVersion := 43
-  else
-    BasePtr.mrsVersion := 15;
+  case wbGameMode of
+    gmFO4 : BasePtr.mrsVersion := 131;
+    gmTES5: BasePtr.mrsVersion := 43;
+    gmFNV : BasePtr.mrsVersion := 15;
+    gmFO3 : BasePtr.mrsVersion := 15;
+    else    BasePtr.mrsVersion := 15;
+  end;
   BasePtr.mrsVCS2 := DefaultVCS2;
 
   Group := nil;
@@ -11393,7 +11398,8 @@ begin
   Include(grStates, gsSorting);
   try
     ChildrenOf := GetChildrenOf;
-    if Assigned(ChildrenOf) and (ChildrenOf.Signature = 'DIAL') then begin
+    // there is no PNAM in Fallout 4, looks like INFOs are no longer linked lists
+    if (wbGameMode <> gmFO4) and Assigned(ChildrenOf) and (ChildrenOf.Signature = 'DIAL') then begin
       {>>> Sorting DIAL group doesn't always work, and Skyrim.esm has a plenty of unsorted DIALs <<<}
       {>>> Also disabled for FNV, https://code.google.com/p/skyrim-plugin-decoding-project/issues/detail?id=59 <<<}
       if not wbSortGroupRecord then

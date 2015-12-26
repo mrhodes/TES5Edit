@@ -39,6 +39,7 @@ uses
   wbDefinitionsFNVSaves in 'wbDefinitionsFNVSaves.pas',
   wbDefinitionsFO3 in 'wbDefinitionsFO3.pas',
   wbDefinitionsFO3Saves in 'wbDefinitionsFO3Saves.pas',
+  wbDefinitionsFO4 in 'wbDefinitionsFO4.pas',
   wbDefinitionsTES3 in 'wbDefinitionsTES3.pas',
   wbDefinitionsTES4 in 'wbDefinitionsTES4.pas',
   wbDefinitionsTES4Saves in 'wbDefinitionsTES4Saves.pas',
@@ -757,9 +758,9 @@ end;
 
 function CheckAppPath: string;
 const
-  //gmFNV, gmFO3, gmTES3, gmTES4, gmTES5
+  //gmFNV, gmFO3, gmTES3, gmTES4, gmTES5, gmFO4
   ExeName : array[TwbGameMode] of string =
-    ('Fallout3.exe', 'FalloutNV.exe', 'Morrowind.exe', 'Oblivion.exe', 'TESV.exe');
+    ('Fallout3.exe', 'FalloutNV.exe', 'Morrowind.exe', 'Oblivion.exe', 'TESV.exe', 'Fallout4.exe');
 var
   s: string;
 begin
@@ -923,6 +924,21 @@ begin
         tsSaves:   DefineFO3Saves;
         tsPlugins: DefineFO3;
       end;
+    end else if isMode('FO4') then begin
+      wbGameMode := gmFO4;
+      wbAppName := 'FO4';
+      wbGameName := 'Fallout4';
+      wbLoadBSAs := False;
+      wbCreateContainedIn := False;
+      if not (wbToolMode in [tmDump, tmExport]) then begin
+        WriteLn(ErrOutput, 'Application '+wbGameName+' does not currently supports '+wbToolName);
+        Exit;
+      end;
+      if not (wbToolSource in [tsPlugins]) then begin
+        WriteLn(ErrOutput, 'Application '+wbGameName+' does not currently supports '+wbSourceName);
+        Exit;
+      end;
+      DefineFO4;
     end else if isMode('TES3') then begin
       WriteLn(ErrOutput, 'TES3 - Morrowind is not supported yet.');
       Exit;
@@ -1088,12 +1104,14 @@ begin
       DumpForms.Free;
     end;
 
-    if wbFindCmdLineParam('l', s) and (wbGameMode in [gmTES5]) then
+    if wbFindCmdLineParam('l', s) and (wbGameMode in [gmTES5, gmFO4]) then
       wbLanguage := s
     else
       case wbGameMode of
         gmTES5:
           wbLanguage := 'English';
+        gmFO4:
+          wbLanguage := 'En';
       end;
     if wbFindCmdLineParam('bts', s) then
       wbBytesToSkip := StrToInt64Def(s, wbBytesToSkip);
@@ -1157,7 +1175,7 @@ begin
       WriteLn(ErrOutput, '-q           ', 'Suppress version message');
       WriteLn(ErrOutput, '-more        ', 'Displays aditional information on Unknowns');
       WriteLn(ErrOutput, '-l:language  ', 'Specifies language for localization files (since TES5)');
-      WriteLn(ErrOutput, '             ', '  Default language is English');
+      WriteLn(ErrOutput, '             ', '  Default language is English for TES5 and En for FO4');
       WriteLn(ErrOutput, '-bsa         ', 'Loads default associated BSAs');
       WriteLn(ErrOutput, '             ', ' (plugin.bsa and plugin - interface.bsa)');
       WriteLn(ErrOutput, '-allbsa      ', 'Loads all associated BSAs (plugin*.bsa)');
@@ -1192,7 +1210,7 @@ begin
       WriteLn(ErrOutput, '             ', '    1001 is the ID of Papyrus data the largest part of the save.');
       WriteLn(ErrOutput, '             ', '');
       WriteLn(ErrOutput, 'Example: full dump of Skyrim.esm excluding "bloated" records');
-      WriteLn(ErrOutput, '  TES5Dump.exe -xr:NAVI,NAVM,WRLD,CELL,LAND,REFR,ACHR Skyrim.esm');
+      WriteLn(ErrOutput, '  TES5Dump.exe -FO4 -xr:NAVI,NAVM,WRLD,CELL,LAND,REFR,ACHR Fallout4.esm');
       WriteLn(ErrOutput, '             ', '');
       WriteLn(ErrOutput, 'Currently supported export formats:');
       WriteLn(ErrOutput, 'RAW          ','Private format for debugging');
