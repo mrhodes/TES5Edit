@@ -5358,7 +5358,7 @@ begin
         end;
 
         if Supports(Self.GetContainer, IwbGroupRecord, GroupRecord) then
-          if GroupRecord.GroupType in [1, 4..10] then
+          if wbCreateContainedIn and (GroupRecord.GroupType in [1, 4..10]) then
             with TwbContainedInElement.Create(Self) do begin
               _AddRef; _Release;
             end;
