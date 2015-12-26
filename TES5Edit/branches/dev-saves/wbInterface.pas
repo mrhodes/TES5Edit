@@ -1693,12 +1693,21 @@ type
       read GetFileName;
   end;
 
+  IwbBA2File = interface(IwbResourceContainer)
+    ['{D05EAAEC-8A23-4CDD-83E4-7593AC846CE3}']
+    function GetFileName: string;
+
+    property FileName: string
+      read GetFileName;
+  end;
+
   TDynResources = array of IwbResource;
 
   IwbContainerHandler = interface(IInterface)
     ['{0CC80043-EADC-4C7D-8677-8719735582C7}']
     procedure AddFolder(const aPath: string);
     procedure AddBSA(const aFileName: string);
+    procedure AddBA2(const aFileName: string);
 
     function OpenResource(const aFileName: string): TDynResources;
     function ResolveHash(const aHash: Int64): TDynStrings;
@@ -3008,6 +3017,7 @@ var
   wbGroupOrder       : TStringList;
   wbLoadBSAs         : Boolean{} = True{};
   wbLoadAllBSAs      : Boolean{} = False{};
+  wbArchiveExtension : string = '.bsa';
   wbBuildRefs        : Boolean{} = True{};
   wbContainerHandler : IwbContainerHandler;
   wbLoaderDone       : Boolean;
