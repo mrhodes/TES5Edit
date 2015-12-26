@@ -974,7 +974,7 @@ begin
   //   can use a private ini to specify the bsa to use.
   if not exact then
     ModName := ModName + '*';
-  if FindFirst(DataPath + ModName + '.bsa', faAnyFile, F) = 0 then try
+  if FindFirst(DataPath + ModName + wbArchiveExtension, faAnyFile, F) = 0 then try
     repeat
       if wbContainerHandler.ContainerExists(DataPath + F.Name) then
         Continue;
