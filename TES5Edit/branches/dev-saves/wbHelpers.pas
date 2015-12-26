@@ -970,7 +970,6 @@ begin
     j := bsaNames.Count;
   if Assigned(bsaMissing) then
     j := j + bsaMissing.Count;
-
   // All games prior to Skyrim load BSA files with partial matching, Skyrim requires exact name match and
   //   can use a private ini to specify the bsa to use.
   if not exact then

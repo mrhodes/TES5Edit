@@ -28,6 +28,7 @@ uses
   wbImplementation,
   wbHelpers,
   wbBSA,
+  wbLocalization,
   wbSort,
   wbNifScanner,
   wbLOD;
@@ -1482,6 +1483,18 @@ begin
   Value := wbDDSDataToBitmap(TBytes(Args.Values[0]), TBitmap(V2O(Args.Values[1])));
 end;
 
+procedure DDSUtils_wbDDSResourceToBitmap(var Value: Variant; Args: TJvInterpreterArgs);
+var
+  res: TDynResources;
+begin
+  if not Assigned(wbContainerHandler) then
+    Exit;
+
+  res := wbContainerHandler.OpenResource(string(Args.Values[0]));
+  if Length(res) <> 0 then
+    Value := wbDDSDataToBitmap(res[High(res)].GetData, TBitmap(V2O(Args.Values[1])));
+end;
+
 
 { Misc routines }
 
@@ -1633,6 +1646,12 @@ begin
       Value := i;
       Exit;
     end;
+end;
+
+procedure Misc_LocalizationGetStringsFromFile(var Value: Variant; Args: TJvInterpreterArgs);
+begin
+  if Assigned(wbLocalizationHandler) then
+    wbLocalizationHandler.GetStringsFromFile(string(Args.Values[0]), TStrings(V2O(Args.Values[1])));
 end;
 
 
@@ -1900,6 +1919,7 @@ begin
     { DDS routines }
     AddFunction(cUnit, 'wbDDSStreamToBitmap', DDSUtils_wbDDSStreamToBitmap, 2, [varEmpty, varEmpty], varEmpty);
     AddFunction(cUnit, 'wbDDSDataToBitmap', DDSUtils_wbDDSDataToBitmap, 2, [varEmpty, varEmpty], varEmpty);
+    AddFunction(cUnit, 'wbDDSResourceToBitmap', DDSUtils_wbDDSResourceToBitmap, 2, [varEmpty, varEmpty], varEmpty);
 
     { Misc routines }
     AddFunction(cUnit, 'wbFlipBitmap', Misc_wbFlipBitmap, 2, [varEmpty, varEmpty], varEmpty);
@@ -1919,6 +1939,7 @@ begin
     AddFunction(cUnit, 'wbGetSiblingRecords', Misc_wbGetSiblingRecords, 4, [varEmpty, varEmpty, varEmpty, varEmpty], varEmpty);
     AddFunction(cUnit, 'wbNormalizeResourceName', Misc_wbNormalizeResourceName, 2, [varEmpty, varEmpty], varEmpty);
     AddFunction(cUnit, 'wbStringListInString', Misc_wbStringListInString, 2, [varEmpty, varEmpty], varEmpty);
+    AddFunction(cUnit, 'LocalizationGetStringsFromFile', Misc_LocalizationGetStringsFromFile, 2, [varEmpty, varEmpty], varEmpty);
   end;
 end;
 

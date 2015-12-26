@@ -51,10 +51,19 @@ const
 {$SetPEFlags IMAGE_FILE_LARGE_ADDRESS_AWARE}
 
 var
-  StartTime    : TDateTime;
-  DumpGroups   : TStringList;
+  dtArrays : set of TwbDefType = [
+    dtSubRecordArray,
+    dtArray
+  ];
+
+var
+  StartTime       : TDateTime;
+  DumpGroups      : TStringList;
+  SkipChildGroups : TStringList;
   DumpChapters : TStringList;
   DumpForms    : TStringList;
+  DumpCount       : Integer;
+  DumpMax         : Integer;
 
 procedure ReportProgress(const aStatus: string);
 begin
@@ -62,7 +71,7 @@ begin
 end;
 
 type
-  TExportFormat = (efRaw);
+  TExportFormat = (efUESPWiki, efRaw);
   TwbDefProfile = string;
   TwbExportPass = ( epRead, epSimple, epShared, epChapters, epRemaining, epNothing);
 
@@ -74,11 +83,124 @@ begin
   Result := efRaw;
   if Uppercase(aFormat)='RAW' then
     Result := efRaw
+  else if Uppercase(aFormat)='UESPWIKI' then
+    Result := efUESPWiki;
 end;
+
+function UESPName(aName: String): String;
+begin
+  while Pos(' ', aName)>0 do
+    aName[Pos(' ', aName)] := '_';
+  Result := aName;
+end;
+
+function UESPType(aType: String): String;
+
+  function UESParrayType(aType: String): String; forward;
+
+  function UESPsingleType(aType, aStandard, aResult: String): String;
+  var
+    i: Integer;
+    l: Integer;
+  begin
+    i := Pos(UpperCase(aStandard), Uppercase(aType));
+    if i>0 then begin
+      Result := '';
+      l := Length(aStandard);
+      if i>1 then begin
+        Result := Copy(aType, 1, i-1);
+        Delete(aType, 1, i+l-1);
+      end else
+        Delete(aType, 1, l);
+      Result := Result + aResult + aType;
+    end else
+      Result := aType;
+  end;
+
+  function UESParrayCount(aType: String): String;
+  var
+    i: Integer;
+    c: String;
+  begin
+    i := Pos('_', aType);
+    if i>1 then begin
+      c := Copy(aType, 1, i-1);
+      Delete(aType, 1, i);
+    end else
+      c := '';
+    Result := '_'+aType+'['+c+']';
+  end;
+
+  function UESParrayType(aType: String): String;
+  const
+    cArray = '_ARRAY';
+    cof = '_OF_';
+  var
+    i: Integer;
+    j : Integer;
+    l: Integer;
+    t: String;
+  begin
+    i := Pos(cArray, UpperCase(aType));
+    l := Length(cArray);
+    if (i>0) and ((i+l-1) = Length(aType)) then begin
+      Delete(aType, i, l);
+      j := Pos(cOf, UpperCase(aType));
+      if j>1 then begin
+        Result := Copy(aType, 1, j-1);
+        Delete(aType, 1, j+Length(cOf)-1);
+        t := UESParrayCount(aType);
+        Result := Result + t;
+      end;
+    end else
+      Result := aType;
+  end;
+
+begin
+  Result := UESPName(aType);
+  Result := UESParrayType(Result);
+
+  Result := UESPsingleType(Result, 'Unsigned_Bytes', 'uint8');
+  Result := UESPsingleType(Result, 'Signed_Bytes', 'int8');
+  Result := UESPsingleType(Result, 'Bytes', 'int8');
+  Result := UESPsingleType(Result, 'Unsigned_Byte', 'uint8');
+  Result := UESPsingleType(Result, 'Signed_Byte', 'int8');
+  Result := UESPsingleType(Result, 'Byte', 'int8');
+  Result := UESPsingleType(Result, 'Unsigned_DWord', 'uint32');
+  Result := UESPsingleType(Result, 'Signed_DWord', 'int32');
+  Result := UESPsingleType(Result, 'DWord', 'int32');
+  Result := UESPsingleType(Result, 'Unsigned_Word', 'uint16');
+  Result := UESPsingleType(Result, 'Signed_Word', 'int16');
+  Result := UESPsingleType(Result, 'Word', 'int16');
+  Result := UESPsingleType(Result, 'Float', 'float32');
+
+  Result := UESPsingleType(Result, 'FormID', 'formid');
+end;
+
+const
+  UESPWikiTable = '{| class="wikitable" border="1" width="100%"'+#13+#10+
+  '! width="3%" | [[Tes5Mod:File Format Conventions|C]]'+#13+#10+
+  '! width="10%" | SubRecord'+#13+#10+
+  '! width="15%" | Name'+#13+#10+
+  '! width="15%" | [[Tes5Mod:File Format Conventions|Type/Size]]'+#13+#10+
+  '! width="57%" | Info';
+  UESPWikiClose ='|}'+#13+#10;
 
 function AnchorProfile(aFormat: TExportFormat; aIndent, aProfile: String; useProfile: Boolean; aName, aType: String): String;
 begin
   case aFormat of
+    efUESPWiki: begin
+      if aIndent='' then
+        Result := '=== [[Tes5Mod:Save File Format/'+aProfile+'|'+UESPName(aName)+']] ==='+#13+#10+UESPWikiTable
+      else begin
+        Result := '|-'+#13+#10+'|'+UESPName(aName)+#13+#10+'|';
+        if useProfile then
+          Result := Result+'[[Tes5Mod:Save File Format/'+aProfile+'|'+UESPType(aType)+']]'
+        else
+          Result := Result+UESPType(aType);
+        Result := Result+#13+#10+'|';
+      end;
+    end;
     efRaw: begin
       Result := aIndent+aName+' as '+aType;
       if useProfile then Result := Result+' ['+aProfile+']';
@@ -247,6 +369,9 @@ begin
     ExportContainer(aFormat, theElement, Profile, Pass, theIndent, skipFirst);
   end;
   if aIndent = '' then begin
+    case aFormat of
+      efUESPWiki: Write(UESPWikiClose);
+    end;
     WriteLN;
   end;
 end;
@@ -492,7 +617,12 @@ begin
         if Assigned(DumpGroups) and not DumpGroups.Find(String(TwbSignature(GroupRecord.GroupLabel)), i) then
           Exit;
         ReportProgress('Dumping: ' + GroupRecord.Name);
-      end;
+      end
+      else
+        if Assigned(SkipChildGroups) and Assigned(GroupRecord.ChildrenOf) and
+           SkipChildGroups.Find(String(TwbSignature(GroupRecord.ChildrenOf.Signature)), i)
+        then
+          Exit;
   if (wbToolSource in [tsSaves]) and Assigned(DumpChapters) and Supports(aContainer, IwbChapter, Chapter) then begin
     if not DumpChapters.Find(IntToStr(Chapter.ChapterType), i) then
       Exit;
@@ -524,9 +654,20 @@ var
 begin
   if Assigned(DumpGroups) and (aElement.ElementType = etGroupRecord) then
     if Supports(aElement, IwbGroupRecord, GroupRecord) then
-      if GroupRecord.GroupType = 0 then
+      if GroupRecord.GroupType = 0 then begin
         if not DumpGroups.Find(String(TwbSignature(GroupRecord.GroupLabel)), i) then
           Exit;
+      end
+      else
+        if Assigned(SkipChildGroups) and Assigned(GroupRecord.ChildrenOf) and
+           SkipChildGroups.Find(String(TwbSignature(GroupRecord.ChildrenOf.Signature)), i)
+        then
+          Exit;
+
+  if aElement.ElementType = etMainRecord then
+    Inc(DumpCount);
+  if (DumpMax > 0) and (DumpCount > DumpMax) then
+    Exit;
 
   Name := aElement.DisplayName;
   Value := aElement.Value;
@@ -701,8 +842,6 @@ begin
     Result := True
   else if Uppercase(aFormatName) = 'UESPWIKI' then
     Result := True
-  else if Uppercase(aFormatName) = 'JAVA' then
-    Result := True
   else
     Result := False;
 end;
@@ -872,6 +1011,14 @@ begin
       DumpGroups.Sort;
     end;
 
+    if wbFindCmdLineParam('xcg', s) then begin
+      SkipChildGroups := TStringList.Create;
+      SkipChildGroups.Sorted := True;
+      SkipChildGroups.Duplicates := dupIgnore;
+      SkipChildGroups.CommaText := s;
+      SkipChildGroups.Sort;
+    end;
+
     if wbFindCmdLineParam('dc', s) or wbFindCmdLineParam('df', s) then begin
       DumpChapters := TStringList.Create;
       DumpChapters.Sorted := True;
@@ -944,8 +1091,10 @@ begin
     if wbFindCmdLineParam('l', s) and (wbGameMode in [gmTES5]) then
       wbLanguage := s
     else
-      wbLanguage := 'English';
-
+      case wbGameMode of
+        gmTES5:
+          wbLanguage := 'English';
+      end;
     if wbFindCmdLineParam('bts', s) then
       wbBytesToSkip := StrToInt64Def(s, wbBytesToSkip);
     if wbFindCmdLineParam('btd', s) then
@@ -953,6 +1102,9 @@ begin
 
     if wbFindCmdLineParam('do', s) then
       wbDumpOffset := StrToInt64Def(s, wbDumpOffset);
+
+    if wbFindCmdLineParam('top', s) then
+      DumpMax := StrToIntDef(s, 0);
 
     s := ParamStr(ParamCount);
 
@@ -1004,7 +1156,7 @@ begin
       WriteLn(ErrOutput, '-? / -help   ', 'This help screen');
       WriteLn(ErrOutput, '-q           ', 'Suppress version message');
       WriteLn(ErrOutput, '-more        ', 'Displays aditional information on Unknowns');
-      WriteLn(ErrOutput, '-l:language  ', 'Specifies language for localization files (TES5 only)');
+      WriteLn(ErrOutput, '-l:language  ', 'Specifies language for localization files (since TES5)');
       WriteLn(ErrOutput, '             ', '  Default language is English');
       WriteLn(ErrOutput, '-bsa         ', 'Loads default associated BSAs');
       WriteLn(ErrOutput, '             ', ' (plugin.bsa and plugin - interface.bsa)');
@@ -1023,9 +1175,11 @@ begin
       WriteLn(ErrOutput, '-xr:list     ', 'Excludes the contents of specified records from being');
       WriteLn(ErrOutput, '             ', '  decompressed and processed.');
       WriteLn(ErrOutput, '-xg:list     ', 'Excludes complete top level groups from being processed');
+      WriteLn(ErrOutput, '-xcg:list    ', 'Excludes record child groups from being processed');
       WriteLn(ErrOutput, '-xbloat      ', 'The following value applies:');
       WriteLn(ErrOutput, '             ', '  -xg:LAND,REGN,PGRD,SCEN,PACK,PERK,NAVI,CELL,WRLD');
       WriteLn(ErrOutput, '-dg:list     ', 'If specified, only dump the listed top level groups');
+      WriteLn(ErrOutput, '-top:N       ', 'If specified, only dump the first N records');
       WriteLn(ErrOutput, '-check       ', 'Performs "Check for Errors" instead of dumping content');
       WriteLn(ErrOutput, '             ', '');
       WriteLn(ErrOutput, 'Saves mode ONLY');
@@ -1042,6 +1196,7 @@ begin
       WriteLn(ErrOutput, '             ', '');
       WriteLn(ErrOutput, 'Currently supported export formats:');
       WriteLn(ErrOutput, 'RAW          ','Private format for debugging');
+      WriteLn(ErrOutput, 'UESPWIKI     ','UESP Wiki table format [Very WIP]');
       WriteLn(ErrOutput, '             ', '');
       Exit;
     end;
@@ -1147,9 +1302,10 @@ begin
         end;
       end;
       FreeAndNil(Masters);
-      ReportProgress('[' + wbDataPath + '] Setting Resource Path.');
-      wbContainerHandler.AddFolder(wbDataPath);
     end;
+
+    ReportProgress('[' + wbDataPath + '] Setting Resource Path.');
+    wbContainerHandler.AddFolder(wbDataPath);
 
     if wbToolMode in [tmDump] then
       _File := wbFile(s);

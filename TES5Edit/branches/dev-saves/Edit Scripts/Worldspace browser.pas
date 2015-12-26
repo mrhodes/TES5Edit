@@ -1,5 +1,5 @@
 {
-  Worldspace Browser v0.2 for Oblivion, Fallout 3, New Vegas, Skyrim.
+  Worldspace Browser v0.3 for Oblivion, Fallout 3, New Vegas, Skyrim and Fallout 4
   Hotkey: Alt+F3
   
   Reconstructs worldspace map from distand LOD (level of detail) landscape textures.
@@ -45,7 +45,7 @@ var
   PosSizePx, MapViewScale, FontMult: real;
   GridOpacity: integer;
   fMapDrawn, fMapNormals, fCellsDebug: boolean;
-  CurrentWorld: IInterface;
+  StartWorld, CurrentWorld: IInterface;
   slPlugin, slRegion, slWorldspaces: TStringList;
 
   frmMain, frmWorld: TForm;
@@ -95,10 +95,16 @@ begin
                     else texname := 'textures\landscape\lod\%s\normals\%s.n.level%d.x%d.y%d.dds';
     Result := Format(texname, [aEditorID, aEditorID, aLODLevel, x, y]);
   end
-  // Skyrim (and probably later games)
-  else begin
+  // Skyrim
+  else if aGame = gmTES5 then begin
     if not aNormals then texname := 'textures\terrain\%s\%s.%d.%d.%d.dds'
                     else texname := 'textures\terrain\%s\%s.%d.%d.%d_n.dds';
+    Result := Format(texname, [aEditorID, aEditorID, aLODLevel, x, y]);
+  end
+  // FO4
+  else if aGame = gmFO4 then begin
+    if not aNormals then texname := 'textures\terrain\%s\%s.%d.%d.%d.dds'
+                    else texname := 'textures\terrain\%s\%s.%d.%d.%d_msn.dds';
     Result := Format(texname, [aEditorID, aEditorID, aLODLevel, x, y]);
   end;
 end;
@@ -129,6 +135,10 @@ begin
   if not HasLOD(wrld) then
     Exit;
 
+  // not sure for FO4, use MapSize
+  if wbGameMode = gmFO4 then
+    Exit;
+  
   // read from lod settings file
   if wbGameMode <> gmTES4 then begin
     BytesStream := TBytesStream.Create(ResourceOpenData('', LODSettingsFileName(wrld)));
@@ -443,13 +453,13 @@ begin
     bmpMap.Canvas.FillRect(Rect(0, 0, bmpMap.Width, bmpMap.Height));
     y := SWy;
     while y < MapSizeY do begin
-      frmMain.Caption := Format('Building map %d%%...', [Round((MapSizeY + y)/(2*MapSizeY)*100)]);
+      frmMain.Caption := Format('Building map %d%%, please wait...', [Round((MapSizeY + y)/(2*MapSizeY)*100)]);
       Application.ProcessMessages;
       x := SWx;
       while x < MapSizeX do begin
         texName := LODTextureFileName(wbGameMode, wrldFormID, wrldEDID, x, y, LODLevel, fMapNormals);
         if ResourceExists(texName) then begin
-          if wbDDSDataToBitmap(ResourceOpenData('', texName), bmp) then begin
+          if wbDDSResourceToBitmap(texName, bmp) then begin
             Result := True;
             if wbGameMode = gmTES4 then begin
               bmpx := CellX2px(x);
@@ -1277,6 +1287,14 @@ begin
 end;
 
 //============================================================================
+// activate event for main form
+procedure frmMainFormActivate(Sender: TObject);
+begin
+  if Assigned(StartWorld) and HasLOD(StartWorld) then
+    DrawMap(StartWorld);
+end;
+
+//============================================================================
 function CreateLabel(aForm: TForm; aText: string; aLeft, aTop: integer): TLabel;
 begin
   Result := TLabel.Create(aForm);
@@ -1311,6 +1329,7 @@ begin
   frmMain.PopupMode := pmAuto;
   frmMain.KeyPreview := True;
   frmMain.OnResize := frmMainFormResize;
+  frmMain.OnActivate := frmMainFormActivate;
   //frmMain.OnKeyDown := FormKeyDown;
 
   mnMain := TMainMenu.Create(frmMain);
@@ -1491,22 +1510,25 @@ procedure InitBrowser;
 begin
   MapSizeX := 64;
   MapSizeY := 64;
-  LODLevel := 32;
   LODSize := 256; // default lod texture size for level 32
+  LODLevel := 32;
   MapViewScale := 1;
   GridOpacity := 0;
   fMapNormals := False;
   if wbGameMode = gmTES4 then begin
     LODSize := 1024; // Oblivion uses 1024x1024 lod textures only
     MapViewScale := 0.25; // scale them down since they are huge
+  end
+  else if wbGameMode = gmFO4 then begin
+    MapSizeX := 96;
+    MapSizeY := 96;
+    LODSize := 512; // FO4 uses 512 for all LOD levels
   end;
   ColorOverlay := ColorOverlayDefault;
 end;
 
 //============================================================================
 function Initialize: integer;
-var
-  wrld: IInterface;
 begin
   InitBrowser;
   try
@@ -1515,11 +1537,9 @@ begin
     slPlugin := TStringList.Create;
     BuildForms;
     if wbGameMode = gmFNV then
-      wrld := RecordByFormID(FileByIndex(0), $000DA726, False)
+      StartWorld := RecordByFormID(FileByIndex(0), $000DA726, False)
     else
-      wrld := RecordByFormID(FileByIndex(0), $0000003C, False);
-    if Assigned(wrld) and HasLOD(wrld) then
-      DrawMap(wrld);
+      StartWorld := RecordByFormID(FileByIndex(0), $0000003C, False);
     frmMain.ShowModal;
   finally
     frmWorld.Free;

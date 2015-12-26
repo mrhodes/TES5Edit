@@ -736,6 +736,7 @@ type
     function GetDontCompare: Boolean;
     function GetDontSave: Boolean;
     function IsValidOffset(aBasePtr, aEndPtr: Pointer; anOffset: Integer): Boolean;
+    function IsLocalOffset(anOffset: Integer): Boolean;
 
     {--- IwbDataContainerInternal ---}
     procedure UpdateStorageFromElements; virtual;
@@ -5934,7 +5935,7 @@ begin
   GetFlagsPtr.SetDeleted(True);
 
   if Supports(Self.GetContainer, IwbGroupRecord, GroupRecord) then
-    if GroupRecord.GroupType in [1, 4..10] then
+    if wbCreateContainedIn and (GroupRecord.GroupType in [1, 4..10]) then
       with TwbContainedInElement.Create(Self) do begin
         _AddRef; _Release;
       end;
@@ -6003,7 +6004,7 @@ begin
 
   if not (mrsQuickInit in mrStates) then begin
     if Supports(Self.GetContainer, IwbGroupRecord, GroupRecord) then
-      if GroupRecord.GroupType in [1, 4..10] then
+      if wbCreateContainedIn and (GroupRecord.GroupType in [1, 4..10]) then
         with TwbContainedInElement.Create(Self) do begin
           _AddRef; _Release;
         end;
@@ -6280,7 +6281,7 @@ var
   GroupRecord: IwbGroupRecord;
 begin
   Result := 1;
-  if Supports(Self.GetContainer, IwbGroupRecord, GroupRecord) then
+  if wbCreateContainedIn and Supports(Self.GetContainer, IwbGroupRecord, GroupRecord) then
     if GroupRecord.GroupType in [1, 4..10] then
       Inc(Result);
 end;
@@ -8215,7 +8216,7 @@ begin
       GetFlagsPtr.SetDeleted(False);
 
       if Supports(Self.GetContainer, IwbGroupRecord, GroupRecord) then
-        if GroupRecord.GroupType in [1, 4..10] then
+        if wbCreateContainedIn and (GroupRecord.GroupType in [1, 4..10]) then
           with TwbContainedInElement.Create(Self) do begin
             _AddRef; _Release;
           end;
@@ -9450,47 +9451,48 @@ begin
   ValueDef := Resolve(srDef.Value, BasePtr, dcDataEndPtr, Self);
   srArraySizePrefix := 0;
 
-  if ValueDef.Name = '' then begin
-    srValueDef := ValueDef;
-    case ValueDef.DefType of
-      dtArray: begin
-        Include(srStates, srsIsArray);
-        if ArrayDoInit(ValueDef, Self, BasePtr, dcDataEndPtr, srArraySizePrefix) then
-          Include(srStates, srsSorted);
-      end;
-      dtStruct, dtStructChapter: StructDoInit(ValueDef, Self, BasePtr, dcDataEndPtr);
-      dtUnion:  begin
-        Include(srStates, srsIsUnion);
-        case UnionDoInit(ValueDef, Self, BasePtr, dcDataEndPtr) of
-          ufArray: Include(srStates, srsIsArray);
-          ufSortedArray: begin
-            Include(srStates, srsIsArray);
+  if Assigned(ValueDef) then
+    if ValueDef.Name = '' then begin
+      srValueDef := ValueDef;
+      case ValueDef.DefType of
+        dtArray: begin
+          Include(srStates, srsIsArray);
+          if ArrayDoInit(ValueDef, Self, BasePtr, dcDataEndPtr, srArraySizePrefix) then
             Include(srStates, srsSorted);
-          end;
-          ufFlags: begin
-            Include(srStates, srsIsFlags);
-            Include(srStates, srsSorted);
+        end;
+        dtStruct, dtStructChapter: StructDoInit(ValueDef, Self, BasePtr, dcDataEndPtr);
+        dtUnion:  begin
+          Include(srStates, srsIsUnion);
+          case UnionDoInit(ValueDef, Self, BasePtr, dcDataEndPtr) of
+            ufArray: Include(srStates, srsIsArray);
+            ufSortedArray: begin
+              Include(srStates, srsIsArray);
+              Include(srStates, srsSorted);
+            end;
+            ufFlags: begin
+              Include(srStates, srsIsFlags);
+              Include(srStates, srsSorted);
+            end;
           end;
         end;
+      else
+        if ValueDoInit(ValueDef, Self, BasePtr, dcDataEndPtr, Self) then begin
+          Include(srStates, srsIsFlags);
+          Include(srStates, srsSorted);
+        end;
       end;
-    else
-      if ValueDoInit(ValueDef, Self, BasePtr, dcDataEndPtr, Self) then begin
-        Include(srStates, srsIsFlags);
-        Include(srStates, srsSorted);
+      // flags are already created in the right sort order
+      if srStates * [srsSorted, srsIsFlags] = [srsSorted] then
+        Include(srStates, srsSortInvalid);
+    end else
+      case ValueDef.DefType of
+        dtArray: Element := TwbArray.Create(Self, BasePtr, dcDataEndPtr, ValueDef, '');
+        dtStruct: Element := TwbStruct.Create(Self, BasePtr, dcDataEndPtr, ValueDef, '');
+        dtStructChapter: Element := TwbChapter.Create(Self, BasePtr, dcDataEndPtr, ValueDef, '');
+        dtUnion: Element := TwbUnion.Create(Self, BasePtr, dcDataEndPtr, ValueDef, '');
+      else
+        Element := TwbValue.Create(Self, BasePtr, dcDataEndPtr, ValueDef, '');
       end;
-    end;
-    // flags are already created in the right sort order
-    if srStates * [srsSorted, srsIsFlags] = [srsSorted] then
-      Include(srStates, srsSortInvalid);
-  end else
-    case ValueDef.DefType of
-      dtArray: Element := TwbArray.Create(Self, BasePtr, dcDataEndPtr, ValueDef, '');
-      dtStruct: Element := TwbStruct.Create(Self, BasePtr, dcDataEndPtr, ValueDef, '');
-      dtStructChapter: Element := TwbChapter.Create(Self, BasePtr, dcDataEndPtr, ValueDef, '');
-      dtUnion: Element := TwbUnion.Create(Self, BasePtr, dcDataEndPtr, ValueDef, '');
-    else
-      Element := TwbValue.Create(Self, BasePtr, dcDataEndPtr, ValueDef, '');
-    end;
 
   if Assigned(dcDataEndPtr) and Assigned(BasePtr) and (BasePtr <> dcDataEndPtr) then begin
     HasUnusedData := not SameText(ValueDef.Name, 'Unused');
@@ -12283,13 +12285,24 @@ function TwbElement.GetSortKey(aExtended: Boolean): string;
 begin
   if aExtended then begin
     if not (esExtendedSortKeyValid in eStates) then begin
-      eExtendedSortKey := GetSortKeyInternal(aExtended);
+      if not (esSorting in eStates) then begin
+        Include(eStates, esSorting);
+        eExtendedSortKey := GetSortKeyInternal(aExtended);
+        Exclude(eStates, esSorting);
+      end
+      else
+        eExtendedSortKey := GetSortKeyInternal(aExtended);
       Include(eStates, esExtendedSortKeyValid);
     end;
     Result := eExtendedSortKey;
   end else begin
     if not (esSortKeyValid in eStates) then begin
-      eSortKey := GetSortKeyInternal(aExtended);
+      if not (esSorting in eStates) then begin
+        Include(eStates, esSorting);
+        eSortKey := GetSortKeyInternal(aExtended);
+        Exclude(eStates, esSorting);
+      end else
+        eSortKey := GetSortKeyInternal(aExtended);
       Include(eStates, esSortKeyValid);
     end;
     Result := eSortKey;
@@ -13860,12 +13873,24 @@ begin
 end;
 
 procedure TwbArray.DoInit;
+var
+  i       : Integer;
+  Sorting : Boolean;
 begin
   inherited;
   if arrSorted and arrSortInvalid then
-    if Length(cntElements) > 1 then
-      wbMergeSort(@cntElements[0], Length(cntElements), CompareSortKeys);
-  arrSortInvalid := False;
+    if (Length(cntElements) > 1) then begin
+      Sorting := False;
+      for i := 0 to Length(cntElements)-1 do
+        if (esSorting in (cntElements[i] as IwbElementInternal).ElementStates) then begin
+          Sorting := TRue;
+          Break;
+        end;
+        if not Sorting then begin
+          wbMergeSort(@cntElements[0], Length(cntElements), CompareSortKeys);
+          arrSortInvalid := False;
+        end;
+    end;
 end;
 
 procedure TwbArray.ElementChanged(const aElement: IwbElement; aContainer: Pointer);
@@ -14228,32 +14253,38 @@ begin
 
   ValueDef := Resolve(aValueDef, aBasePtr, aEndPtr, aElement);
 
-  if wbFlagsAsArray then
-    if Supports(ValueDef, IwbIntegerDef, IntegerDef) then
-      if Supports(IntegerDef.Formater[aElement], IwbFlagsDef, FlagsDef) then begin
+  if Assigned(ValueDef) then
+  begin
+    if wbFlagsAsArray then
+      if Supports(ValueDef, IwbIntegerDef, IntegerDef) then
+        if Supports(IntegerDef.Formater[aElement], IwbFlagsDef, FlagsDef) then begin
 
-        if Assigned(aBasePtr) and (FlagsDef.FlagCount > 0) then begin
-          j := IntegerDef.ToInt(aBasePtr, aEndPtr, aContainer);
-          if j <> 0 then
-            for i := 0 to Pred(FlagsDef.FlagCount) do
-              if (j and (Cardinal(1) shl i)) <> 0 then begin
-                t := FlagsDef.Flags[i];
-                if (t <> '') and (not wbHideUnused or not SameText(t,'Unused')) then
-                  Element := TwbFlag.Create(aContainer, aBasePtr, aEndPtr, IntegerDef, FlagsDef, i);
-                j := j and not (Cardinal(1) shl i);
-                if j = 0 then
-                  Break;
-              end;
+          if Assigned(aBasePtr) and (FlagsDef.FlagCount > 0) then begin
+            j := IntegerDef.ToInt(aBasePtr, aEndPtr, aContainer);
+            if j <> 0 then
+              for i := 0 to Pred(FlagsDef.FlagCount) do
+                if (j and (Cardinal(1) shl i)) <> 0 then begin
+                  t := FlagsDef.Flags[i];
+                  if (t <> '') and (not wbHideUnused or not SameText(t,'Unused')) then
+                    Element := TwbFlag.Create(aContainer, aBasePtr, aEndPtr, IntegerDef, FlagsDef, i);
+                  j := j and not (Cardinal(1) shl i);
+                  if j = 0 then
+                    Break;
+                end;
+          end;
+
+          Result := True;
+
         end;
 
-        Result := True;
-
-      end;
-
-  ValueDef.AfterLoad(aContainer);
+    ValueDef.AfterLoad(aContainer);
+  end;
 
   if wbMoreInfoForUnknown then begin
-    t := ValueDef.Name;
+    if Assigned(ValueDef) then
+      t := ValueDef.Name
+    else
+      t := '';
     if t = '' then
       t := aContainer.Def.Name;
     if SameText(t, 'Unknown') and (not Assigned(aBasePtr) or (aBasePtr <> aEndPtr)) then
@@ -14289,7 +14320,10 @@ begin
       end;
   end;
 
-  i := ValueDef.Size[aBasePtr, aEndPtr, aContainer];
+  if assigned(ValueDef) then
+    i := ValueDef.Size[aBasePtr, aEndPtr, aContainer]
+  else
+    i := High(Integer);
   if i = Cardinal(High(Integer)) then
     aBasePtr := aEndPtr
   else if Assigned(aBasePtr) then
@@ -15008,6 +15042,14 @@ begin
             Result := True;
 end;
 
+function TwbDataContainer.IsLocalOffset(anOffset: Integer): Boolean;
+begin
+  if Cardinal(dcDataBasePtr)+anOffset < Cardinal(dcDataEndPtr) then
+    Result := True
+  else
+    Result := False;
+end;
+
 procedure TwbDataContainer.MergeStorageInternal(var aBasePtr: Pointer; aEndPtr: Pointer);
 var
   SizeNeeded    : Cardinal;
@@ -15335,19 +15377,22 @@ var
   Container: IwbDataContainer;
 begin
   Resolved := Resolve(vbValueDef, GetDataBasePtr, GetDataEndPtr, Self);
-  if (Resolved <> vbValueDef) and (Resolved.DefType in dtNonValues) then
+  if (not Assigned(Resolved)) or (Resolved <> vbValueDef) and (Resolved.DefType in dtNonValues) then
     Result := vbValueDef.Name
   else
     Result := Resolved.Name;
-  if (Resolved.DefType in dtNonValues) and (wbDumpOffset=1) then // simply display starting offset.
-    Result := Result + ' {' + IntToHex64(Cardinal(GetDataBasePtr)-wbBaseOffset, 8) + '}';
-  // something for Dump: Displaying the size in {} and the array count in []
-  //  Triggers a lot of pre calculations
-  if (Resolved.DefType in dtNonValues) and (wbDumpOffset>2) then
-    Result := Result + ' {' + IntToHex64(Cardinal(GetDataEndPtr)-wbBaseOffset, 8) + '-' + IntToHex64(Cardinal(GetDataBasePtr)-wbBaseOffset, 8) +
-      ' = ' +IntToStr(Resolved.Size[GetDataBasePtr, GetDataEndPtr, Self]) + '}';
-  if (Resolved.DefType = dtArray) and (wbDumpOffset>1) and Supports(Self, IwbDataContainer, Container) then
-    Result := Result + ' [' + IntToStr(Container.GetElementCount) + ']';
+  if Assigned(Resolved) then
+  begin
+    if (Resolved.DefType in dtNonValues) and (wbDumpOffset=1) then // simply display starting offset.
+      Result := Result + ' {' + IntToHex64(Cardinal(GetDataBasePtr)-wbBaseOffset, 8) + '}';
+    // something for Dump: Displaying the size in {} and the array count in []
+    //  Triggers a lot of pre calculations
+    if (Resolved.DefType in dtNonValues) and (wbDumpOffset>2) then
+      Result := Result + ' {' + IntToHex64(Cardinal(GetDataEndPtr)-wbBaseOffset, 8) + '-' + IntToHex64(Cardinal(GetDataBasePtr)-wbBaseOffset, 8) +
+        ' = ' +IntToStr(Resolved.Size[GetDataBasePtr, GetDataEndPtr, Self]) + '}';
+    if (Resolved.DefType = dtArray) and (wbDumpOffset>1) and Supports(Self, IwbDataContainer, Container) then
+      Result := Result + ' [' + IntToStr(Container.GetElementCount) + ']';
+  end;
   if vbNameSuffix <> '' then
     Result := Result + ' ' + vbNameSuffix;
 end;
@@ -15803,22 +15848,30 @@ constructor TwbContainedInElement.Create(const aMainRecord: IwbMainRecord);
 var
   BasePtr        : Pointer;
   EndPtr         : Pointer;
-
   GroupRecord    : IwbGroupRecord;
+  Grp            : TwbGroupTypes;
 begin
+  // MainRecord must be in a group
   if not Supports(aMainRecord.Container, IwbGroupRecord, GroupRecord) then
     Assert(False);
+  // if that group is Exterior Sub-Block, then it must be in a group too, get it
   if GroupRecord.GroupType = 5 then
     if not Supports(GroupRecord.Container, IwbGroupRecord, GroupRecord) then
       Assert(False);
+  // if that group is Exterior Block, then it must be in a group too, get it
   if GroupRecord.GroupType = 4 then
     if not Supports(GroupRecord.Container, IwbGroupRecord, GroupRecord) then
       Assert(False);
-  if GroupRecord.GroupType in [8..10] then
+  // if group is persistent, temporary or vwd cell children, it should be in a group too
+  // if vwd is treated as quest children, then exclude it from check
+  if wbVWDAsQuestChildren then Grp := [8..9] else Grp := [8..10];
+  if GroupRecord.GroupType in Grp then
     if not Supports(GroupRecord.Container, IwbGroupRecord, GroupRecord) then
       Assert(False);
 
-  Assert(GroupRecord.GroupType in [1, 6, 7]);
+  // the final list of parent groups, mainrecords in those will have ContainedIn element
+  if wbVWDAsQuestChildren then Grp := [1, 6, 7, 10] else Grp := [1, 6, 7];
+  Assert(GroupRecord.GroupType in Grp);
 
   Include(dcFlags, dcfDontMerge);
   Include(dcFlags, dcfDontSave);
@@ -16035,6 +16088,7 @@ const
   WRLD : TwbSignature = 'WRLD';
   CELL : TwbSignature = 'CELL';
   DIAL : TwbSignature = 'DIAL';
+  QUST : TwbSignature = 'QUST';
 
 { TwbFileSource }
 
@@ -16326,6 +16380,7 @@ initialization
   wbContainedInDef[1] := wbFormIDCk('Worldspace', [WRLD], False, cpNormal, True);
   wbContainedInDef[6] := wbFormIDCk('Cell', [CELL], False, cpNormal, True);
   wbContainedInDef[7] := wbFormIDCk('Topic', [DIAL], False, cpNormal, True);
+  wbContainedInDef[10] := wbFormIDCk('Quest', [QUST], False, cpNormal, True);
 
   SubRecordOrderList := TwbFastStringList.Create;
   SubRecordOrderList.Sorted := True;
@@ -16356,4 +16411,5 @@ finalization
   wbContainedInDef[1] := nil;
   wbContainedInDef[6] := nil;
   wbContainedInDef[7] := nil;
+  wbContainedInDef[10] := nil;
 end.

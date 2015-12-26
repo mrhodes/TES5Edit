@@ -589,6 +589,7 @@ type
     function SelectionIncludesAnyVWD(Selection: TNodeArray): Boolean;
     procedure CheckHistoryRemove(const aList: IInterfaceList; const aMainRecord: IwbMainRecord);
     procedure UpdateColumnWidths;
+    procedure SetDefaultNodeHeight(aHeight: Integer);
 
     function SetAllToMaster: Boolean;
     function RestorePluginsFromMaster: Boolean;
@@ -614,6 +615,7 @@ type
     ModGroupsEnabled : Boolean;
     Settings: TMemIniFile;
     AutoSave: Boolean;
+    ParentedGroupRecordType: set of Byte;
 
     FilterPreset: Boolean; // new: flag to skip filter window
     FilterScripted: Boolean; // new: flag to use scripted filtering function
@@ -701,6 +703,8 @@ type
     DRcount     : Cardinal;
     CheckResult : Byte;
     AutoDone    : Boolean;
+    ColumnWidth : Integer;
+    RowHeight   : Integer;
 
     procedure DoInit;
     procedure SetDoubleBuffered(aWinControl: TWinControl);
@@ -3351,6 +3355,9 @@ begin
   wbFlagsAsArray := True;
   wbRequireLoadOrder := not wbUseFalsePlugins;
   AutoSave := False;
+  ParentedGroupRecordType := [1, 6, 7];
+  if wbVWDAsQuestChildren then
+    Include(ParentedGroupRecordType, 10);
 
   vstNav.NodeDataSize := SizeOf(TNavNodeData);
   vstView.DragImageKind := diDragColumnOnly;
@@ -3902,7 +3909,9 @@ begin
   wbHideIgnored := Settings.ReadBool('Options', 'HideIgnored', wbHideIgnored);
   wbHideNeverShow := Settings.ReadBool('Options', 'HideNeverShow', wbHideNeverShow);
   wbActorTemplateHide := Settings.ReadBool('Options', 'ActorTemplateHide', wbActorTemplateHide);
-  wbColumnWidth := Settings.ReadInteger('Options', 'ColumnWidth', wbColumnWidth);
+  ColumnWidth := Settings.ReadInteger('Options', 'ColumnWidth', ColumnWidth);
+  RowHeight := Settings.ReadInteger('Options', 'RowHeight', RowHeight);
+  SetDefaultNodeHeight(RowHeight);
   wbSortFLST := Settings.ReadBool('Options', 'SortFLST', wbSortFLST);
   wbSortGroupRecord := Settings.ReadBool('Options', 'SortGroupRecord', wbSortGroupRecord);
   wbRemoveOffsetData := Settings.ReadBool('Options', 'RemoveOffsetData', wbRemoveOffsetData);
@@ -4611,6 +4620,8 @@ begin
   LastUpdate := GetTickCount;
   Font := Screen.IconFont;
   Caption := Application.Title;
+  ColumnWidth := 200;
+  RowHeight := vstNav.DefaultNodeHeight;
   // Script mode is semiautomated - needs user interaction but no UI
   if (wbToolMode in wbAutoModes) or (wbToolMode in [tmScript]) then begin
     mmoMessages.Parent := Self;
@@ -11030,7 +11041,8 @@ begin
     cbShowGroupRecordCount.Checked := wbShowGroupRecordCount;
     cbSimpleRecords.Checked := wbSimpleRecords;
     cbClampFormID.Checked := wbClampFormID;
-    edColumnWidth.Text := IntToStr(wbColumnWidth);
+    edColumnWidth.Text := IntToStr(ColumnWidth);
+    edRowHeight.Text := IntToStr(RowHeight);
     cbAutoSave.Checked := AutoSave;
     //cbIKnow.Checked := wbIKnowWhatImDoing;
     cbTrackAllEditorID.Checked := wbTrackAllEditorID;
@@ -11062,7 +11074,9 @@ begin
     wbShowGroupRecordCount := cbShowGroupRecordCount.Checked;
     wbSimpleRecords := cbSimpleRecords.Checked;
     wbClampFormID := cbClampFormID.Checked;
-    wbColumnWidth := StrToIntDef(edColumnWidth.Text, wbColumnWidth);
+    ColumnWidth := StrToIntDef(edColumnWidth.Text, ColumnWidth);
+    RowHeight := StrToIntDef(edRowHeight.Text, RowHeight);
+    SetDefaultNodeHeight(RowHeight);
     AutoSave := cbAutoSave.Checked;
     //wbIKnowWhatImDoing := cbIKnow.Checked;
     wbTrackAllEditorID := cbTrackAllEditorID.Checked;
@@ -11091,7 +11105,8 @@ begin
     Settings.WriteBool('Options', 'ShowGroupRecordCount', wbShowGroupRecordCount);
     Settings.WriteBool('Options', 'SimpleRecords', wbSimpleRecords);
     Settings.WriteBool('Options', 'ClampFormID', wbClampFormID);
-    Settings.WriteInteger('Options', 'ColumnWidth', wbColumnWidth);
+    Settings.WriteInteger('Options', 'ColumnWidth', ColumnWidth);
+    Settings.WriteInteger('Options', 'RowHeight', RowHeight);
     //Settings.WriteBool('Options', 'IKnowWhatImDoing', wbIKnowWhatImDoing);
     Settings.WriteBool('Options', 'TrackAllEditorID', wbTrackAllEditorID);
     Settings.WriteBool('Options', 'UDRSetXESP', wbUDRSetXESP);
@@ -12485,7 +12500,7 @@ begin
           Clear;
           with Add do begin
             Text := '';
-            Width := wbColumnWidth;
+            Width := ColumnWidth;
             Options := Options - [coDraggable];
             Options := Options + [coFixed];
           end;
@@ -12493,7 +12508,7 @@ begin
             with Add do begin
               Text := (ActiveRecords[i].Element as IwbMainRecord).EditorID;
               Style := vsOwnerDraw;
-              Width := wbColumnWidth;
+              Width := ColumnWidth;
               MinWidth := 5;
               MaxWidth := 3000;
               Options := Options - [coAllowclick, coDraggable];
@@ -12599,7 +12614,7 @@ begin
             Clear;
             with Add do begin
               Text := '';
-              Width := wbColumnWidth;
+              Width := ColumnWidth;
               Options := Options - [coDraggable];
               Options := Options + [coFixed];
             end;
@@ -12607,7 +12622,7 @@ begin
               with Add do begin
                 Text := ActiveRecords[i].Element._File.Name;
                 Style := vsOwnerDraw;
-                Width := wbColumnWidth;
+                Width := ColumnWidth;
                 MinWidth := 5;
                 MaxWidth := 3000;
                 Options := Options - [coAllowclick, coDraggable];
@@ -12642,7 +12657,7 @@ begin
             Clear;
             with Add do begin
               Text := '';
-              Width := wbColumnWidth;
+              Width := ColumnWidth;
             end;
           finally
             EndUpdate;
@@ -12657,6 +12672,7 @@ begin
       for i := 0 to Pred(ActiveMaster.ReferencedByCount) do
         with lvReferencedBy.Items.Add do begin
           Caption := ActiveMaster.ReferencedBy[i].Name;
+          SubItems.Add(ActiveMaster.ReferencedBy[i].Signature);
           SubItems.Add(ActiveMaster.ReferencedBy[i]._File.Name);
           Data := Pointer(ActiveMaster.ReferencedBy[i]);
         end;
@@ -13048,10 +13064,19 @@ begin
     end else if mniViewColumnWidthFitText.Checked then
       vstView.Header.AutoFitColumns(False)
     else begin
-      ColWidth := wbColumnWidth;
+      ColWidth := ColumnWidth;
       for i := 0 to Pred(vstView.Header.Columns.Count) do
         vstView.Header.Columns[i].Width := ColWidth;
     end;
+end;
+
+procedure TfrmMain.SetDefaultNodeHeight(aHeight: Integer);
+begin
+  vstNav.DefaultNodeHeight := aHeight;
+  vstView.DefaultNodeHeight := aHeight;
+  vstSpreadSheetWeapon.DefaultNodeHeight := aHeight;
+  vstSpreadSheetArmor.DefaultNodeHeight := aHeight;
+  vstSpreadSheetAmmo.DefaultNodeHeight := aHeight;
 end;
 
 function TfrmMain.ValidateCRC(const aFileName  : string;
@@ -13868,7 +13893,7 @@ begin
       Exit;
     if Column = 0 then
       if Shift = [ssShift] then begin
-        ColWidth := wbColumnWidth;
+        ColWidth := ColumnWidth;
         for i := 0 to Pred(vstView.Header.Columns.Count) do
           vstView.Header.Columns[i].Width := ColWidth;
       end else case Button of
@@ -14593,7 +14618,7 @@ begin
       if Element.ElementType = etMainRecord then
         if Integer(Succ(Node.Index)) < Container.ElementCount then begin
           if Supports(Container.Elements[Succ(Node.Index)], IwbGroupRecord, GroupRecord) then begin
-            if (not (GroupRecord.GroupType in [1, 6, 7])) or
+            if (not (GroupRecord.GroupType in ParentedGroupRecordType)) or
               ((Element as IwbMainRecord).FormID <> GroupRecord.GroupLabel) then
               GroupRecord := nil;
           end;
@@ -14631,7 +14656,7 @@ begin
         end;
 
   if Node.Index > 0 then
-    if Supports(Element, IwbGroupRecord, GroupRecord) and (GroupRecord.GroupType in [1, 6, 7]) then begin
+    if Supports(Element, IwbGroupRecord, GroupRecord) and (GroupRecord.GroupType in ParentedGroupRecordType) then begin
       Container := PNavNodeData(Sender.GetNodeData(Node.Parent)).Container as IwbContainerElementRef;
       if Assigned(Container) and (Integer(Node.Index) < Container.ElementCount) then begin
         Element := Container.Elements[Pred(Node.Index)];
@@ -16058,6 +16083,7 @@ begin
             finally
               FreeAndNil(n);
             end;
+
           end;
           LoaderProgress('[' + ltDataPath + '] Setting Resource Path.');
           wbContainerHandler.AddFolder(ltDataPath);
