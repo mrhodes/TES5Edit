@@ -24,10 +24,12 @@ uses
   Graphics;
 
 const
-  VersionString  = '3.1.3 EXPERIMENTAL';
-  clOrange       = $004080FF;
-  wbFloatDigits  = 6;
-  wbHardcodedDat = '.Hardcoded.keep.this.with.the.exe.and.otherwise.ignore.it.I.really.mean.it.dat';
+  VersionString        = '3.1.3 EXPERIMENTAL';
+  clOrange             = $004080FF;
+  wbFloatDigits        = 6;
+  wbHardcodedDat       = '.Hardcoded.keep.this.with.the.exe.and.otherwise.ignore.it.I.really.mean.it.dat';
+  wbPersistentSelfName = 'Self';
+  wbPersistentGameName = 'Game';
 
 type
   TwbProgressCallback = procedure(const aStatus: string);
@@ -126,6 +128,8 @@ var
   wbMOHookFile           : string;
 
   wbSpeedOverMemory : Boolean = False;
+
+  wbCurrentSelf : Integer = -1; // memorize the index of the current file in a script.
 
 {$IFDEF USE_CODESITE}
 type
@@ -751,7 +755,8 @@ type
     fsOnlyHeader,
     fsIsHardcoded,
     fsIsGameMaster,
-    fsIsTemporary
+    fsIsTemporary,
+    fsHasNoFormID
   );
 
   TwbFileStates = set of TwbFileState;
@@ -796,6 +801,11 @@ type
     procedure SetIsLocalized(Value: Boolean);
 
     function GetIsNotPlugin: Boolean;
+    function GetHasNoFormID: Boolean;
+    procedure SetHasNoFormID(Value: Boolean);
+
+    function GetMasterPersistentLoadOrderFormID(aValue: String): Cardinal;
+
     property FileName: string
       read GetFileName;
     property UnsavedSince: TDateTime
@@ -837,6 +847,9 @@ type
       write SetIsLocalized;
     property IsNotPlugin: Boolean   // Save or other file to display.
       read GetIsNotPlugin;
+    property HasNoFormID: Boolean   // Like Morrowind for example. Also true for save/coSave.
+      read GetHasNoFormID
+      write SetHasNoFormID;
   end;
 
   IwbDataContainer = interface(IwbContainer)
@@ -932,6 +945,7 @@ type
     function GetCanHaveEditorID: Boolean;
     procedure SetEditorID(const aValue: string);
     function GetFullName: string;
+    function GetMasterPersistentName(aValue: Cardinal): string;
     function GetDisplayNameKey: string;
     function GetMaster: IwbMainRecord;
     function GetIsMaster: Boolean;
@@ -10148,7 +10162,7 @@ constructor TwbStringDef.Create(aPriority   : TwbConflictPriority;
                                 aDontShow   : TwbDontShowCallback;
                                 aGetCP      : TwbGetConflictPriority;
                                 aTerminator : Boolean;
-								                aForward    : boolean);
+                                aForward    : boolean);
 begin
   sdSize := aSize;
   sdForward := aForward;
@@ -10193,7 +10207,7 @@ end;
 
 procedure TwbStringDef.FromStringTransform(aBasePtr, aEndPtr: Pointer; const aElement: IwbElement; const aValue: string; aTransformType: TwbStringTransformType);
 begin
-  FromStringNative(aBasePtr, aEndPtr, aElement, TransformString(wbStringToAnsi(aValue, aElement), aTransformType, aElement));
+  FromStringNative(aBasePtr, aEndPtr, aElement, TransformString(AnsiString(aValue), aTransformType, aElement));
 end;
 
 function TwbStringDef.GetDefType: TwbDefType;
@@ -11008,41 +11022,51 @@ var
   FileID    : Integer;
   NewFileID : Integer;
   i         : Integer;
-  s, t      : string;
+
+  function SplitFormIDEditValue(const aValue: String): Cardinal;
+  var
+    i         : Integer;
+    s, t      : string;
+  begin
+    s := '';
+    t := aValue;
+    i := Pos('[', t);
+    if i>0 then
+      while i > 0 do begin
+        Delete(t, 1, i);
+        i := Pos(']', t);
+        if i > 0 then begin
+          s := Copy(t, 1, Pred(i));
+          Delete(t, 1, i);
+          if (Length(s) = 13) and (s[5] = ':') then
+            Delete(s, 1, 5);
+        end;
+
+        try
+          StrToInt64('$' + s);
+          if Length(s) = 8 then
+            i := 0
+          else
+            i := Pos('[', t);
+        except
+          i := Pos('[', t);
+        end;
+      end
+    else
+      s := aValue;
+
+    if Length(s) = 8 then
+      Result := StrToInt64('$' + s)
+    else begin
+      if IsValid('ACVA') and SameText(Trim(aValue), 'None') then begin
+        Result := $FF;
+      end else
+        Result := StrToInt64('$' + aValue);
+    end;
+  end;
+
 begin
-  s := '';
-  t := aValue;
-  i := Pos('[', t);
-  while i > 0 do begin
-    Delete(t, 1, i);
-    i := Pos(']', t);
-    if i > 0 then begin
-      s := Copy(t, 1, Pred(i));
-      Delete(t, 1, i);
-      if (Length(s) = 13) and (s[5] = ':') then
-        Delete(s, 1, 5);
-    end;
-
-    try
-      StrToInt64('$' + s);
-      if Length(s) = 8 then
-        i := 0
-      else
-        i := Pos('[', t);
-    except
-      i := Pos('[', t);
-    end;
-  end;
-
-  if Length(s) = 8 then
-    Result := StrToInt64('$' + s)
-  else begin
-    if IsValid('ACVA') and SameText(Trim(aValue), 'None') then begin
-      Result := $FF;
-      Exit;
-    end else
-      Result := StrToInt64('$' + aValue);
-  end;
+  Result := SplitFormIDEditValue(aValue);
 
   if not wbDisplayLoadOrderFormID then
     Exit;
@@ -11395,7 +11419,7 @@ end;
 function TwbFormID.ToEditValue(aInt: Int64; const aElement: IwbElement): string;
 begin
   if wbDisplayLoadOrderFormID then begin
-    Result := ToString(aInt, aElement);//ToSortKey(aInt, aElement)
+    Result := ToString(aInt, aElement);
     if (Length(Result) > 0) and (Result[1] = '<') then
       Delete(Result, 1, 1);
   end else
@@ -11404,7 +11428,6 @@ end;
 
 function TwbFormID.ToSortKey(aInt: Int64; const aElement: IwbElement): string;
 var
-  _File: IwbFile;
   MainRecord: IwbMainRecord;
 begin
   if (aInt < $800) or (aInt = $FFFFFFFF) then begin
@@ -11412,20 +11435,15 @@ begin
     Exit;
   end;
 
-  if Assigned(aElement) then begin
-    _File := aElement._File;
-    if Assigned(_File) then begin
-      try
-        MainRecord := _File.RecordByFormID[aInt, True];
-        if Assigned(MainRecord) then begin
-          Result := IntToHex64(MainRecord.LoadOrderFormID, 8);
-          Exit;
-        end;
-      except
-        on E: Exception do begin
-          Result := IntToHex64(aInt, 8);
-          Exit;
-        end;
+  MainRecord := GetMainRecord(aInt, aElement);
+  if Assigned(MainRecord) then begin
+    try
+      Result := IntToHex64(MainRecord.LoadOrderFormID, 8);
+      Exit;
+    except
+      on E: Exception do begin
+        Result := IntToHex64(aInt, 8);
+        Exit;
       end;
     end;
   end;
@@ -11644,7 +11662,7 @@ begin
   j := 0;
   while i <= Length(aValue) do begin
     case aValue[i] of
-      ' ', ',', ';': {allowed whitespace}
+      ' ', ',', ';',#$D,#$A: {allowed whitespace}
         Inc(i);
       '0'..'9', 'a'..'f', 'A'..'F': begin
         if i = Length(aValue) then

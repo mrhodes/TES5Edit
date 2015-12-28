@@ -650,6 +650,9 @@ type
     procedure SetIsLocalized(Value: Boolean);
 
     function GetIsNotPlugin: Boolean;
+    function GetHasNoFormID: Boolean;
+    procedure SetHasNoFormID(Value: Boolean);
+
     {---IwbFileInternal---}
     procedure AddMainRecord(const aRecord: IwbMainRecord);
     procedure RemoveMainRecord(const aRecord: IwbMainRecord);
@@ -667,6 +670,8 @@ type
 
     constructor Create(const aFileName: string; aLoadOrder: Integer; aCompareTo: string; aOnlyHeader: Boolean; IsTemporary: Boolean = False);
     constructor CreateNew(const aFileName: string; aLoadOrder: Integer);
+
+    function GetMasterPersistentLoadOrderFormID(aValue: String): Cardinal;
   public
     destructor Destroy; override;
   end;
@@ -1064,6 +1069,7 @@ type
     function GetName: string; override;
     function GetShortName: string; override;
     function GetPersistentName: string; override;
+    function GetMasterPersistentName(aValue: Cardinal): string; virtual;
     function GetDisplayName: string; override;
   end;
 
@@ -2594,6 +2600,11 @@ begin
   Result := nil;
 end;
 
+function TwbFile.GetHasNoFormID: Boolean;
+begin
+  Result := GetIsNotPlugin or (fsHasNoFormID in flStates);
+end;
+
 function TwbFile.GetHeader: IwbMainRecord;
 var
   SelfRef : IwbContainerElementRef;
@@ -3277,6 +3288,14 @@ begin
 
   flProgress('Processing completed');
   flLoadFinished := True;
+end;
+
+procedure TwbFile.SetHasNoFormID(Value: Boolean);
+begin
+  if Value or GetIsNotPlugin then
+    Include(flStates, fsHasNoFormID)
+  else
+    Exclude(flStates, fsHasNoFormID);
 end;
 
 procedure TwbFile.SetIsESM(Value: Boolean);
@@ -7003,6 +7022,61 @@ begin
   Result := GetMaster;
   if not Assigned(Result) then
     Result := Self;
+end;
+
+function TwbMainRecord.GetMasterPersistentName(aValue: Cardinal): string;
+var
+  i : Integer;
+  j : Integer;
+begin
+  i := aValue shr 24;
+  if wbDisplayLoadOrderFormID then
+    for j := 0 to Pred(Pred(GetFile.MasterCount)) do
+      if GetFile.Masters[j].LoadOrder = i then begin
+        Result := GetFile.Masters[j].PersistentName;
+        Exit;
+      end;
+  if (i = wbCurrentSelf) then
+    Result := wbPersistentSelfName
+  else begin
+    if (i >= GetFile.MasterCount) then
+      Result := GetFile.PersistentName
+    else if (fsIsGameMaster in GetFile.Masters[i].FileStates)  then
+      Result := wbPersistentGameName
+    else
+      Result := GetFile.Masters[i].PersistentName;
+  end;
+end;
+
+function TwbFile.GetMasterPersistentLoadOrderFormID(aValue: String): Cardinal;
+var
+  i, j  : Integer;
+  s, t  : string;
+begin
+  Result := 0;
+  s := '';
+  t := aValue;
+  if Pos('[', t)<>1         then Exit;  // Badly formed
+  if Pos(']', t)<>Length(t) then Exit;  // Badly formed
+  if Pos('-', t) < 2        then Exit;  // Badly formed
+  s := Copy(t, 2, Pos('-', t) - 2);
+  System.Delete(t, 1, Pos('-', t) + 1);
+  System.Delete(t, Length(t), 1);
+
+  if SameText(s, wbPersistentSelfName) then
+    Result := (GetLoadOrder shl 24) or StrToInt('$' + t)
+  else for i := 0 to Pred(GetMasterCount) do
+    if SameText(GetMaster(i).PersistentName, s) then begin
+      try
+        if wbDisplayLoadOrderFormID then
+          j := GetMaster(i).LoadOrder
+        else
+          j := i;
+        Result := (j shl 24) or StrToInt64('$' + t);
+      except
+      end;
+      break;
+    end;
 end;
 
 function TwbMainRecord.GetShortName: string;
@@ -14264,7 +14338,6 @@ begin
     if wbFlagsAsArray then
       if Supports(ValueDef, IwbIntegerDef, IntegerDef) then
         if Supports(IntegerDef.Formater[aElement], IwbFlagsDef, FlagsDef) then begin
-
           if Assigned(aBasePtr) and (FlagsDef.FlagCount > 0) then begin
             j := IntegerDef.ToInt(aBasePtr, aEndPtr, aContainer);
             if j <> 0 then
