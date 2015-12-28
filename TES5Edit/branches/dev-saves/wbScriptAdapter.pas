@@ -510,6 +510,23 @@ begin
     Element.EditValue := string(Args.Values[1]);
 end;
 
+procedure IwbElement_GetPersistentEditValue(var Value: Variant; Args: TJvInterpreterArgs);
+var
+  Element: IwbElement;
+begin
+  Value := '';
+  if Supports(IInterface(Args.Values[0]), IwbElement, Element) then
+    Value := Element.GetPersistentEditValue;
+end;
+
+procedure IwbElement_SetPersistentEditValue(var Value: Variant; Args: TJvInterpreterArgs);
+var
+  Element: IwbElement;
+begin
+  if Supports(IInterface(Args.Values[0]), IwbElement, Element) then
+    Element.SetPersistentEditValue(string(Args.Values[1]));
+end;
+
 procedure IwbElement_GetNativeValue(var Value: Variant; Args: TJvInterpreterArgs);
 var
   Element: IwbElement;
@@ -1797,6 +1814,8 @@ begin
     AddFunction(cUnit, 'IsEditable', IwbElement_GetIsEditable, 1, [varEmpty], varEmpty);
     AddFunction(cUnit, 'GetEditValue', IwbElement_GetEditValue, 1, [varEmpty], varEmpty);
     AddFunction(cUnit, 'SetEditValue', IwbElement_SetEditValue, 2, [varEmpty, varString], varEmpty);
+    AddFunction(cUnit, 'GetPersistentEditValue', IwbElement_GetPersistentEditValue, 1, [varEmpty], varEmpty);
+    AddFunction(cUnit, 'SetPersistentEditValue', IwbElement_SetPersistentEditValue, 2, [varEmpty, varString], varEmpty);
     AddFunction(cUnit, 'GetNativeValue', IwbElement_GetNativeValue, 1, [varEmpty], varEmpty);
     AddFunction(cUnit, 'SetNativeValue', IwbElement_SetNativeValue, 2, [varEmpty, varEmpty], varEmpty);
     AddFunction(cUnit, 'Remove', IwbElement_Remove, 1, [varEmpty], varEmpty);

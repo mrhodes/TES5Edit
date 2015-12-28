@@ -7222,6 +7222,11 @@ begin
       for i := Low(Selection) to High(Selection) do begin
         StartNode := Selection[i];
         if Assigned(StartNode) then begin
+          NodeData := vstNav.GetNodeData(StartNode);
+          if Assigned(NodeData.Element) then
+            if NodeData.Element.ElementType = etFile then
+              wbCurrentSelf := (NodeData.Element as IwbFile).MasterCount;
+
           Node := vstNav.GetLast(StartNode);
           if not Assigned(Node) then
             Node := StartNode;
