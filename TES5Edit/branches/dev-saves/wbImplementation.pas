@@ -12115,7 +12115,7 @@ begin
     aElement := IwbContainer(eContainer)
   else
     aElement := nil;
-  if Assigned(aElement) and (aElement.ElementType = etArray) or (aElement.ElementType = etSubRecordArray) then
+  if Assigned(aElement) and (aElement.ElementType in [etArray, etSubRecordArray, etStruct, etSubRecord, etSubRecordStruct, etStructChapter]) then
     Result := '['+IntToStr(IwbContainer(eContainer).IndexOf(Self))+'] ';
   Result := Result + GetShortName;
 end;
@@ -15006,7 +15006,8 @@ begin
   SizeNeeded := GetDataSize;
   if SizeNeeded > 0 then begin
     SizeAvailable := Cardinal( aEndPtr ) - Cardinal( aBasePtr );
-    Assert( SizeAvailable >= SizeNeeded );
+    if (SizeAvailable < SizeNeeded) then
+      Assert( SizeAvailable >= SizeNeeded );
 
     BasePtr := aBasePtr;
     Inc(PByte(aBasePtr), GetDataPrefixSize);
