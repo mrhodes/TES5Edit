@@ -340,7 +340,7 @@ begin
     if DirectoryExists(x) then begin
       x := x+c;
       while (Length(x)>0) and (x[Length(x)]=' ') do Delete(x, 1, 1);
-      s := GetPermanentEditValue(e);
+      s := GetPersistentEditValue(e);
       slText.Text := s;
       // if debug then AddMessage('Checking: '+x);
       if FileExists(x) then begin
@@ -350,10 +350,10 @@ begin
         if sl.Text <> slText.Text then begin
           // if debug then AddMessage(x+' modified');
           if doImport then
-						SetPermanentEditValue(e, sl.Text)
-					else
+            SetPersistentEditValue(e, sl.Text)
+          else
             try slText.SaveToFile(x); except end;
-				end;
+        end;
       end else begin
         // if debug then AddMessage(x+' created');
         if (not doImport) and (Length(s)>0) then
