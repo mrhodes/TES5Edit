@@ -364,6 +364,8 @@ begin
 
     if wbGameMode in [gmFO3, gmFNV] then
       wbTheGameIniFileName := wbMyGamesTheGamePath + 'Fallout.ini'
+    else if wbGameMode = gmFO4 then
+      wbTheGameIniFileName := wbMyGamesTheGamePath + 'Fallout4.ini'
     else
       wbTheGameIniFileName := wbMyGamesTheGamePath + wbGameName + '.ini';
   end;
@@ -417,15 +419,74 @@ end;
 
 var
   wbForcedModes: string;
+  AppGameMode, AppToolMode, AppSourceMode: string;
+
+procedure DetectAppMode;
+const
+  SourceModes : array [1..2] of string = ('plugins', 'saves');
+  GameModes: array [1..5] of string = ('tes4', 'tes5', 'fo3', 'fnv', 'fo4');
+  ToolModes: array [1..12] of string = (
+    'edit', 'view', 'lodgen', 'script', 'translate',
+    'setesm', 'clearesm', 'sortandclean', 'sortandcleanmasters',
+    'checkforerrors', 'checkforitm', 'checkfordr');
+var
+  s, p: string;
+begin
+  // Detecting game mode
+  // check command line params first for mode overrides
+  // they should take precendence over application name detection
+  AppSourceMode := SourceModes[1];
+  for s in SourceModes do
+    if FindCmdLineSwitch(s) or wbFindCmdLineParam(s, p) or (Pos(s, wbForcedModes) <> 0) then begin
+      AppSourceMode := s;
+      Break;
+    end;
+  if AppSourceMode = '' then
+    for s in SourceModes do
+      if (Pos(s, LowerCase(ExtractFileName(ParamStr(0)))) <> 0) or (Pos(s, wbForcedModes) <> 0) then begin
+        AppSourceMode := s;
+        Break;
+      end;
+  // if still nothing, then default value
+  if AppSourceMode = '' then
+    AppGameMode := 'plugins';
+
+  for s in GameModes do
+    if FindCmdLineSwitch(s) or wbFindCmdLineParam(s, p) or (Pos(s, wbForcedModes) <> 0) then begin
+      AppGameMode := s;
+      Break;
+    end;
+  // if no overrrides, then check by executable name
+  if AppGameMode = '' then
+    for s in GameModes do
+      if (Pos(s, LowerCase(ExtractFileName(ParamStr(0)))) <> 0) or (Pos(s, wbForcedModes) <> 0) then begin
+        AppGameMode := s;
+        Break;
+      end;
+  // if still nothing, then default value
+  if AppGameMode = '' then
+    AppGameMode := 'tes5';
+
+  // the same for tool mode
+  for s in ToolModes do
+    if FindCmdLineSwitch(s) or wbFindCmdLineParam(s, p) or (Pos(s, wbForcedModes) <> 0) then begin
+      AppToolMode := s;
+      Break;
+    end;
+  if AppToolMode = '' then
+    for s in ToolModes do
+      if (Pos(s, LowerCase(ExtractFileName(ParamStr(0)))) <> 0) or (Pos(s, wbForcedModes) <> 0) then begin
+        AppToolMode := s;
+        Break;
+      end;
+  if AppToolMode = '' then
+    AppToolMode := 'edit';
+end;
 
 function isMode(aMode: String): Boolean;
-var
-  s: string;
 begin
-  Result := (Pos(Uppercase(aMode), UpperCase(wbForcedModes)) <> 0) or
-            FindCmdLineSwitch(aMode) or
-            wbFindCmdLineParam(aMode, s) or
-            (Pos(Uppercase(aMode), UpperCase(ExtractFileName(ParamStr(0)))) <> 0);
+  aMode := LowerCase(aMode);
+  Result := (AppGameMode = aMode) or (AppToolMode = aMode) or (AppSourceMode = aMode);
 end;
 
 // Force app modes
@@ -456,6 +517,11 @@ var
   s: string;
 begin
   wbReportMode := False;
+  wbEditAllowed := True;
+  wbDontSave    := False;
+
+  CheckForcedMode;
+  DetectAppMode;
 
   if isMode('Saves') then begin
     wbToolSource := tsSaves;
@@ -466,9 +532,6 @@ begin
     wbSourceName := 'Plugins';
   end;
 
-  wbEditAllowed := True;
-  wbDontSave    := False;
-  CheckForcedMode;
   if isMode('View') then begin
     wbToolMode    := tmView;
     wbToolName    := 'View';
@@ -541,19 +604,6 @@ begin
       ShowMessage('Application '+wbGameName+' does not currently support '+wbSourceName);
       Exit;
     end;
-  end else if isMode('FO4') then begin
-    wbGameMode := gmFO4;
-    wbAppName := 'FO4';
-    wbGameName := 'Fallout4';
-    wbArchiveExtension := '.ba2';
-    if not (wbToolMode in wbAlwaysMode) and not (wbToolMode in [tmTranslate]) then begin
-      ShowMessage('Application '+wbGameName+' does not currently support '+wbToolName);
-      Exit;
-    end;
-    if not (wbToolSource in [tsPlugins]) then begin
-      ShowMessage('Application '+wbGameName+' does not currently support '+wbSourceName);
-      Exit;
-    end;
   end else if isMode('TES3') then begin
     wbGameMode := gmTES3;
     wbAppName := 'TES3';
@@ -590,6 +640,19 @@ begin
       ShowMessage('Application '+wbGameName+' does not currently support '+wbSourceName);
       Exit;
     end;
+  end else if isMode('FO4') then begin
+    wbGameMode := gmFO4;
+    wbAppName := 'FO4';
+    wbGameName := 'Fallout4';
+    wbArchiveExtension := '.ba2';
+    if not (wbToolMode in wbAlwaysMode) and not (wbToolMode in [tmTranslate]) then begin
+      ShowMessage('Application '+wbGameName+' does not currently support '+wbToolName);
+      Exit;
+    end;
+    if not (wbToolSource in [tsPlugins]) then begin
+      ShowMessage('Application '+wbGameName+' does not currently support '+wbSourceName);
+      Exit;
+    end;
   end else begin
     ShowMessage('Application name must contain FNV, FO3, FO4, TES4 or TES5 to select game.');
     Exit;
@@ -609,12 +672,6 @@ begin
     wbVWDInTemporary := True;
     wbLoadBSAs := False;
     ReadSettings;
-  end else if wbGameMode = gmFO4 then begin
-    wbVWDInTemporary := True;
-    wbVWDAsQuestChildren := True;
-    wbHideIgnored := False; // to show Form Version
-    ReadSettings;
-    //wbCreateContainedIn := False;
   end else if wbGameMode = gmTES3 then begin
     wbLoadBSAs := False;
     wbAllowInternalEdit := false;
@@ -628,6 +685,12 @@ begin
     wbLoadBSAs := True; // localization won't work otherwise
     wbHideIgnored := False; // to show Form Version
     ReadSettings;
+  end else if wbGameMode = gmFO4 then begin
+    wbVWDInTemporary := True;
+    wbVWDAsQuestChildren := True;
+    wbHideIgnored := False; // to show Form Version
+    ReadSettings;
+    //wbCreateContainedIn := False;
   end else begin
     Exit;
   end;

@@ -545,19 +545,12 @@ end;
 
 procedure ProfileHeader(aFormat: TExportFormat; Pass: TwbExportPass);
 var
-//  R         : Integer;
   RecordDef : PwbRecordDef;
   Profile   : String;
 begin
   Profile := '';
   case wbToolSource of
     tsPlugins: begin
-//      R := wbRecordDefMap.IndexOf(wbHeaderSignature);
-//      if R >= 0 then
-//        RecordDef := IwbRecordDef(Pointer(wbRecordDefMap.Objects[R]))
-//      else
-//        RecordDef := nil;
-//      if Assigned(RecordDef) then
       if wbFindRecordDef(wbHeaderSignature, RecordDef) then
         ProfileElement(aFormat, RecordDef^, Profile, Pass, '');
     end;
@@ -570,7 +563,6 @@ end;
 procedure ProfileArray(aFormat: TExportFormat; Pass: TwbExportPass);
 var
   i         : Integer;
-//  R         : Integer;
   RecordDef : PwbRecordDef;
   Profile   : String;
 begin
@@ -578,12 +570,6 @@ begin
     tsPlugins: for i := 0 to Pred(wbGroupOrder.Count) do
       if wbGroupOrder[i]<>wbHeaderSignature then begin
         Profile := '';
-//        R := wbRecordDefMap.IndexOf(wbGroupOrder[i]);
-//        if R >= 0 then
-//          RecordDef := IwbRecordDef(Pointer(wbRecordDefMap.Objects[R]))
-//        else
-//          RecordDef := nil;
-//        if Assigned(RecordDef) then
         if wbFindRecordDef(AnsiString(wbGroupOrder[i]), RecordDef) then
           ProfileElement(aFormat, RecordDef^, Profile, Pass, '');
       end;
@@ -847,6 +833,16 @@ begin
     Result := False;
 end;
 
+procedure SwitchToCoSave;
+begin
+  case wbGameMode of
+    gmFNV:  SwitchToFNVCoSave;
+    gmFO3:  SwitchToFO3CoSave;
+    gmTES4: SwitchToTES4CoSave;
+    gmTES5: SwitchToTES5CoSave;
+  end;
+end;
+
 var
   NeedsSyntaxInfo : Boolean;
   s, s2           : string;
@@ -916,29 +912,13 @@ begin
         WriteLn(ErrOutput, 'Application '+wbGameName+' does not currently supports '+wbToolName);
         Exit;
       end;
-      if not (wbToolSource in [tsPlugins, tsSaves]) then begin
-        WriteLn(ErrOutput, 'Application '+wbGameName+' does not currently supports '+wbSourceName);
-        Exit;
-      end;
-      case wbToolSource of
-        tsSaves:   DefineFO3Saves;
-        tsPlugins: DefineFO3;
-      end;
-    end else if isMode('FO4') then begin
-      wbGameMode := gmFO4;
-      wbAppName := 'FO4';
-      wbGameName := 'Fallout4';
-      wbLoadBSAs := False;
-      wbCreateContainedIn := False;
-      if not (wbToolMode in [tmDump, tmExport]) then begin
-        WriteLn(ErrOutput, 'Application '+wbGameName+' does not currently supports '+wbToolName);
-        Exit;
-      end;
       if not (wbToolSource in [tsPlugins]) then begin
         WriteLn(ErrOutput, 'Application '+wbGameName+' does not currently supports '+wbSourceName);
         Exit;
       end;
-      DefineFO4;
+      case wbToolSource of
+        tsPlugins: DefineFO4;
+      end;
     end else if isMode('TES3') then begin
       WriteLn(ErrOutput, 'TES3 - Morrowind is not supported yet.');
       Exit;
@@ -988,6 +968,23 @@ begin
       case wbToolSource of
         tsSaves:   DefineTES5Saves;
         tsPlugins: DefineTES5;
+      end;
+    end else if isMode('FO4') then begin
+      wbGameMode := gmFO4;
+      wbAppName := 'FO4';
+      wbGameName := 'Fallout4';
+      wbLoadBSAs := False;
+      wbCreateContainedIn := False;
+      if not (wbToolMode in [tmDump, tmExport]) then begin
+        WriteLn(ErrOutput, 'Application '+wbGameName+' does not currently supports '+wbToolName);
+        Exit;
+      end;
+      if not (wbToolSource in [tsPlugins]) then begin
+        WriteLn(ErrOutput, 'Application '+wbGameName+' does not currently supports '+wbSourceName);
+        Exit;
+      end;
+      case wbToolSource of
+        tsPlugins: DefineFO4;
       end;
     end else begin
       WriteLn(ErrOutput, 'Application name must contain FNV, FO3, TES4, TES5 to select game.');
@@ -1144,14 +1141,14 @@ begin
     end;
     if wbToolSource = tsSaves then
       case wbGameMode of
-        gmFNV:  if SameText(ExtractFileExt(s), '.nvse') then SwitchToFNVCoSave;
-        gmFO3:  if SameText(ExtractFileExt(s), '.fose') then SwitchToFO3CoSave
+        gmFNV:  if SameText(ExtractFileExt(s), '.nvse') then SwitchToCoSave;
+        gmFO3:  if SameText(ExtractFileExt(s), '.fose') then SwitchToCoSave
           else
             WriteLn(ErrOutput, 'Save are not supported yet "',s,'". Please check the command line parameters.');
-        gmTES4: if SameText(ExtractFileExt(s), '.obse') then SwitchToTES4CoSave
+        gmTES4: if SameText(ExtractFileExt(s), '.obse') then SwitchToCoSave
           else
             WriteLn(ErrOutput, 'Save are not supported yet "',s,'". Please check the command line parameters.');
-        gmTES5: if SameText(ExtractFileExt(s), '.skse') then SwitchToTES5CoSave;
+        gmTES5: if SameText(ExtractFileExt(s), '.skse') then SwitchToCoSave;
       else
           WriteLn(ErrOutput, 'CoSave are not supported yet "',s,'". Please check the command line parameters.');
       end;

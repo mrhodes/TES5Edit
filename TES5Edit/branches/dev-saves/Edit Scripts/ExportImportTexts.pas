@@ -304,7 +304,7 @@ begin
             SetPersistentEditValue(e, sl.Text)
           else
             try slText.SaveToFile(x); except end;
-				end;
+        end;
       end else begin
         // if debug then AddMessage(x+' created');
         if (not doImport) and (Length(s)>0) then

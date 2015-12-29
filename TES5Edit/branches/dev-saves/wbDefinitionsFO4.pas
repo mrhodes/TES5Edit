@@ -1250,8 +1250,12 @@ var
   s, t       : string;
 begin
   case aType of
-    ctToStr: if aInt = -1 then Result := 'None' else
-      Result := IntToStr(aInt) + ' <Warning: Could not resolve alias>';
+    ctToStr: if aInt = -1 then
+        Result := 'None'
+      else if aInt = -2 then
+        Result := 'Player'
+      else
+        Result := IntToStr(aInt) + ' <Warning: Could not resolve alias>';
     ctToEditValue: if aInt = -1 then Result := 'None' else
       Result := IntToStr(aInt);
     ctToSortKey: begin
@@ -1264,7 +1268,7 @@ begin
     ctEditInfo: Result := '';
   end;
 
-  if (aInt = -1) and (aType <> ctEditType) and (aType <> ctEditInfo) then
+  if ((aInt = -1) or (aInt = -2)) and (aType <> ctEditType) and (aType <> ctEditInfo) then
     Exit;
 
   if not Assigned(aQuestRef) then
@@ -1290,8 +1294,9 @@ begin
       Result := 'ComboBox';
       Exit;
     end;
-    ctEditInfo:
+    ctEditInfo: begin
       EditInfos := TStringList.Create;
+    end;
   else
     EditInfos := nil;
   end;
@@ -1343,7 +1348,11 @@ begin
   Result := -1;
 
   if aString = 'None' then
+    Exit
+  else if aString = 'Player' then begin
+    Result := -2;
     Exit;
+  end;
 
   i := 1;
   s := Trim(aString);
@@ -2528,6 +2537,19 @@ begin
     end;
 end;
 
+function wbEFSHFormatDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+var
+  MainRecord: IwbMainRecord;
+begin
+  Result := 0;
+  if not Assigned(aElement) then
+    Exit;
+  if not Supports(aElement.Container, IwbMainRecord, MainRecord) then
+    Exit;
+  if MainRecord.Version < 102 then
+    Result := 1;
+end;
+
 {>>> For VMAD <<<}
 function wbScriptObjFormatDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 var
@@ -3445,8 +3467,14 @@ begin
     ParamType := Desc.ParamType1;
     ParamFlag := Container.ElementByName['Type'].NativeValue;
     if ParamType in [ptObjectReference, ptActor, ptPackage] then begin
-      if ParamFlag and $02 > 0 then ParamType := ptAlias else {>>> 'use aliases' is set <<<}
-      if ParamFlag and $08 > 0 then ParamType := ptPackdata;  {>>> 'use packdata' is set <<<}
+      if ParamFlag and $02 > 0 then begin
+        // except for this func when Run On = Quest Alias, then alias is param3 and package is param1
+        // [INFO:00020D3C]
+        if not ((Container.ElementByName['Run On'].NativeValue = 5) and (Desc.Name = 'GetIsCurrentPackage')) then
+          ParamType := ptAlias    {>>> 'use aliases' is set <<<}
+      end
+      else if ParamFlag and $08 > 0 then
+        ParamType := ptPackdata;  {>>> 'use packdata' is set <<<}
     end;
     Result := Succ(Integer(ParamType));
   end;
@@ -8093,180 +8121,254 @@ begin
     wbString(NAM7, 'Holes Texture'),
     wbString(NAM8, 'Membrane Palette Texture'),
     wbString(NAM9, 'Particle Palette Texture'),
-    wbUnknown(DATA),  // Fixed 168 bytes if form version < 62, ignored otherwize
+    wbUnknown(DATA),  // if form version < 62, ignored otherwise
     // format depends on Form Version (appear with form version 62, changed in form version 106), different for older records starting from the first field
-    wbStruct(DNAM, '', [
-      wbUnknown
-      {wbInteger('Membrane Shader - Source Blend Mode', itU32, wbBlendModeEnum),
-      wbInteger('Membrane Shader - Blend Operation', itU32, wbBlendOpEnum),
-      wbInteger('Membrane Shader - Z Test Function', itU32, wbZTestFuncEnum),
-      wbStruct('Fill/Texture Effect - Color Key 1', [
-        wbInteger('Red', itU8),
-        wbInteger('Green', itU8),
-        wbInteger('Blue', itU8),
-        wbByteArray('Unknown', 1)
+    wbUnion(DNAM, '', wbEFSHFormatDecider, [
+      wbStruct('Data', [
+        wbInteger('Membrane Shader - Source Blend Mode', itU32, wbBlendModeEnum),
+        wbInteger('Membrane Shader - Blend Operation', itU32, wbBlendOpEnum),
+        wbInteger('Membrane Shader - Z Test Function', itU32, wbZTestFuncEnum),
+        wbStruct('Fill/Texture Effect - Color Key 1', [
+          wbInteger('Red', itU8),
+          wbInteger('Green', itU8),
+          wbInteger('Blue', itU8),
+          wbByteArray('Unknown', 1)
+        ]),
+        wbFloat('Fill/Texture Effect - Alpha Fade In Time'),
+        wbFloat('Fill/Texture Effect - Full Alpha Time'),
+        wbFloat('Fill/Texture Effect - Alpha Fade Out Time'),
+        wbFloat('Fill/Texture Effect - Presistent Alpha Ratio'),
+        wbFloat('Fill/Texture Effect - Alpha Pulse Amplitude'),
+        wbFloat('Fill/Texture Effect - Alpha Pulse Frequency'),
+        wbFloat('Fill/Texture Effect - Texture Animation Speed (U)'),
+        wbFloat('Fill/Texture Effect - Texture Animation Speed (V)'),
+        wbFloat('Edge Effect - Fall Off'),
+        wbStruct('Edge Effect - Color', [
+          wbInteger('Red', itU8),
+          wbInteger('Green', itU8),
+          wbInteger('Blue', itU8),
+          wbByteArray('Unknown', 1)
+        ]),
+        wbFloat('Edge Effect - Alpha Fade In Time'),
+        wbFloat('Edge Effect - Full Alpha Time'),
+        wbFloat('Edge Effect - Alpha Fade Out Time'),
+        wbFloat('Edge Effect - Persistent Alpha Ratio'),
+        wbFloat('Edge Effect - Alpha Pulse Amplitude'),
+        wbFloat('Edge Effect - Alpha Pulse Frequency'),
+        wbFloat('Fill/Texture Effect - Full Alpha Ratio'),
+        wbFloat('Edge Effect - Full Alpha Ratio'),
+        wbInteger('Membrane Shader - Dest Blend Mode', itU32, wbBlendModeEnum),
+        wbFloat('Unknown'),
+        wbFloat('Unknown'),
+        wbFloat('Unknown'),
+        wbFloat('Unknown'),
+        wbStruct('Color Key 1 - Color', [
+          wbInteger('Red', itU8),
+          wbInteger('Green', itU8),
+          wbInteger('Blue', itU8),
+          wbByteArray('Unknown', 1)
+        ]),
+        wbStruct('Color Key 2 - Color', [
+          wbInteger('Red', itU8),
+          wbInteger('Green', itU8),
+          wbInteger('Blue', itU8),
+          wbByteArray('Unknown', 1)
+        ]),
+        wbStruct('Color Key 3 - Color', [
+          wbInteger('Red', itU8),
+          wbInteger('Green', itU8),
+          wbInteger('Blue', itU8),
+          wbByteArray('Unknown', 1)
+        ]),
+        wbInteger('Unknown', itU8),
+        wbFloat('Unknown'),
+        wbFloat('Unknown'),
+        wbFloat('Unknown'),
+        wbFloat('Unknown'),
+        wbFloat('Unknown'),
+        wbFloat('Unknown'),
+        wbStruct('Color', [
+          wbInteger('Red', itU8),
+          wbInteger('Green', itU8),
+          wbInteger('Blue', itU8),
+          wbByteArray('Unknown', 1)
+        ]),
+        wbFloat('Unknown'),
+        wbFloat('Unknown')
       ]),
-      wbFloat('Fill/Texture Effect - Alpha Fade In Time'),
-      wbFloat('Fill/Texture Effect - Full Alpha Time'),
-      wbFloat('Fill/Texture Effect - Alpha Fade Out Time'),
-      wbFloat('Fill/Texture Effect - Presistent Alpha Ratio'),
-      wbFloat('Fill/Texture Effect - Alpha Pulse Amplitude'),
-      wbFloat('Fill/Texture Effect - Alpha Pulse Frequency'),
-      wbFloat('Fill/Texture Effect - Texture Animation Speed (U)'),
-      wbFloat('Fill/Texture Effect - Texture Animation Speed (V)'),
-      wbFloat('Edge Effect - Fall Off'),
-      wbStruct('Edge Effect - Color', [
-        wbInteger('Red', itU8),
-        wbInteger('Green', itU8),
-        wbInteger('Blue', itU8),
-        wbByteArray('Unknown', 1)
-      ]),
-      wbFloat('Edge Effect - Alpha Fade In Time'),
-      wbFloat('Edge Effect - Full Alpha Time'),
-      wbFloat('Edge Effect - Alpha Fade Out Time'),
-      wbFloat('Edge Effect - Persistent Alpha Ratio'),
-      wbFloat('Edge Effect - Alpha Pulse Amplitude'),
-      wbFloat('Edge Effect - Alpha Pulse Frequency'),
-      wbFloat('Fill/Texture Effect - Full Alpha Ratio'),
-      wbFloat('Edge Effect - Full Alpha Ratio'),
-      wbInteger('Membrane Shader - Dest Blend Mode', itU32, wbBlendModeEnum),
-      wbInteger('Particle Shader - Source Blend Mode', itU32, wbBlendModeEnum),
-      wbInteger('Particle Shader - Blend Operation', itU32, wbBlendOpEnum),
-      wbInteger('Particle Shader - Z Test Function', itU32, wbZTestFuncEnum),
-      wbInteger('Particle Shader - Dest Blend Mode', itU32, wbBlendModeEnum),
-      wbFloat('Particle Shader - Particle Birth Ramp Up Time'),
-      wbFloat('Particle Shader - Full Particle Birth Time'),
-      wbFloat('Particle Shader - Particle Birth Ramp Down Time'),
-      wbFloat('Particle Shader - Full Particle Birth Ratio'),
-      wbFloat('Particle Shader - Persistant Particle Count'),
-      wbFloat('Particle Shader - Particle Lifetime'),
-      wbFloat('Particle Shader - Particle Lifetime +/-'),
-      wbFloat('Particle Shader - Initial Speed Along Normal'),
-      wbFloat('Particle Shader - Acceleration Along Normal'),
-      wbFloat('Particle Shader - Initial Velocity #1'),
-      wbFloat('Particle Shader - Initial Velocity #2'),
-      wbFloat('Particle Shader - Initial Velocity #3'),
-      wbFloat('Particle Shader - Acceleration #1'),
-      wbFloat('Particle Shader - Acceleration #2'),
-      wbFloat('Particle Shader - Acceleration #3'),
-      wbFloat('Particle Shader - Scale Key 1'),
-      wbFloat('Particle Shader - Scale Key 2'),
-      wbFloat('Particle Shader - Scale Key 1 Time'),
-      wbFloat('Particle Shader - Scale Key 2 Time'),
-      wbStruct('Color Key 1 - Color', [
-        wbInteger('Red', itU8),
-        wbInteger('Green', itU8),
-        wbInteger('Blue', itU8),
-        wbByteArray('Unknown', 1)
-      ]),
-      wbStruct('Color Key 2 - Color', [
-        wbInteger('Red', itU8),
-        wbInteger('Green', itU8),
-        wbInteger('Blue', itU8),
-        wbByteArray('Unknown', 1)
-      ]),
-      wbStruct('Color Key 3 - Color', [
-        wbInteger('Red', itU8),
-        wbInteger('Green', itU8),
-        wbInteger('Blue', itU8),
-        wbByteArray('Unknown', 1)
-      ]),
-      wbFloat('Color Key 1 - Color Alpha'),
-      wbFloat('Color Key 2 - Color Alpha'),
-      wbFloat('Color Key 3 - Color Alpha'),
-      wbFloat('Color Key 1 - Color Key Time'),
-      wbFloat('Color Key 2 - Color Key Time'),
-      wbFloat('Color Key 3 - Color Key Time'),
-      wbFloat('Particle Shader - Initial Speed Along Normal +/-'),
-      wbFloat('Particle Shader - Initial Rotation (deg)'),
-      wbFloat('Particle Shader - Initial Rotation (deg) +/-'),
-      wbFloat('Particle Shader - Rotation Speed (deg/sec)'),
-      wbFloat('Particle Shader - Rotation Speed (deg/sec) +/-'),
-      wbFormIDCk('Addon Models', [DEBR, NULL]),
-      wbFloat('Holes - Start Time'),
-      wbFloat('Holes - End Time'),
-      wbFloat('Holes - Start Val'),
-      wbFloat('Holes - End Val'),
-      wbFloat('Edge Width (alpha units)'),
-      wbStruct('Edge Color', [
-        wbInteger('Red', itU8),
-        wbInteger('Green', itU8),
-        wbInteger('Blue', itU8),
-        wbByteArray('Unknown', 1)
-      ]),
-      wbFloat('Explosion Wind Speed'),
-      wbInteger('Texture Count U', itU32),
-      wbInteger('Texture Count V', itU32),
-      wbFloat('Addon Models - Fade In Time'),
-      wbFloat('Addon Models - Fade Out Time'),
-      wbFloat('Addon Models - Scale Start'),
-      wbFloat('Addon Models - Scale End'),
-      wbFloat('Addon Models - Scale In Time'),
-      wbFloat('Addon Models - Scale Out Time'),
-      wbFormIDCk('Ambient Sound', [SNDR, NULL]),
-      wbStruct('Fill/Texture Effect - Color Key 2', [
-        wbInteger('Red', itU8),
-        wbInteger('Green', itU8),
-        wbInteger('Blue', itU8),
-        wbByteArray('Unknown', 1)
-      ]),
-      wbStruct('Fill/Texture Effect - Color Key 3', [
-        wbInteger('Red', itU8),
-        wbInteger('Green', itU8),
-        wbInteger('Blue', itU8),
-        wbByteArray('Unknown', 1)
-      ]),
-      wbStruct('Fill/Texture Effect - Color Key Scale/Time', [
-        wbFloat('Color Key 1 - Scale'),
-        wbFloat('Color Key 2 - Scale'),
-        wbFloat('Color Key 3 - Scale'),
-        wbFloat('Color Key 1 - Time'),
-        wbFloat('Color Key 2 - Time'),
-        wbFloat('Color Key 3 - Time')
-      ]),
-      wbFloat('Color Scale'),
-      wbFloat('Birth Position Offset'),
-      wbFloat('Birth Position Offset Range +/-'),
-      wbStruct('Particle Shader Animated', [
-        wbInteger('Start Frame', itU32),
-        wbInteger('Start Frame Variation', itU32),
-        wbInteger('End Frame', itU32),
-        wbInteger('Loop Start Frame', itU32),
-        wbInteger('Loop Start Variation', itU32),
-        wbInteger('Frame Count', itU32),
-        wbInteger('Frame Count Variation', itU32)
-      ]),
-      wbInteger('Flags', itU32, wbFlags([
-        'No Membrane Shader',
-        'Membrane Grayscale Color',
-        'Membrane Grayscale Alpha',
-        'No Particle Shader',
-        'Edge Effect Inverse',
-        'Affect Skin Only',
-        'Ignore Alpha',
-        'Project UVs',
-        'Ignore Base Geometry Alpha',
-        'Lighting',
-        'No Weapons',
-        'Unknown 11',
-        'Unknown 12',
-        'Unknown 13',
-        'Unknown 14',
-        'Particle Animated',
-        'Particle Grayscale Color',
-        'Particle Grayscale Alpha',
-        'Unknown 18',
-        'Unknown 19',
-        'Unknown 20',
-        'Unknown 21',
-        'Unknown 22',
-        'Unknown 23',
-        'Use Blood Geometry'
-      ])),
-      wbFloat('Fill/Texture Effect - Texture Scale (U)'),
-      wbFloat('Fill/Texture Effect - Texture Scale (V)'),
-      wbInteger('Scene Graph Emit Depth Limit (unused)', itU32),}
-    ], cpNormal, True, nil, 0),
+      wbStruct('Data (old format)', [
+        wbByteArray('Unknown', 1),
+        wbInteger('Membrane Shader - Source Blend Mode', itU32, wbBlendModeEnum),
+        wbInteger('Membrane Shader - Blend Operation', itU32, wbBlendOpEnum),
+        wbInteger('Membrane Shader - Z Test Function', itU32, wbZTestFuncEnum),
+        wbStruct('Fill/Texture Effect - Color Key 1', [
+          wbInteger('Red', itU8),
+          wbInteger('Green', itU8),
+          wbInteger('Blue', itU8),
+          wbByteArray('Unknown', 1)
+        ]),
+        wbFloat('Fill/Texture Effect - Alpha Fade In Time'),
+        wbFloat('Fill/Texture Effect - Full Alpha Time'),
+        wbFloat('Fill/Texture Effect - Alpha Fade Out Time'),
+        wbFloat('Fill/Texture Effect - Presistent Alpha Ratio'),
+        wbFloat('Fill/Texture Effect - Alpha Pulse Amplitude'),
+        wbFloat('Fill/Texture Effect - Alpha Pulse Frequency'),
+        wbFloat('Fill/Texture Effect - Texture Animation Speed (U)'),
+        wbFloat('Fill/Texture Effect - Texture Animation Speed (V)'),
+        wbFloat('Edge Effect - Fall Off'),
+        wbStruct('Edge Effect - Color', [
+          wbInteger('Red', itU8),
+          wbInteger('Green', itU8),
+          wbInteger('Blue', itU8),
+          wbByteArray('Unknown', 1)
+        ]),
+        wbFloat('Edge Effect - Alpha Fade In Time'),
+        wbFloat('Edge Effect - Full Alpha Time'),
+        wbFloat('Edge Effect - Alpha Fade Out Time'),
+        wbFloat('Edge Effect - Persistent Alpha Ratio'),
+        wbFloat('Edge Effect - Alpha Pulse Amplitude'),
+        wbFloat('Edge Effect - Alpha Pulse Frequency'),
+        wbFloat('Fill/Texture Effect - Full Alpha Ratio'),
+        wbFloat('Edge Effect - Full Alpha Ratio'),
+        wbInteger('Membrane Shader - Dest Blend Mode', itU32, wbBlendModeEnum),
+        wbInteger('Particle Shader - Source Blend Mode', itU32, wbBlendModeEnum),
+        wbInteger('Particle Shader - Blend Operation', itU32, wbBlendOpEnum),
+        wbInteger('Particle Shader - Z Test Function', itU32, wbZTestFuncEnum),
+        wbInteger('Particle Shader - Dest Blend Mode', itU32, wbBlendModeEnum),
+        wbFloat('Particle Shader - Particle Birth Ramp Up Time'),
+        wbFloat('Particle Shader - Full Particle Birth Time'),
+        wbFloat('Particle Shader - Particle Birth Ramp Down Time'),
+        wbFloat('Particle Shader - Full Particle Birth Ratio'),
+        wbFloat('Particle Shader - Persistant Particle Count'),
+        wbFloat('Particle Shader - Particle Lifetime'),
+        wbFloat('Particle Shader - Particle Lifetime +/-'),
+        wbFloat('Particle Shader - Initial Speed Along Normal'),
+        wbFloat('Particle Shader - Acceleration Along Normal'),
+        wbFloat('Particle Shader - Initial Velocity #1'),
+        wbFloat('Particle Shader - Initial Velocity #2'),
+        wbFloat('Particle Shader - Initial Velocity #3'),
+        wbFloat('Particle Shader - Acceleration #1'),
+        wbFloat('Particle Shader - Acceleration #2'),
+        wbFloat('Particle Shader - Acceleration #3'),
+        wbFloat('Particle Shader - Scale Key 1'),
+        wbFloat('Particle Shader - Scale Key 2'),
+        wbFloat('Particle Shader - Scale Key 1 Time'),
+        wbFloat('Particle Shader - Scale Key 2 Time'),
+        wbStruct('Color Key 1 - Color', [
+          wbInteger('Red', itU8),
+          wbInteger('Green', itU8),
+          wbInteger('Blue', itU8),
+          wbByteArray('Unknown', 1)
+        ]),
+        wbStruct('Color Key 2 - Color', [
+          wbInteger('Red', itU8),
+          wbInteger('Green', itU8),
+          wbInteger('Blue', itU8),
+          wbByteArray('Unknown', 1)
+        ]),
+        wbStruct('Color Key 3 - Color', [
+          wbInteger('Red', itU8),
+          wbInteger('Green', itU8),
+          wbInteger('Blue', itU8),
+          wbByteArray('Unknown', 1)
+        ]),
+        wbFloat('Color Key 1 - Color Alpha'),
+        wbFloat('Color Key 2 - Color Alpha'),
+        wbFloat('Color Key 3 - Color Alpha'),
+        wbFloat('Color Key 1 - Color Key Time'),
+        wbFloat('Color Key 2 - Color Key Time'),
+        wbFloat('Color Key 3 - Color Key Time'),
+        wbFloat('Particle Shader - Initial Speed Along Normal +/-'),
+        wbFloat('Particle Shader - Initial Rotation (deg)'),
+        wbFloat('Particle Shader - Initial Rotation (deg) +/-'),
+        wbFloat('Particle Shader - Rotation Speed (deg/sec)'),
+        wbFloat('Particle Shader - Rotation Speed (deg/sec) +/-'),
+        wbFormIDCk('Addon Models', [DEBR, NULL]),
+        wbFloat('Holes - Start Time'),
+        wbFloat('Holes - End Time'),
+        wbFloat('Holes - Start Val'),
+        wbFloat('Holes - End Val'),
+        wbFloat('Edge Width (alpha units)'),
+        wbStruct('Edge Color', [
+          wbInteger('Red', itU8),
+          wbInteger('Green', itU8),
+          wbInteger('Blue', itU8),
+          wbByteArray('Unknown', 1)
+        ]),
+        wbFloat('Explosion Wind Speed'),
+        wbInteger('Texture Count U', itU32),
+        wbInteger('Texture Count V', itU32),
+        wbFloat('Addon Models - Fade In Time'),
+        wbFloat('Addon Models - Fade Out Time'),
+        wbFloat('Addon Models - Scale Start'),
+        wbFloat('Addon Models - Scale End'),
+        wbFloat('Addon Models - Scale In Time'),
+        wbFloat('Addon Models - Scale Out Time'),
+        wbFormIDCk('Ambient Sound', [SNDR, NULL]),
+        wbStruct('Fill/Texture Effect - Color Key 2', [
+          wbInteger('Red', itU8),
+          wbInteger('Green', itU8),
+          wbInteger('Blue', itU8),
+          wbByteArray('Unknown', 1)
+        ]),
+        wbStruct('Fill/Texture Effect - Color Key 3', [
+          wbInteger('Red', itU8),
+          wbInteger('Green', itU8),
+          wbInteger('Blue', itU8),
+          wbByteArray('Unknown', 1)
+        ]),
+        wbStruct('Fill/Texture Effect - Color Key Scale/Time', [
+          wbFloat('Color Key 1 - Scale'),
+          wbFloat('Color Key 2 - Scale'),
+          wbFloat('Color Key 3 - Scale'),
+          wbFloat('Color Key 1 - Time'),
+          wbFloat('Color Key 2 - Time'),
+          wbFloat('Color Key 3 - Time')
+        ]),
+        wbFloat('Color Scale'),
+        wbFloat('Birth Position Offset'),
+        wbFloat('Birth Position Offset Range +/-'),
+        wbStruct('Particle Shader Animated', [
+          wbInteger('Start Frame', itU32),
+          wbInteger('Start Frame Variation', itU32),
+          wbInteger('End Frame', itU32),
+          wbInteger('Loop Start Frame', itU32),
+          wbInteger('Loop Start Variation', itU32),
+          wbInteger('Frame Count', itU32),
+          wbInteger('Frame Count Variation', itU32)
+        ]),
+        wbInteger('Flags', itU32, wbFlags([
+          'No Membrane Shader',
+          'Membrane Grayscale Color',
+          'Membrane Grayscale Alpha',
+          'No Particle Shader',
+          'Edge Effect Inverse',
+          'Affect Skin Only',
+          'Ignore Alpha',
+          'Project UVs',
+          'Ignore Base Geometry Alpha',
+          'Lighting',
+          'No Weapons',
+          'Unknown 11',
+          'Unknown 12',
+          'Unknown 13',
+          'Unknown 14',
+          'Particle Animated',
+          'Particle Grayscale Color',
+          'Particle Grayscale Alpha',
+          'Unknown 18',
+          'Unknown 19',
+          'Unknown 20',
+          'Unknown 21',
+          'Unknown 22',
+          'Unknown 23',
+          'Use Blood Geometry'
+        ])),
+        wbFloat('Fill/Texture Effect - Texture Scale (U)'),
+        wbFloat('Fill/Texture Effect - Texture Scale (V)'),
+        wbInteger('Scene Graph Emit Depth Limit (unused)', itU16)
+      ])
+    ], cpNormal, True),
     wbMODL
   ], False, nil, cpNormal, False, nil {wbEFSHAfterLoad});
 
@@ -10548,7 +10650,7 @@ begin
       ], [])
     ),
     wbRArray('Actors', wbRStruct('Actor', [
-      wbInteger(ALID, 'Actor ID', itU32),
+      wbInteger(ALID, 'Alias ID', itS32),
       wbInteger(LNAM, 'Flags', itU32, wbFlags([
         'No Player Activation',
         'Optional'
@@ -10571,7 +10673,7 @@ begin
         'Timer'
       ])),
       wbString(NAM0, 'Name'),
-      wbInteger(ALID, 'Actor ID', itS32),
+      wbInteger(ALID, 'Alias ID', itS32),
       wbUnknown(LNAM),
       wbInteger(INAM, 'Index', itU32),
       wbInteger(FNAM, 'Flags', itU32, wbFlags([

@@ -588,6 +588,7 @@ procedure IwbElement_Check(var Value: Variant; Args: TJvInterpreterArgs);
 var
   Element: IwbElement;
 begin
+  Value := '';
   if Supports(IInterface(Args.Values[0]), IwbElement, Element) then
     Value := Element.Check;
 end;
@@ -606,6 +607,7 @@ procedure IwbElement_Equals(var Value: Variant; Args: TJvInterpreterArgs);
 var
   Element, Element2: IwbElement;
 begin
+  Value := False;
   if Supports(IInterface(Args.Values[0]), IwbElement, Element) then
     if Supports(IInterface(Args.Values[1]), IwbElement, Element2) then
       Value := Element.Equals(Element2);
@@ -615,6 +617,7 @@ procedure IwbElement_CanContainFormIDs(var Value: Variant; Args: TJvInterpreterA
 var
   Element: IwbElement;
 begin
+  Value := False;
   if Supports(IInterface(Args.Values[0]), IwbElement, Element) then
     Value := Element.CanContainFormIDs;
 end;
@@ -623,6 +626,7 @@ procedure IwbElement_CanMoveUp(var Value: Variant; Args: TJvInterpreterArgs);
 var
   Element: IwbElement;
 begin
+  Value := False;
   if Supports(IInterface(Args.Values[0]), IwbElement, Element) then
     Value := Element.CanMoveUp;
 end;
@@ -631,6 +635,7 @@ procedure IwbElement_CanMoveDown(var Value: Variant; Args: TJvInterpreterArgs);
 var
   Element: IwbElement;
 begin
+  Value := False;
   if Supports(IInterface(Args.Values[0]), IwbElement, Element) then
     Value := Element.CanMoveDown;
 end;
@@ -1425,6 +1430,18 @@ begin
     Value := _File.FileFormIDtoLoadOrderFormID(Args.Values[1]);
 end;
 
+procedure IwbFile_WriteToStream(var Value: Variant; Args: TJvInterpreterArgs);
+var
+  _File : IwbFile;
+  Stream: TStream;
+begin
+  if Supports(IInterface(Args.Values[0]), IwbFile, _File) then begin
+    Stream := TStream(V2O(Args.Values[1]));
+    if Assigned(Stream) then
+      _File.WriteToStream(Stream, Boolean(Args.Values[2]));
+  end;
+end;
+
 
 { wbContainerHandler }
 
@@ -1928,6 +1945,7 @@ begin
     AddFunction(cUnit, 'HasGroup', IwbFile_HasGroup, 2, [varEmpty, varString], varEmpty);
     AddFunction(cUnit, 'LoadOrderFormIDtoFileFormID', IwbFile_LoadOrderFormIDtoFileFormID, 2, [varEmpty, varEmpty], varEmpty);
     AddFunction(cUnit, 'FileFormIDtoLoadOrderFormID', IwbFile_FileFormIDtoLoadOrderFormID, 2, [varEmpty, varString], varEmpty);
+    AddFunction(cUnit, 'FileWriteToStream', IwbFile_WriteToStream, 3, [varEmpty, varEmpty, varEmpty], varEmpty);
 
     { IwbContainerHandler }
     AddFunction(cUnit, 'ResourceContainerList', IwbContainerHandler_ResourceContainerList, 1, [varEmpty], varEmpty);

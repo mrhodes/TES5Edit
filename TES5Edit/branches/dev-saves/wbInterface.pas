@@ -804,6 +804,9 @@ type
     function GetIsLocalized: Boolean;
     procedure SetIsLocalized(Value: Boolean);
 
+    function GetNextObjectID: Cardinal;
+    procedure SetNextObjectID(aObjectID: Cardinal);
+
     function GetIsNotPlugin: Boolean;
     function GetHasNoFormID: Boolean;
     procedure SetHasNoFormID(Value: Boolean);
@@ -849,6 +852,11 @@ type
     property IsLocalized: Boolean
       read GetIsLocalized
       write SetIsLocalized;
+
+    property NextObjectID: Cardinal
+      read GetNextObjectID
+      write SetNextObjectID;
+
     property IsNotPlugin: Boolean   // Save or other file to display.
       read GetIsNotPlugin;
     property HasNoFormID: Boolean   // Like Morrowind for example. Also true for save/coSave.
@@ -3051,7 +3059,6 @@ var
   wbContainerHandler : IwbContainerHandler;
   wbLoaderDone       : Boolean;
   wbLoaderError      : Boolean;
-  wbColumnWidth      : Integer = 200;
 
 procedure wbAddGroupOrder(const aSignature: TwbSignature);
 function wbGetGroupOrder(const aSignature: TwbSignature): Integer;
@@ -3194,7 +3201,7 @@ var
   wbHeaderSignature   : TwbSignature = 'TES4';
   wbFileMagic         : TwbFileMagic;
   wbFilePlugins       : String = 'Master Files';
-  wbUseFalsePlugins   : Boolean = True;
+  wbUseFalsePlugins   : Boolean = False;
   wbFileHeader        : IwbStructDef;
   wbFileChapters      : IwbStructDef;
   wbBytesToSkip       : Cardinal = 0;
@@ -10229,7 +10236,7 @@ end;
 
 procedure TwbStringDef.FromStringTransform(aBasePtr, aEndPtr: Pointer; const aElement: IwbElement; const aValue: string; aTransformType: TwbStringTransformType);
 begin
-  FromStringNative(aBasePtr, aEndPtr, aElement, TransformString(AnsiString(aValue), aTransformType, aElement));
+  FromStringNative(aBasePtr, aEndPtr, aElement, TransformString(wbStringToAnsi(aValue, aElement), aTransformType, aElement));
 end;
 
 function TwbStringDef.GetDefType: TwbDefType;
@@ -12881,7 +12888,7 @@ end;
 function TwbIntegerDefFormater.ToEditValue(aInt: Int64;
   const aElement: IwbElement): string;
 begin
-  ToEditValueInternal(aInt, aElement, False);
+  Result := ToEditValueInternal(aInt, aElement, False);
 end;
 
 function TwbIntegerDefFormater.ToEditValueInternal(aInt: Int64;
@@ -12893,7 +12900,7 @@ end;
 function TwbIntegerDefFormater.ToPersistentEditValue(aInt: Int64;
   const aElement: IwbElement): string;
 begin
-  ToEditValueInternal(aInt, aElement, True);
+  Result := ToEditValueInternal(aInt, aElement, True);
 end;
 
 { TwbUnionDef }
@@ -13091,10 +13098,10 @@ var
   Container : IwbContainerElementRef;
   Element   : IwbElement;
 begin
-  if Assigned(aBasePtr) and Assigned(aEndPtr) and (Cardinal(aEndPtr)<Cardinal(aBasePtr)) then begin
-    wbProgressCallback('Found a union with a negative size! (1) '+IntToHex64(Cardinal(aBasePtr), 8)+
-      ' > '+IntToHex64(Cardinal(aEndPtr), 8)+'  for '+noName);
-  end;
+//  if Assigned(aBasePtr) and Assigned(aEndPtr) and (Cardinal(aEndPtr)<Cardinal(aBasePtr)) then begin
+//    wbProgressCallback('Found a union with a negative size! (1) '+IntToHex64(Cardinal(aBasePtr), 8)+
+//      ' > '+IntToHex64(Cardinal(aEndPtr), 8)+'  for '+noName);
+//  end;
   if GetIsVariableSize then
     aMember := Decide(aBasePtr, aEndPtr, aElement)
   else
@@ -13126,9 +13133,9 @@ begin
     Result := aMember.Size[aBasePtr, aEndPtr, Element];
     if Result = High(Integer) then Exit;
     if Assigned(aBasePtr) and Assigned(aEndPtr) and (Cardinal(aEndPtr)<Cardinal(aBasePtr)+Result) then begin
-      if Assigned(aBasePtr) and Assigned(aEndPtr) and (aEndPtr<>aBasePtr) then
-        wbProgressCallback('Found a union with a negative size! (2) '+IntToHex64(Cardinal(aBasePtr)+Result, 8)+
-          ' > '+IntToHex64(Cardinal(aEndPtr), 8)+'  for '+noName);
+//      if Assigned(aBasePtr) and Assigned(aEndPtr) and (aEndPtr<>aBasePtr) then
+//        wbProgressCallback('Found a union with a negative size! (2) '+IntToHex64(Cardinal(aBasePtr)+Result, 8)+
+//          ' > '+IntToHex64(Cardinal(aEndPtr), 8)+'  for '+noName);
       Result := Cardinal(aEndPtr)-Cardinal(aBasePtr);
     end;
   end;
