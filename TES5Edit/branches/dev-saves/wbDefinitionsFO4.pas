@@ -18,6 +18,59 @@ unit wbDefinitionsFO4;
 
 interface
 
+uses
+  wbInterface;
+
+var
+	wbBipedObjectFlags: IwbFlagsDef;
+	wbEquipType: IwbFlagsDef;
+	wbFurnitureEntryTypeFlags: IwbFlagsDef;
+	wbPKDTFlags: IwbFlagsDef;
+	wbPKDTInterruptFlags: IwbFlagsDef;
+	wbSMNodeFlags: IwbFlagsDef;
+
+	wbActorPropertyEnum: IwbEnumDef;
+	wbAdvanceActionEnum: IwbEnumDef;
+	wbAlignmentEnum: IwbEnumDef;
+	wbArmorPropertyEnum: IwbEnumDef;
+	wbArmorTypeEnum: IwbEnumDef;
+	wbAttackAnimationEnum: IwbEnumDef;
+	wbAxisEnum: IwbEnumDef;
+	wbBipedObjectEnum: IwbEnumDef;
+	wbBlendModeEnum: IwbEnumDef;
+	wbBlendOpEnum: IwbEnumDef;
+	wbBodyPartIndexEnum: IwbEnumDef;
+	wbCastEnum: IwbEnumDef;
+	wbCastingSourceEnum: IwbEnumDef;
+	wbCrimeTypeEnum: IwbEnumDef;
+	wbCriticalStageEnum: IwbEnumDef;
+	wbEmotionTypeEnum: IwbEnumDef;
+	wbEntryPointsEnum: IwbEnumDef;
+	wbEventFunctionEnum: IwbEnumDef;
+	wbEventMemberEnum: IwbEnumDef;
+	wbFormTypeEnum: IwbEnumDef;
+	wbFunctionsEnum: IwbEnumDef;
+	wbFurnitureAnimTypeEnum: IwbEnumDef;
+	wbLocationEnum: IwbEnumDef;
+	wbMiscStatEnum: IwbEnumDef;
+	wbMusicEnum: IwbEnumDef;
+	wbObjectTypeEnum: IwbEnumDef;
+	wbPropTypeEnum: IwbEnumDef;
+	wbQuadrantEnum: IwbEnumDef;
+	wbSexEnum: IwbEnumDef;
+	wbSkillEnum: IwbEnumDef;
+	wbSoulGemEnum: IwbEnumDef;
+	wbSoundLevelEnum: IwbEnumDef;
+	wbTargetEnum: IwbEnumDef;
+	wbTintMaskTypeEnum: IwbEnumDef;
+	wbVatsValueFunctionEnum: IwbEnumDef;
+	wbWardStateEnum: IwbEnumDef;
+	wbWeaponAnimTypeEnum: IwbEnumDef;
+	wbWeaponPropertyEnum: IwbEnumDef;
+	wbZTestFuncEnum: IwbEnumDef;
+	wbScriptProperties: IwbArrayDef;
+	wbScriptPropertyStruct: IwbArrayDef;
+
 procedure DefineFO4;
 
 implementation
@@ -28,7 +81,6 @@ uses
   SysUtils,
   Math,
   Variants,
-  wbInterface,
   wbHelpers;
 
 const
@@ -836,7 +888,6 @@ const
 var
   wbPKDTSpecificFlagsUnused : Boolean;
   wbEDID: IwbSubRecordDef;
-  wbSoulGemEnum: IwbEnumDef;
   wbCOED: IwbSubRecordDef;
   wbXLCM: IwbSubRecordDef;
   wbEITM: IwbSubRecordDef;
@@ -848,21 +899,6 @@ var
   wbXGLB: IwbSubRecordDef;
   wbXRGD: IwbSubRecordDef;
   wbXRGB: IwbSubRecordDef;
-  wbEquipType: IwbFlagsDef;
-  wbEmotionTypeEnum: IwbEnumDef;
-  wbFurnitureAnimTypeEnum: IwbEnumDef;
-  wbFurnitureEntryTypeFlags: IwbFlagsDef;
-  wbWeaponAnimTypeEnum: IwbEnumDef;
-  wbWardStateEnum: IwbEnumDef;
-  wbEventFunctionEnum: IwbEnumDef;
-  wbEventMemberEnum: IwbEnumDef;
-  wbMusicEnum: IwbEnumDef;
-  wbSoundLevelEnum: IwbEnumDef;
-  wbBodyPartIndexEnum: IwbEnumDef;
-  wbAttackAnimationEnum: IwbEnumDef;
-  wbArmorPropertyEnum: IwbEnumDef;
-  wbActorPropertyEnum: IwbEnumDef;
-  wbWeaponPropertyEnum: IwbEnumDef;
   wbSPLO: IwbSubRecordDef;
   wbSPLOs: IwbSubRecordArrayDef;
   wbCNTO: IwbSubRecordStructDef;
@@ -906,45 +942,21 @@ var
   wbICONReq: IwbSubRecordStructDef;
   wbICO2: IwbSubRecordStructDef;
   wbActorValue: IwbIntegerDef;
-  wbCrimeTypeEnum: IwbEnumDef;
-  wbVatsValueFunctionEnum: IwbEnumDef;
-  wbSkillEnum: IwbEnumDef;
   wbETYP: IwbSubRecordDef;
   wbETYPReq: IwbSubRecordDef;
-  wbFormTypeEnum: IwbEnumDef;
-  wbMiscStatEnum: IwbEnumDef;
-  wbAdvanceActionEnum: IwbEnumDef;
-  wbAlignmentEnum: IwbEnumDef;
-  wbAxisEnum: IwbEnumDef;
-  wbCastingSourceEnum: IwbEnumDef;
-  wbCriticalStageEnum: IwbEnumDef;
-  wbSexEnum: IwbEnumDef;
-  wbObjectTypeEnum: IwbEnumDef;
-  wbQuadrantEnum: IwbEnumDef;
-  wbBlendModeEnum: IwbEnumDef;
-  wbBlendOpEnum: IwbEnumDef;
-  wbZTestFuncEnum: IwbEnumDef;
   wbEFID: IwbSubRecordDef;
   wbEFIT: IwbSubRecordDef;
-  wbFunctionsEnum: IwbEnumDef;
   wbEffectsReq: IwbSubRecordArrayDef;
   wbFirstPersonFlagsU32: IwbIntegerDef;
-  wbBODT: IwbSubRecordDef;
   wbBOD2: IwbSubRecordDef;
-  wbBODTBOD2: IwbSubRecordUnionDef;
   wbScriptEntry: IwbStructDef;
-  wbPropTypeEnum: IwbEnumDef;
   wbScriptFlags: IwbIntegerDef;
   wbScriptPropertyObject: IwbUnionDef;
-  wbScriptPropertyStruct: IwbArrayDef;
-  wbScriptProperties: IwbArrayDef;
   wbScriptFragments: IwbStructDef;
   wbScriptFragmentsQuest: IwbStructDef;
   wbScriptFragmentsInfo: IwbStructDef;
   wbScriptFragmentsPack: IwbStructDef;
   wbScriptFragmentsScen: IwbStructDef;
-  wbEntryPointsEnum: IwbEnumDef;
-  wbLocationEnum: IwbEnumDef;
   wbPLDT: IwbSubRecordDef;
   wbPLVD: IwbSubRecordDef;
   wbTargetData: IwbStructDef;
@@ -962,8 +974,6 @@ var
   wbCITC: IwbSubRecordDef;
   wbMGEFData: IwbSubRecordStructDef;
   wbMGEFType: IwbIntegerDef;
-  wbCastEnum: IwbEnumDef;
-  wbTargetEnum: IwbEnumDef;
   wbMDOB: IwbSubRecordDef;
   wbSPIT: IwbSubRecordDef;
   wbDMDSs: IwbSubRecordDef;
@@ -974,18 +984,11 @@ var
   wbDMDT: IwbSubRecordDef;
   wbOwnership: IwbSubRecordStructDef;
   wbAmbientColors: IwbStructDef;
-  wbSMNodeFlags: IwbFlagsDef;
-  wbBipedObjectEnum: IwbEnumDef;
-  wbBipedObjectFlags: IwbFlagsDef;
-  wbArmorTypeEnum: IwbEnumDef;
   wbRACE_DATAFlags01: IwbIntegerDef;
   wbPhonemeTargets: IwbSubRecordDef;
   wbPHWT: IwbSubRecordStructDef;
   wbHeadPart: IwbSubRecordStructDef;
-  wbTintMaskTypeEnum: IwbEnumDef;
   wbQUSTAliasFlags: IwbSubRecordDef;
-  wbPKDTFlags: IwbFlagsDef;
-  wbPKDTInterruptFlags: IwbFlagsDef;
   wbPDTO: IwbSubRecordDef;
   wbPDTOs: IwbSubRecordArrayDef;
   wbUNAMs: IwbSubRecordArrayDef;
@@ -1006,6 +1009,7 @@ var
   wbTintTemplateGroups: IwbSubrecordArrayDef;
   wbMorphGroups: IwbSubrecordArrayDef;
   wbRaceFRMI: IwbSubrecordArrayDef;
+  wbRaceRBPC: IwbSubRecordDef;
   wbNVNM: IwbSubRecordDef;
   wbMHDT: IwbSubRecordDef;
   wbOFST: IwbSubRecordDef;
@@ -2549,6 +2553,12 @@ begin
   if MainRecord.Version < 102 then
     Result := 1;
 end;
+
+function wbDeciderFormVersion99(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
+begin
+  Result := wbFormVerDecider(aBasePtr, aEndPtr, aElement, 99);
+end;
+
 
 {>>> For VMAD <<<}
 function wbScriptObjFormatDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
@@ -4903,60 +4913,9 @@ begin
 
   wbFirstPersonFlagsU32 := wbInteger('First Person Flags', itU32, wbBipedObjectFlags);
 
-  wbBODT := wbStruct(BODT, 'Body Template', [
-    wbFirstPersonFlagsU32,
-    wbInteger('General Flags', itU8, wbFlags([
-      {0x00000001}'(ARMA)Modulates Voice', {>>> From ARMA <<<}
-      {0x00000002}'Unknown 2',
-      {0x00000004}'Unknown 3',
-      {0x00000008}'Unknown 4',
-      {0x00000010}'(ARMO)Non-Playable', {>>> From ARMO <<<}
-      {0x00000020}'Unknown 6',
-      {0x00000040}'Unknown 7',
-      {0x00000080}'Unknown 8'
-    ], True)),
-    wbByteArray('Unused', 3, cpIgnore),
-    wbInteger('Armor Type', itU32, wbArmorTypeEnum)
-  ], cpNormal, False, nil, 3);
-
   wbBOD2 := wbStruct(BOD2, 'Biped Body Template', [
     wbFirstPersonFlagsU32
-    //wbInteger('Armor Type', itU32, wbArmorTypeEnum)
   ], cpNormal, False);
-
-  wbBODTBOD2 :=
-    wbRUnion('Biped Body Template', [
-      wbStruct(BOD2, 'Biped Body Template', [
-        wbFirstPersonFlagsU32,
-        wbInteger('General Flags', it0, wbFlags([
-          {0x00000001}'(ARMA)Modulates Voice', {>>> From ARMA <<<}
-          {0x00000002}'Unknown 2',
-          {0x00000004}'Unknown 3',
-          {0x00000008}'Unknown 4',
-          {0x00000010}'(ARMO)Non-Playable', {>>> From ARMO <<<}
-          {0x00000020}'Unknown 6',
-          {0x00000040}'Unknown 7',
-          {0x00000080}'Unknown 8'
-        ], True)),
-        wbEmpty('Unused'),
-        wbInteger('Armor Type', itU32, wbArmorTypeEnum)
-      ], cpNormal, False),
-      wbStruct(BODT, 'Body Template', [
-        wbFirstPersonFlagsU32,
-        wbInteger('General Flags', itU8, wbFlags([
-          {0x00000001}'(ARMA)Modulates Voice', {>>> From ARMA <<<}
-          {0x00000002}'Unknown 2',
-          {0x00000004}'Unknown 3',
-          {0x00000008}'Unknown 4',
-          {0x00000010}'(ARMO)Non-Playable', {>>> From ARMO <<<}
-          {0x00000020}'Unknown 6',
-          {0x00000040}'Unknown 7',
-          {0x00000080}'Unknown 8'
-        ], True)),
-        wbByteArray('Unused', 3, cpIgnore),
-        wbInteger('Armor Type', itU32, wbArmorTypeEnum)
-      ], cpNormal, False, nil, 3)
-    ], []);
 
   wbMDOB := wbFormID(MDOB, 'Menu Display Object', cpNormal, False);
   wbCNAM := wbStruct(CNAM, 'Color', [
@@ -5870,7 +5829,7 @@ begin
       wbInteger('Health', itS32),
       wbInteger('DEST Count', itU8),
       wbInteger('VATS Targetable', itU8, wbEnum(['False', 'True'])),
-      wbByteArray('Unused', 2)
+      wbByteArray('Unknown', 2)
     ]),
     wbStructs(DAMC, 'Unknowns', 'Unknown', [
       wbFormIDck('Damage Type?', [DMGT, NULL]),
@@ -6537,7 +6496,8 @@ begin
     99, 'Collision Layer',
    100, 'Scroll',
    101, 'ColorForm',
-   102, 'Reverb Parameters'
+   102, 'Reverb Parameters',
+   116, 'Terminal'
   ]);
 
   wbMiscStatEnum := wbEnum([], [
@@ -7284,7 +7244,7 @@ begin
     wbStruct(DATA, 'Data', [
       wbInteger('Value', itS32),
       wbFloat('Weight'),
-      wbByteArray('Unknown', 4)
+      wbInteger('Power Armor Health', itU32)
     ], cpNormal, True),
     wbStruct(FNAM, '', [
       wbInteger('Damage Resistance', itU16),
@@ -9188,7 +9148,20 @@ begin
         'No Controller Vibration'
       ])),
       wbInteger('Sound Level', itU32, wbSoundLevelEnum, cpNormal, True),}
-      wbUnknown
+      wbUnion('Unknown', wbDeciderFormVersion99, [
+        wbByteArray('Unknown', 4),
+        wbFloat('Unknown')
+      ]),
+      wbByteArray('Unknown', 4),
+      wbByteArray('Unknown', 4),
+      wbFloat('Unknown'),
+      wbByteArray('Unknown', 4),
+      wbByteArray('Unknown', 4),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown')
+      //wbUnknown
     ], cpNormal, True, nil, 10)
   ]);
 
@@ -9662,10 +9635,10 @@ begin
     wbFULL,
     wbDESCReq,
     wbLString(ANAM, 'Abbreviation', 0, cpTranslate),
-    wbUnknown(NAM0),
-    wbUnknown(AVFL),
-    wbUnknown(NAM1)
-  ]);
+    wbFloat(NAM0, 'Unknown'), // Prior to form version 81, it was either 0.0, 1.0 or 100.0, so scale or multiplier ?
+    wbInteger(AVFL, 'Unknown', itU32), // 32 bits Flags, it used to impact NAM0 loading (bits 10, 11, 12) (even though it loads later :) )
+    wbInteger(NAM1, 'Unknown', itU32)
+  ]); // S.P.E.C.I.A.L start at index 5, so FormID 0x2bc+5 to 0x2bc+11, RadResistIngestion at index 0x29
 
   wbRecord(CAMS, 'Camera Shot', [
     wbEDID,
@@ -9790,7 +9763,7 @@ begin
     wbFormIDCk(SNAM, 'Sound 1', [SNDR, NULL]),
     wbFormIDCk(NAM1, 'Sound 2', [SNDR, NULL]),
     wbFormIDCk(NAM2, 'Hazard', [HAZD, NULL]),
-    wbUnknown(FNAM)
+    wbFloat(FNAM, 'Unknown')
   ]);
 
   wbRecord(IPDS, 'Impact Data Set', [
@@ -10954,7 +10927,13 @@ begin
       wbArray('Curve', wbInteger('Value', itU8), 5),
       wbByteArray('Unknown')
     ]),}
-    wbUnknown(ATTN),
+    wbStruct(ATTN, 'Attenuation Values', [
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbFloat('Unknown'),
+      wbArray('Curve', wbInteger('Value', itU8), 8)
+    ]),
     wbFormIDCk(ENAM, 'Unknown', [AECH])
   ]);
 
@@ -11851,19 +11830,19 @@ begin
       wbFloat('Blue'),
       wbFloat('Alpha')
     ]),
-    wbUnknown(MSDK),
-    wbUnknown(MSDV),
+    wbArray(MSDK, 'Unknown', wbByteArray('Key', 4)),
+    wbArray(MSDV, 'Unknown', wbFloat('Value')),
     wbRArray('Unknown',
       wbRStruct('Unknown', [
         wbUnknown(TETI),
         wbUnknown(TEND)
       ], [])
     ),
-    wbUnknown(MRSV),
+    wbArray(MRSV, 'Unknown', wbFloat('Unknown')),
     wbRArray('Unknown',
       wbRStruct('Unknown', [
         wbUnknown(FMRI),
-        wbUnknown(FMRS)
+        wbArray(FMRS, 'Unknown', wbFloat('Unknown'))
       ], [])
     ),
     wbFloat(FMIN, 'Unknown')
@@ -12584,6 +12563,16 @@ begin
       ], [])
     );
 
+  // since version 78: array of pair of AVIF FormID, before array of AVIF index. Similar to DamageType (and MGEF also somehow).
+  wbRaceRBPC :=
+    wbUnion(RBPC, '', wbFormVer78Decider, [
+      wbArray('Unknown', wbInteger('AVIF index', itU32)),
+      wbArray('Unknown', wbStruct('Unknown', [
+        wbFormIDck('AVIF 1', [AVIF, NULL]),
+        wbFormIDck('AVIF 2', [AVIF, NULL])
+      ]))
+    ]);
+
   wbRecord(RACE, 'Race',
     wbFlags(wbRecordFlagsFlags, wbFlagsList([
       {0x00080000} 19, 'Critter?'
@@ -12714,7 +12703,7 @@ begin
     wbFormIDCk(LNAM, 'Close Loot Sound', [SNDR, NULL]),
     {>>> When NAME is user defined wbBipedObjectEnum will be incorrect <<<}
     wbRArray('Biped Object Names', wbString(NAME, 'Name')),
-    wbUnknown(RBPC),
+    wbRaceRBPC,
     wbRArrayS('Movement Types', wbRStructSK([0], 'Movement Types', [
       wbFormIDCk(MTYP, 'Movement Type', [MOVT, NULL]),
       wbStruct(SPED, 'Override Values', [
@@ -12850,8 +12839,8 @@ begin
       ], [])
     ),
 
-    wbUnknown(PTOP),
-    wbUnknown(NTOP),
+    wbFloat(PTOP, 'Unknown'),
+    wbFloat(NTOP, 'Unknown'),
     wbRArray('Unknown',
       wbRStruct('Unknown', [
         wbUnknown(MSID),
@@ -13165,9 +13154,9 @@ begin
     {>>Lock Tab for REFR when 'Locked' is Unchecked this record is not present <<<}
     wbStruct(XLOC, 'Lock Data', [
       wbInteger('Level', itU8, wbEnum([], [
-         1, 'Novice',
-        25, 'Apprentice',
-        50, 'Adept',
+         1, 'Novice 1',
+        25, 'Novice 25',
+        50, 'Advanced',
         75, 'Expert',
        100, 'Master',
        253, 'Requires Terminal',
@@ -13748,7 +13737,7 @@ begin
       wbFloat('Specular Properties - Sun Specular Power'),
       wbFloat('Water Properties - Reflectivity Amount'),
       wbFloat('Water Properties - Fresnel Amount'),
-      wbByteArray('Unknown', 4),
+      wbFloat('Unknown'),
       wbFloat('Fog Properties - Above Water - Fog Distance - Near Plane'),
       wbFloat('Fog Properties - Above Water - Fog Distance - Far Plane'),
       wbStruct('Shallow Color', [
@@ -13769,7 +13758,7 @@ begin
         wbInteger('Blue', itU8),
         wbByteArray('Unknown', 1)
       ]),
-      wbByteArray('Unknown', 4),
+      wbFloat('Unknown'),
       wbFloat('Unknown'),
       wbFloat('Unknown'),
       wbFloat('Unknown'),
@@ -13892,7 +13881,7 @@ begin
       wbByteArray('Unknown', 1),
       wbFloat('Unknown'),
       wbByteArray('Unknown', 2),
-      wbFloat('Unknown'),
+      wbFloat('Action Points cost'),
       wbFloat('Unknown'),
       wbFloat('Unknown'),
       wbByteArray('Unknown', 4),
@@ -14287,7 +14276,7 @@ begin
   wbRecord(AMDL, 'Aim Model', [
     wbEDID,
     wbStruct(DNAM, 'Unknown', [
-      wbByteArray('Unknown', 4),
+      wbFloat('Unknown'),
       wbFloat('Unknown'),
       wbFloat('Unknown'),
       wbFloat('Unknown'),
@@ -14348,7 +14337,14 @@ begin
 
   wbRecord(DMGT, 'Damage Type', [
     wbEDID,
-    wbUnknown(DNAM)
+    // Before form version 78, it was an array of AVIF index, since then array of AVIF formID, coupled with a SPEL formID ?
+    wbUnion(DNAM, 'Data', wbFormVer78Decider, [
+      wbArray('Indexes', wbInteger('AVIF index', itU32)),
+      wbArray('Unknown', wbStruct('Unknown', [
+        wbFormIDck('Actor Value Info', [AVIF, NULL]),
+        wbFormIDck('Spell', [SPEL, NULL])
+      ]))
+    ])
   ]);
 
   wbRecord(GDRY, 'God Ray', [
@@ -14456,7 +14452,7 @@ begin
         wbString(BNAM, 'Base Material'),
         wbString(SNAM, 'Swap Material'),
         wbString(FNAM),
-        wbUnknown(CNAM)
+        wbFloat(CNAM, 'Unknown')
       ], [])
     )
   ]);
@@ -14703,7 +14699,14 @@ begin
     wbRArray('Unknown',
       wbRStruct('Unknown', [
         wbFormIDCk(INDX, 'Object', [STAT]),
-        wbUnknown(DATA)
+        wbStruct(DATA, 'Object Bounds', [
+          wbFloat('X1'),
+          wbFloat('Y1'),
+          wbFloat('Z1'),
+          wbFloat('X2'),
+          wbFloat('Y2'),
+          wbFloat('Z2')
+        ])
       ], [])
     )
   ]);

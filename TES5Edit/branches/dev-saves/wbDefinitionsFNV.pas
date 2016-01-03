@@ -22,48 +22,48 @@ uses
   wbInterface;
 
 var
-  wbServiceFlags     : IwbFlagsDef;
-  wbAggroRadiusFlags : IwbFlagsDef;
-  wbTemplateFlags    : IwbFlagsDef;
-  wbRecordFlagsFlags : IwbFlagsDef;
+	wbAggroRadiusFlags: IwbFlagsDef;
+  wbPKDTFlags: IwbFlagsDef;
+	wbRecordFlagsFlags: IwbFlagsDef;
+	wbServiceFlags: IwbFlagsDef;
+	wbTemplateFlags: IwbFlagsDef;
 
-  wbSkillEnum        : IwbEnumDef;
-  wbAgressionEnum    : IwbEnumDef;
-  wbConfidenceEnum   : IwbEnumDef;
-  wbMoodEnum         : IwbEnumDef;
-  wbAssistanceEnum   : IwbEnumDef;
-  wbArchtypeEnum     : IwbEnumDef;
-
-  wbSpecializationEnum: IwbEnumDef;
-  wbWeaponAnimTypeEnum: IwbEnumDef;
-  wbReloadAnimEnum: IwbEnumDef;
-  wbMusicEnum: IwbEnumDef;
-  wbSoundLevelEnum: IwbEnumDef;
-  wbHeadPartIndexEnum: IwbEnumDef;
-  wbBodyPartIndexEnum: IwbEnumDef;
-  wbAttackAnimationEnum: IwbEnumDef;
-  wbImpactMaterialTypeEnum: IwbEnumDef;
-  wbCreatureTypeEnum: IwbEnumDef;
-  wbPlayerActionEnum: IwbEnumDef;
-  wbBodyLocationEnum: IwbEnumDef;
-  wbModEffectEnum: IwbEnumDef;
-  wbCrimeTypeEnum: IwbEnumDef;
-  wbVatsValueFunctionEnum: IwbEnumDef;
-  wbEquipTypeEnum: IwbEnumDef;
-  wbFormTypeEnum: IwbEnumDef;
-  wbMenuModeEnum: IwbEnumDef;
-  wbMiscStatEnum: IwbEnumDef;
-  wbAlignmentEnum: IwbEnumDef;
-  wbAxisEnum: IwbEnumDef;
-  wbCriticalStageEnum: IwbEnumDef;
-  wbSexEnum: IwbEnumDef;
-  wbPKDTType: IwbEnumDef;
-  wbObjectTypeEnum: IwbEnumDef;
-  wbQuadrantEnum: IwbEnumDef;
-  wbBlendModeEnum: IwbEnumDef;
-  wbBlendOpEnum: IwbEnumDef;
-  wbZTestFuncEnum: IwbEnumDef;
-  wbFunctionsEnum: IwbEnumDef;
+	wbAgressionEnum: IwbEnumDef;
+	wbAlignmentEnum: IwbEnumDef;
+	wbArchtypeEnum: IwbEnumDef;
+	wbAssistanceEnum: IwbEnumDef;
+	wbAttackAnimationEnum: IwbEnumDef;
+	wbAxisEnum: IwbEnumDef;
+	wbBlendModeEnum: IwbEnumDef;
+	wbBlendOpEnum: IwbEnumDef;
+	wbBodyLocationEnum: IwbEnumDef;
+	wbBodyPartIndexEnum: IwbEnumDef;
+	wbConfidenceEnum: IwbEnumDef;
+	wbCreatureTypeEnum: IwbEnumDef;
+	wbCrimeTypeEnum: IwbEnumDef;
+	wbCriticalStageEnum: IwbEnumDef;
+	wbEquipTypeEnum: IwbEnumDef;
+	wbFormTypeEnum: IwbEnumDef;
+	wbFunctionsEnum: IwbEnumDef;
+	wbHeadPartIndexEnum: IwbEnumDef;
+	wbImpactMaterialTypeEnum: IwbEnumDef;
+	wbMenuModeEnum: IwbEnumDef;
+	wbMiscStatEnum: IwbEnumDef;
+	wbModEffectEnum: IwbEnumDef;
+	wbMoodEnum: IwbEnumDef;
+	wbMusicEnum: IwbEnumDef;
+	wbObjectTypeEnum: IwbEnumDef;
+	wbPKDTType: IwbEnumDef;
+	wbPlayerActionEnum: IwbEnumDef;
+	wbQuadrantEnum: IwbEnumDef;
+	wbReloadAnimEnum: IwbEnumDef;
+	wbSexEnum: IwbEnumDef;
+	wbSkillEnum: IwbEnumDef;
+	wbSoundLevelEnum: IwbEnumDef;
+	wbSpecializationEnum: IwbEnumDef;
+	wbVatsValueFunctionEnum: IwbEnumDef;
+	wbWeaponAnimTypeEnum: IwbEnumDef;
+	wbZTestFuncEnum: IwbEnumDef;
 
 function wbCreaLevelDecider(aBasePtr: Pointer; aEndPtr: Pointer; const aElement: IwbElement): Integer;
 
@@ -639,7 +639,6 @@ var
   wbActorValue: IwbIntegerDef;
   wbETYP: IwbSubRecordDef;
   wbETYPReq: IwbSubRecordDef;
-  wbPKDTFlags: IwbFlagsDef;
   wbEFID: IwbSubRecordDef;
   wbEFIT: IwbSubRecordDef;
   wbEffects: IwbSubRecordArrayDef;
@@ -9115,9 +9114,9 @@ begin
            {0x00800000} 'Autocalc Service',
            {0x01000000} '',
            {0x02000000} '',
-           {0x03000000} 'No Knockdowns',
+           {0x04000000} 'No Knockdowns',
            {0x08000000} 'Not Pushable',
-           {0x10000000} '', {28}
+           {0x10000000} 'Unknown 28',
            {0x20000000} '',
            {0x40000000} 'No Rotating To Head-track',
            {0x80000000} ''
@@ -9148,7 +9147,7 @@ begin
            {0x00800000 } nil,
            {0x01000000 } nil,
            {0x02000000 } nil,
-           {0x03000000 No Knockdowns} nil,
+           {0x04000000 No Knockdowns} nil,
            {0x08000000 Not Pushable} wbActorTemplateUseModelAnimation,
            {0x10000000 } nil,
            {0x20000000 } nil,
