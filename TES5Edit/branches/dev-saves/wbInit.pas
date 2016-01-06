@@ -657,10 +657,10 @@ begin
     ShowMessage('Application name must contain FNV, FO3, FO4, TES4 or TES5 to select game.');
     Exit;
   end;
-  if (wbToolSource = tsSaves) and (wbToolMode = tmEdit) then begin
-    ShowMessage('Application '+wbGameName+' does not currently support '+wbSourceName+' in '+wbToolName+' mode.');
-    Exit;
-  end;
+  // if (wbToolSource = tsSaves) and (wbToolMode = tmEdit) then begin
+  //   ShowMessage('Application '+wbGameName+' does not currently support '+wbSourceName+' in '+wbToolName+' mode.');
+  //   Exit;
+  // end;
 
   DoInitPath(wbParamIndex);
 

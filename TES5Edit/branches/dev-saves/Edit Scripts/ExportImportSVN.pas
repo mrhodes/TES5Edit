@@ -8,7 +8,7 @@ unit UserScript;
 var
   slText, sl: TStringList;
   basePath, extension: string;
-  InfoMode: Integr;
+  InfoMode: Integer;
   doImport, doStop: boolean;
   debug: boolean;
     
@@ -333,7 +333,7 @@ begin
     c := basePath + x + extension;
     x := ExtractFilePath(c);
     c := ExtractFileName(c);
-    //if debug then AddMessage('Processing: '+c+' at '+x);
+    // if debug then AddMessage('Processing: '+c+' at '+x);
     
     while (Length(x)>0) and (x[Length(x)]=' ') do Delete(x, 1, 1);
     ForceDirectories(x);

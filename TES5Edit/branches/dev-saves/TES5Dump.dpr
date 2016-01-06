@@ -75,10 +75,8 @@ type
   TExportFormat = (efUESPWiki, efRaw);
   TwbDefProfile = string;
   TwbExportPass = ( epRead, epSimple, epShared, epChapters, epRemaining, epNothing);
-
 var
   wbDefProfiles : TStringList = nil;
-
 function StrToTExportFormat(aFormat: string): TExportFormat;
 begin
   Result := efRaw;
@@ -912,6 +910,24 @@ begin
         WriteLn(ErrOutput, 'Application '+wbGameName+' does not currently supports '+wbToolName);
         Exit;
       end;
+      if not (wbToolSource in [tsPlugins, tsSaves]) then begin
+        WriteLn(ErrOutput, 'Application '+wbGameName+' does not currently supports '+wbSourceName);
+        Exit;
+      end;
+      case wbToolSource of
+        tsSaves:   DefineFO3Saves;
+        tsPlugins: DefineFO3;
+      end;
+    end else if isMode('FO4') then begin
+      wbGameMode := gmFO4;
+      wbAppName := 'FO4';
+      wbGameName := 'Fallout4';
+      wbLoadBSAs := False;
+      wbCreateContainedIn := False;
+      if not (wbToolMode in [tmDump, tmExport]) then begin
+        WriteLn(ErrOutput, 'Application '+wbGameName+' does not currently supports '+wbToolName);
+        Exit;
+      end;
       if not (wbToolSource in [tsPlugins]) then begin
         WriteLn(ErrOutput, 'Application '+wbGameName+' does not currently supports '+wbSourceName);
         Exit;
@@ -968,23 +984,6 @@ begin
       case wbToolSource of
         tsSaves:   DefineTES5Saves;
         tsPlugins: DefineTES5;
-      end;
-    end else if isMode('FO4') then begin
-      wbGameMode := gmFO4;
-      wbAppName := 'FO4';
-      wbGameName := 'Fallout4';
-      wbLoadBSAs := False;
-      wbCreateContainedIn := False;
-      if not (wbToolMode in [tmDump, tmExport]) then begin
-        WriteLn(ErrOutput, 'Application '+wbGameName+' does not currently supports '+wbToolName);
-        Exit;
-      end;
-      if not (wbToolSource in [tsPlugins]) then begin
-        WriteLn(ErrOutput, 'Application '+wbGameName+' does not currently supports '+wbSourceName);
-        Exit;
-      end;
-      case wbToolSource of
-        tsPlugins: DefineFO4;
       end;
     end else begin
       WriteLn(ErrOutput, 'Application name must contain FNV, FO3, TES4, TES5 to select game.');

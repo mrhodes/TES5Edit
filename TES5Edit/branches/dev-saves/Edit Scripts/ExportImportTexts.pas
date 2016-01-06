@@ -1,12 +1,12 @@
 {
-  Export the text of scripts in selected records.
+  Export the text of selected records.
 }
 unit UserScript;
 
 var
   slText, sl: TStringList;
   basePath, extension: string;
-	doScriptsOnly, doImport, doStop: boolean;
+  doScriptsOnly, doImport, doStop: boolean;
   debug: boolean;
     
 //=========================================================================
